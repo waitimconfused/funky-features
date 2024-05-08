@@ -1,5 +1,5 @@
 reloadTemplateElements();
-export default async function reloadTemplateElements(){
+async function reloadTemplateElements(){
 	let templateElements = document.querySelectorAll("template[from]");
 
 	for(let index = 0; index < templateElements.length; index ++){
