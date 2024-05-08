@@ -21,7 +21,7 @@ export default async function reloadTemplateElements(){
 		iframe.contentWindow.document.write(html);
 		iframe.contentWindow.document.close();
 
-		let template = iframe.contentWindow.document.querySelector(`template#${id}`) || new HTMLTemplateElement;
+		let template = iframe.contentWindow.document.querySelector(`template#${id}`) || document.createElement("template");
 		template = template.content.cloneNode(true);
 		replaceMe.replaceWith(template);
 		document.body.removeChild(iframe);
