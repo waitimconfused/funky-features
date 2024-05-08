@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Editor</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<link rel="icon" type="image/*" href="/assets/favicon.png">
+	<style>
+		body:has(img) {
+			background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"%3E%3Cg fill="%239C92AC" fill-opacity="0.4"%3E%3Cpath fill-rule="evenodd" d="M0 0h4v4H0V0zm4 4h4v4H4V4z"/%3E%3C/g%3E%3C/svg%3E');
+			background-position: 50% 50%;
+			background-size: 2rem 2rem;
+			position: fixed;
+			width: 100vw;
+			height: 100vh;
+			top: 0px;
+			left: 0px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		@media (prefers-color-scheme: dark) {
+			body { background-color: #3f3f3f; }
+		}
+		@media (prefers-color-scheme: light) {
+			body { background-color: #f3f3f3; }
+		}
+	</style>
+</head>
+<body>
+
+	<h1 id="name">File Name</h1>
+	<h2 id="path">File Path</h2>
+	<div id="content"></div>
+
+	<script type="module">
+
+		import { getFileOptions } from "./options.js";
+
+		const imageTypes = [
+			".apng",
+			".avif",
+			".gif",
+			".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp",
+			".png",
+			".svg",
+			".webp",
+			".bmp",
+			".ico", ".cur",
+			".tif", ".tiff",
+
+		]
+
+		const urlParams = new URLSearchParams(window.location.search);
+		var path = urlParams.get('path');
+		path = atob(path);
+		document.getElementById("path").innerText = path;
+
+		let fileType = getFileOptions(path).extension;
+
+		if(imageTypes.includes(fileType)) {
+			let image = document.createElement("img");
+			image.src = path;
+			document.body.innerHTML = "";
+			document.body.appendChild(image);
+		}else{
+			let response = await fetch(path, {
+				mode: 'no-cors'
+			});
+			let content = await response.text();
+			document.getElementById("content").innerText = content;
+		}
+	</script>
+
+</body>
+</html>

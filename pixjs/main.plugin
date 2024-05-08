@@ -1,0 +1,32 @@
+@include Javascript as js from runtime/
+
+def async get(path=""):
+	def response = await fetch(path)
+	def contents = await response.text()
+	def b64moduleData = "data:text/javascript;base64," + btoa(contents)
+	def module = await import(b64moduleData)
+	return module;
+
+def random(low=0, high=1):
+	def random = js.math.random()
+	def calcRange = random * (high - low + 1) + start
+	return js.math.floor(calcRange)
+
+@include game from runtime/
+@include player from runtime/
+@include math from runtime/
+
+prop build():
+	console.log(game:block)
+	game:block.variant = default
+	console.log(game:block)
+
+property interact():
+
+	if game:block.variant == "opened": stop
+
+	def amount = random(0, 10)
+	console.log(player)
+	
+	schedule game:notify.show("Gained Item!", "item/diamond") 1s
+	player:inventory.give("item/diamond")

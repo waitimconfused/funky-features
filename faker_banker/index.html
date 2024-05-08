@@ -1,0 +1,75 @@
+<template id="acc">
+	<h1 id="acc-name">Account Name</h1>
+	<h2 id="acc-money">$00.00</h2>
+</template>
+
+<button id="acc-create">Create Account</button>
+<button id="acc-set">Set Account</button>
+<button id="acc-trade">Trade Money</button>
+
+<div id="acc-div"></div>
+
+<script type="module">
+	import * as AstClient from "/Asterisk/client/index.js";
+
+	const div = document.getElementById("acc-div") || new HTMLDivElement;
+
+	function createAccount(accName=""){
+		AstClient.apiCall({
+			name: accName
+		},"/api/faker_banker/create")
+		.then(reloadAccounts);
+	}
+	document.getElementById("acc-create").onclick = () => {
+		let accName = prompt("Enter Account Name:");
+		if(!accName) return;
+		createAccount(accName);
+	}
+
+	function setAccount(accName="", amount=0.0){
+		AstClient.apiCall({
+			name: accName,
+			amount: amount
+		},"/api/faker_banker/set")
+		.then(reloadAccounts);
+	}
+	document.getElementById("acc-set").onclick = () => {
+		let accName = prompt("Enter Account Name:");
+		let amount = parseInt(prompt("Amount:"));
+		setAccount(accName, amount);
+	}
+
+	function tradeMoney(accFrom="", accTo="", amount=0.0){
+		AstClient.apiCall({
+			from: accFrom,
+			to: accTo,
+			amount: amount
+		},"/api/faker_banker/trade")
+		.then(reloadAccounts);
+	}
+	document.getElementById("acc-trade").onclick = () => {
+		let accFrom = prompt("Money FROM account:");
+		let accTo = prompt("Money TO account:");
+		let amount = parseInt(prompt("Amount:"));
+		tradeMoney(accFrom, accTo, amount);
+	}
+
+	function reloadAccounts(){
+		AstClient.apiCall({},"/api/faker_banker/get_all")
+		.then((faker_banker) => {
+			let accounts = faker_banker.accounts;
+			console.log(accounts);
+			div.innerHTML = "";
+			Object.keys(accounts).forEach((accName) => {
+				let money = accounts[accName].money;
+				let template = document.querySelector("template#acc") || new HTMLTemplateElement;
+				let templateCopy = template.content.cloneNode(true);
+				templateCopy.getElementById("acc-name").innerText = accName;
+				templateCopy.getElementById("acc-money").innerText = "$"+money;
+				div.appendChild(templateCopy);
+				console.log(div);
+			})
+		});
+	}
+	reloadAccounts();
+</script>

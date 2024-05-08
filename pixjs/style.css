@@ -1,0 +1,50 @@
+:root {
+	color-scheme: dark;
+}
+
+body {
+	white-space: break-spaces;
+    font-family: Consolas, "Courier New", monospace;
+    background-color: #000c18;
+    font-size: 14px;
+    font-weight: normal;
+    font-size: 14px;
+    font-feature-settings: "liga" 0, "calt" 0;
+    font-variation-settings: normal;
+    line-height: 19px;
+    letter-spacing: 0px;
+    padding: 0px;
+    margin: 0px;
+	display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+	padding: 1rem;
+}
+
+div {
+	background: #060621;
+    box-sizing: border-box;
+    padding: 1rem;
+	width: 100%;
+    overflow-x: auto;
+    color: #6688cc;
+    border-radius: 0.5rem;
+}
+
+span { color: #6688cc; }
+span > span { color: inherit !important; }
+
+.mem-declare { color: #9966b8; font-style: italic; }
+.prop { color: #9966b8; }
+.mem { color: #ddbb88; }
+.mem-func { color: #ddbb88; }
+.return { color: #225588; }
+.export { color: #225588; }
+.string { color: #22aa44; }
+.number { color: #f280d0; }
+.comment { color: #384887; }
+.bracket { color: #ddbb88; }
+.operator { color: #225588; }
+.async { color: #225588 }
+.await { color: #225588 }
+.indent { display: inline-block; width: 2.5rem; }

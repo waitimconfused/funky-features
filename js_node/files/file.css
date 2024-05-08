@@ -1,0 +1,61 @@
+body, canvas {
+	touch-action: none;
+	-ms-touch-action: none;
+	user-select: none;
+}
+ol#filespace {
+	--padding: 1rem;
+	overflow: auto;
+	position: fixed;
+	top: 0px;
+	left: 50vw;
+	width: calc(50vw - var(--padding) * 2);
+	height: calc(100vh - var(--padding) * 2);
+	padding: var(--padding);
+	color: white;
+	background: black;
+	white-space: pre;
+	font-family: "Source Code Pro",monospace;
+	font-weight: bold;
+	margin: 0px;
+
+	list-style: none;
+	counter-reset: li;	  
+}
+
+li::before {
+	content: counter(li);
+	position: sticky;
+	color: #232323;
+	display: inline-block;
+	width: 1em;
+	margin-left: -1rem;
+	margin-right: 1rem;
+	counter-increment: li;
+}
+ul {
+	margin-left: -1rem;
+}
+
+code {
+	--padding: 10px;
+	background-color: grey;
+}
+
+code.code-inline {
+	display: inline-block;
+	padding: 0px var(--padding) 0px var(--padding);
+}
+code.code-block {
+	display: block;
+	padding: var(--padding);
+}
+
+.link {
+	background-color: #31363C;
+	color: white;
+	padding: 0.2rem 0.4rem;
+	border-radius: 6px;
+	text-decoration: underline;
+	cursor: pointer;
+}
