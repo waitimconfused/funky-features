@@ -310,7 +310,7 @@ export default class Node {
 		context.shadowColor = `rgba(0, 0, 0, ${a})`;
 		context.strokeStyle = `rgba(0, 0, 0, ${a})`;
 		context.fillStyle = `rgba(255, 255, 255, ${a})`;
-		context.font = `bold ${this.display.radius * camera.zoom / 1.5 + lerp(0, 10, this.lerp.radius)}px 'JetBrains Mono', 'Noto Emoji'`;
+		context.font = `bold ${this.display.radius * camera.zoom / 1.5 + lerp(0, 10, this.lerp.radius)}px 'JetBrains Mono'`;
 		context.textBaseline = 'middle';
 		context.textAlign = 'center';
 		context.lineWidth = this.display.radius * camera.zoom / 10;
