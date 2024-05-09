@@ -6,6 +6,7 @@ var shiftClickedParent = "";
 var shiftClickedChild = "";
 
 export function nodeIsShiftClicked(node=new Node){
+	if(globalGraph.editingMode == false) return;
 	if(shiftClickedParent == ""){
 		shiftClickedParent = node.token;
 		console.log({
@@ -93,7 +94,6 @@ export default class Graph {
 	constructor(){
 		this.canvas = document.createElement("canvas");
 		document.body.appendChild(this.canvas);
-		this.canvas.style.position = "fixed";
 		this.canvas.style.userSelect = "none";
 		this.canvas.style.zIndex = -1;
 		this.canvas.style.backgroundColor = `rgb(${this.styles.bg.r}, ${this.styles.bg.g}, ${this.styles.bg.b})`;
@@ -127,6 +127,7 @@ export default class Graph {
 	}
 
 	disableEditing(){
+		this.editingMode = false;
 		this.canvas.ondblclick = () => {
 			for(let nodeIndex = 0; nodeIndex < this.nodeIndexes.length; nodeIndex ++){
 				let nodeToken = this.nodeIndexes[nodeIndex];
@@ -137,6 +138,7 @@ export default class Graph {
 		hideOptionsPane();
 	}
 	enableEditing(){
+		this.editingMode = true;
 		this.canvas.ondblclick = () => {
 			let nodeDoubleClick = false;
 			for(let nodeIndex = 0; nodeIndex < this.nodeIndexes.length; nodeIndex ++){
