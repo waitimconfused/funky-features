@@ -95,7 +95,6 @@ export default class Graph {
 		this.canvas = document.createElement("canvas");
 		document.body.appendChild(this.canvas);
 		this.canvas.style.userSelect = "none";
-		this.canvas.style.zIndex = -1;
 		this.canvas.style.backgroundColor = `rgb(${this.styles.bg.r}, ${this.styles.bg.g}, ${this.styles.bg.b})`;
 		window.onresize = () => {
 			let width = this.styles.size.width;
