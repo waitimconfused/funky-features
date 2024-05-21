@@ -17,6 +17,7 @@ export default class Node {
 		},
 		glyph: "?"
 	};
+	#attributes = { title: "" }
 	children = [];
 	parents = [];
 	isClicked = false;
@@ -73,6 +74,11 @@ export default class Node {
 			this.display.colour.g = rgbArray[2];
 			this.display.colour.b = rgbArray[3];
 		}
+		return this;
+	}
+	setAttribute(attribute="", value){
+		attribute = attribute.toLowerCase();
+		this.#attributes[attribute] = value;
 		return this;
 	}
 	getStyling(){
@@ -229,6 +235,7 @@ export default class Node {
 			this.lerp.radius += nodeTransitionSpeed * delta;
 			this.lerp.textOffset += nodeTransitionSpeed * delta;
 			globalGraph.canvas.style.cursor = "pointer";
+			if(this.#attributes.title) globalGraph.canvas.setAttribute("title", this.#attributes.title);
 		}else{
 			this.lerp.radius -= nodeTransitionSpeed * delta;
 			this.lerp.textOffset -= nodeTransitionSpeed * delta;

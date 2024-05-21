@@ -41,6 +41,10 @@ export function draw(
 		context.mozImageSmoothingEnabled = false;
 		context.webkitImageSmoothingEnabled = false;
 		context.imageSmoothingEnabled = false;
+		DestinationXPos = Math.floor(DestinationXPos);
+		DestinationYPos = Math.floor(DestinationYPos);
+		DestinationWidth = Math.floor(DestinationWidth);
+		DestinationHeight = Math.floor(DestinationHeight);
 	}
 
 	context.save();
@@ -48,26 +52,24 @@ export function draw(
 		DestinationWidth = Math.abs(DestinationWidth);
 		context.scale(-1, 1);
 		context.translate(
-			0 - innerScreen.width,
+			0 - drawDestination.width,
 			0
 		);
-		DestinationXPos = innerScreen.width - DestinationXPos - DestinationWidth;
+		DestinationXPos = drawDestination.width - DestinationXPos;
 	}
 
 	if(CropXPos == -1) CropXPos = 0;
 	if(CropYPos == -1) CropYPos = 0;
 
 	if(CropWidth == -1) CropWidth = undefined;
-	else CropWidth = Math.floor(CropWidth);
 	if(CropHeight == -1) CropHeight = undefined;
-	else CropHeight = Math.floor(CropHeight);
 
 	try {
-		if(CropXPos && CropYPos & CropWidth && CropHeight){
+		if(CropWidth && CropHeight){
 			context.drawImage(
 				CacheImage(imgSource),
 	
-				CropXPos, CropYPos,
+				CropXPos || 0, CropYPos || 0,
 				CropWidth, CropHeight,
 	
 				DestinationXPos, DestinationYPos,
@@ -85,7 +87,7 @@ export function draw(
 		context.drawImage(
 			ErrorImage,
 
-			0, 0, ErrorImage.width, ErrorImage.height,
+			0, 0, 16, 16,
 
 			Math.floor(DestinationXPos), Math.floor(DestinationYPos),
 			Math.floor(DestinationWidth), Math.floor(DestinationHeight),

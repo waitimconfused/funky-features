@@ -6,6 +6,7 @@ import exp from "node:constants";
 export var visibility = true;
 
 export var page_404 = "/404.html";
+var page_404_message = "<h1>Error 404: Page not found</h1><p>The file you have requested can not be found.</p>"
 
 /**
  * Disable the ability to return files to any client
@@ -73,16 +74,24 @@ export function get(path=""){
 		};
 		else {
 			MESSAGES.code("404", path);
-			let content404 = get(page_404);
-			content404.status = 404;
+			let content404 = {
+				type: "text/html",
+				content: page_404_message,
+				status: 404
+			};
+			if(fs.existsSync(page_404)) content404.content = get(page_404);
 			return content404;
 		}
 	}
 
 	if(fs.existsSync(path) == false){
 		MESSAGES.code("404", path);
-		let content404 = get(page_404);
-		content404.status = 404;
+		let content404 = {
+			type: "text/html",
+			content: page_404_message,
+			status: 404
+		};
+		if(fs.existsSync(page_404)) content404.content = get(page_404);
 		return content404;
 	}
 
@@ -95,11 +104,16 @@ export function get(path=""){
 			message = fs.readFileSync(path+"/index.htm");
 		}
 
-		if(message == "") return {
-			type: "text/plain",
-			content: MESSAGES.code("404-dir", path),
-			status: 404
-		};
+		if(message == ""){
+			MESSAGES.code("404", path);
+			let content404 = {
+				type: "text/html",
+				content: page_404_message,
+				status: 404
+			};
+			if(fs.existsSync(page_404)) content404.content = get(page_404);
+			return content404;
+		}
 
 		return {
 			type: "text/html",
