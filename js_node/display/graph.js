@@ -204,6 +204,7 @@ export default class Graph {
 		}
 
 		this.canvas.style.cursor = "default";
+		if(this.canvas.hasAttribute("title")) this.canvas.removeAttribute("title");
 		let bg = this.canvas.style.backgroundColor.split(/rgb\((\d*),? ?(\d*),? ?(\d*),? ?(\d*)\)/gm);
 		this.styles.bg.r = bg[1];
 		this.styles.bg.g = bg[2];
