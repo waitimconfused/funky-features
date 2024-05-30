@@ -175,6 +175,7 @@ var lastZoomDistance = null;
 var hoveredNode = null;
 var numberOfTouches = 0;
 document.addEventListener("touchstart", function(e){
+	if(e.target != globalGraph.canvas) return;
 	numberOfTouches == e.touches.length;
 	if(e.touches.length == 1){
 		var touch = e.touches[0];
@@ -194,6 +195,7 @@ document.addEventListener("touchstart", function(e){
 	}
 });
 document.addEventListener('touchmove', function(e) {
+	if(e.target != globalGraph.canvas) return;
     e.preventDefault();
 	if(globalGraph.hasHoveredNode){
 		hoveredNode = globalGraph.hoveredNode;
@@ -231,6 +233,7 @@ document.addEventListener('touchmove', function(e) {
 	}
 }, false);
 document.addEventListener("touchend", function(e){
+	if(e.target != globalGraph.canvas) return;
 	if(e.touches.length == 0){
 		hoveredNode = null;
 		mouse.click_l = false;
