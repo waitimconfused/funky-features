@@ -93,6 +93,7 @@ export default class Graph {
 
 	constructor(){
 		this.canvas = document.createElement("canvas");
+		this.canvas.style.touchAction = "none";
 
 		if(document.getElementById("js_node.canvas")){
 			document.getElementById("js_node.canvas").innerHTML = "";
