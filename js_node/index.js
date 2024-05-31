@@ -176,6 +176,7 @@ var hoveredNode = null;
 var numberOfTouches = 0;
 document.addEventListener("touchstart", function(e){
 	if(e.target != globalGraph.canvas) return;
+	alert("Touching canvas");
 	numberOfTouches == e.touches.length;
 	if(e.touches.length == 1){
 		var touch = e.touches[0];
