@@ -6,7 +6,7 @@ import Settings from "../../../options/index.json" with {type: "json"};
 import PackageJSON from "../../../package.json" with {type: "json"};
 
 import reloadWorlds from "../../worlds/reload.js";
-import { reloadAddons } from "../../addons/cache.js";
+// import { reloadAddons } from "../../addons/cache.js";
 
 const menu = new Menu;
 let buttonSize = 64;

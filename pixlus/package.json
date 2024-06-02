@@ -1,0 +1,13 @@
+{
+    "name": "pixlus",
+    "description": "Welcome to the world of PIXLUS",
+    "version": "0.0.9",
+    "port": 3000,
+    "type": "module",
+    "scripts": {
+        "ast-host": "node host.ast.js",
+        "ast-install": "node install.ast.js",
+
+		"addon-comp": "node code/addons/compile.js"
+    }
+}
