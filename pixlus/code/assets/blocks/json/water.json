@@ -1,0 +1,42 @@
+{
+	"block": {
+		"": {
+			"img": {
+				"source": "water.png",
+				"animationLength": 8,
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 16
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","X","X"],
+					["X","X","X"],
+					["X","X","X"]
+				]
+			}
+		},
+		"clif": {
+			"img": {
+				"source": "water.png",
+				"animationLength": 8,
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","X","X"],
+					["X","X","X"],
+					["X","X","X"]
+				]
+			}
+		}
+	}
+}

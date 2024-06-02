@@ -1,0 +1,7 @@
+* {
+	cursor: url(../../assets/cursor/default.png) 10 0, pointer;
+}
+
+*:active {
+	cursor: url(../../assets/cursor/click.png) 10 0, pointer;
+}

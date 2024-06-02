@@ -1,0 +1,19 @@
+{
+    "types": {
+        "": "json/air.json",
+        "grass_block": "json/grass_block.json",
+        "dirt": "json/dirt.json",
+        "water": "json/water.json",
+        "campfire": "json/campfire.json",
+        "chest": "json/chest.json",
+        "tree": "json/tree.json",
+        "rocks": "json/rocks.json",
+        "flower": "json/flower.json",
+        "home": "json/home.json",
+        "home_inside": "json/home_inside.json",
+        "portal": "json/portal.json",
+        "bridge": "json/bridge.json",
+        "gem": "json/gem.json",
+        "magic": "json/magic.json"
+    }
+}

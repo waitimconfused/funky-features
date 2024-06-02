@@ -1,0 +1,46 @@
+@font-face {
+    font-family: PIXLUS_black-white;
+    src: url("../assets/UI/images/fonts/Pixlus_black_white-Regular.ttf");
+	text-transform: uppercase;
+}
+
+body {
+	/* Default Font Family */
+	font-family: sans-serif;
+}
+
+#web_fonts {
+	display: inline-block;
+	width: 16px;
+    height: 16px;
+    background-repeat: no-repeat;
+	image-rendering: pixelated;
+}
+
+#web_fonts.letter {
+	--x: 0;
+	--y: 0;
+    background-image: url(../../code/assets/UI/images/fonts/letters.png);
+    background-size: calc(100% * 5);
+	background-position-x: calc( (var(--x) / 16) * (100% / 4));
+	background-position-y: calc( (var(--y) / 16) * (100% / 5));
+}
+#web_fonts.number {
+    background-image: url(../../code/assets/UI/images/fonts/numbers.png);
+    background-size: calc(100% * 3);
+	/* background-position-x: calc( (var(--x) / 16) * (100% / 3));
+	background-position-y: calc( (var(--y) / 16) * (100% / 4)); */
+
+	background-position-x: 0px;
+	background-position-y: 0px;
+}
+
+#web_fonts.icon {
+    background-image: url(../../code/assets/UI/images/fonts/icons/period.png);
+    background-size: calc(100%);
+	/* background-position-x: calc( (var(--x) / 16) * (100% / 3));
+	background-position-y: calc( (var(--y) / 16) * (100% / 4)); */
+
+	background-position-x: 0px;
+	background-position-y: 0px;
+}

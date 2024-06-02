@@ -1,0 +1,23 @@
+{
+	"block": {
+		"": {
+			"img": {
+				"source": "magic.png",
+				"animationLength": 10,
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		}
+	}
+}

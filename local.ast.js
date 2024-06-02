@@ -105,3 +105,7 @@ Ast.serverside.api.createEndpoint(function(dataIn, IP){
 
 	return {status: 200};
 }, "/faker_banker/trade");
+
+
+
+Ast.message.write("Local IP Address", `You are working locally.\nWhen asked by Confusion "Enter your machine key:"\nanswer with :"${ btoa(Ast.getIP()) }"`)

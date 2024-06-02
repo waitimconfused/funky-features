@@ -89,7 +89,7 @@ export function onRequest(request=http.IncomingMessage, response=http.ServerResp
 		let fileHeader = file.header || {};
 		let fileContent = file.content;
 
-		fileHeader["Access-Control-Allow-Origin"] = "http://localhost:1200/projects/demo?project=testing_page&local";
+		fileHeader["Access-Control-Allow-Origin"] = "*";
 		fileHeader["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
 		fileHeader["Access-Control-Allow-Headers"] = "Content-Type";
 		fileHeader["Content-Type"] = fileType;

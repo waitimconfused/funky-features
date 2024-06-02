@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Confusion | 404?</title>
+
+		<style>
+			body {
+				font-family: system-ui;
+				color: black;
+				background-color: #588018;
+				padding: 5rem;
+				box-shadow: inset 0px 0px 0px 16px #346124;
+				box-sizing: border-box;
+				position: absolute;
+				top: 0px;
+				left: 0px;
+				width: 100vw;
+				height: 100vh;
+				margin: 0px;
+			}
+			
+			h1 {
+				padding-left: 1rem;
+			}
+
+			h2 {
+				max-width: 20rem;
+			}
+
+			div.emoji {
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				width: 13rem;
+				aspect-ratio: 1 / 1;
+				transform: translate(-50%, -50%);
+				user-select: none;
+				-webkit-user-drag: none;
+			}
+
+			div.emoji * {
+				position: absolute;
+				left: 50%;
+				top: 50%;
+
+				transform-origin: center center;
+				transform: translate(-25%, -25%);
+
+				/*   translate: 3rem 3rem; */
+				scale: 2;
+				user-select: none;
+				-webkit-user-drag: none;
+			}
+			img {
+				image-rendering: pixelated;
+			}
+			button {
+				background-color: #52731c;
+				border: none;
+				padding: 0.5rem 1rem;
+				cursor: pointer;
+				box-shadow: 0px 0px 0px 5px #346124;
+			}
+			button:hover {
+				background-color: #5d8320;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="content">
+			<h1>Error 404?</h1>
+			<h2>You wanted a page, and we don't have one to give.</h2>
+			<p>If you think something <strong>should</strong> be here, join the Discord</p>
+		</div>
+
+		<div class="emoji">
+			<img src="/code/assets/PIXLUS-logo-small.png">
+		</div>
+
+		<button onclick="history.back()">Go Back</button>
+	</body>
+
+	<script>
+		window.onresize = (e) => {
+			e.preventDefault();
+		}
+
+		// Prevent Touchpad actions
+		window.addEventListener('wheel', (e) => {
+			e.preventDefault();
+		}, {passive: false});
+
+		window.addEventListener("gesturestart", function (e) {
+			e.preventDefault();
+		}, {passive: false});
+
+		window.addEventListener("gesturechange", function (e) {
+			e.preventDefault();
+		}, {passive: false})
+
+		window.addEventListener("gestureend", function (e) {
+			e.preventDefault();
+		}, {passive: false});
+	</script>
+</html>

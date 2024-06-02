@@ -1,0 +1,74 @@
+{
+	"block": {
+		"": {
+			"img": {
+				"source": "portal.png",
+				"animationLength": 3,
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 16
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"closed": {
+			"img": {
+				"source": "portal.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 16,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"text": "Closed",
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"to-Above": {
+			"img": {
+				"source": "portal.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"text": "Over",
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				],
+				"standing": {
+					"img":  {
+						"source": "portal.png",
+						"animationLength": 3,
+						"width": 16,
+						"height": 16,
+						"tileCoords": {
+							"X": 0,
+							"Y": 16
+						}
+					}
+				},
+				"action": " set world ('Over') "
+			}
+		}
+	}
+}

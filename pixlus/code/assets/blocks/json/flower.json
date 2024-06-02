@@ -1,0 +1,112 @@
+{
+	"block": {
+		"": {
+			"img": {
+				"source": "Nature/flowers.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"large": {
+			"img": {
+				"source": "Nature/flowers.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"mid": {
+			"img": {
+				"source": "Nature/flowers.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 16,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"small": {
+			"img": {
+				"source": "Nature/flowers.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 32,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"coloured": {
+			"img": {
+				"source": "Nature/flowers.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 48,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"sunflower": {
+			"img": {
+				"source": "Nature/flowers.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 64,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		}
+	}
+}

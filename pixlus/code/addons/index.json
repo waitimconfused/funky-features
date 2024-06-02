@@ -1,0 +1,9 @@
+{
+	"gameplay": [
+		"./plugin.py"
+	],
+
+	"blocks": {
+		"grass_block": "./grass_block.py"
+	}
+}

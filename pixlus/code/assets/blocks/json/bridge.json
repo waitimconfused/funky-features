@@ -1,0 +1,132 @@
+{
+	"block": {
+		"": {
+			"img": {
+				"source": "bridge.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 16,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","O","X"],
+					["X","O","X"],
+					["X","O","X"]
+				]
+			}
+		},
+
+		"vertical-top": {
+			"img": {
+				"source": "bridge.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 32,
+					"Y": 16
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","O","X"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"vertical": {
+			"img": {
+				"source": "bridge.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 16,
+					"Y": 16
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","O","X"],
+					["X","O","X"],
+					["X","O","X"]
+				]
+			}
+		},
+		"vertical-bottom": {
+			"img": {
+				"source": "bridge.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 16
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+
+		"horizontal-left": {
+			"img": {
+				"source": "bridge.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"horizontal": {
+			"img": {
+				"source": "bridge.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 16,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","X","X"],
+					["O","O","O"],
+					["X","X","X"]
+				]
+			}
+		},
+		"horizontal-right": {
+			"img": {
+				"source": "bridge.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 32,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		}
+	}
+}

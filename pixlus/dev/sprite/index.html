@@ -1,0 +1,51 @@
+<title>PIXLUS | Dev</title>
+<link rel="stylesheet" href="./css/index.html.css">
+
+<div class="canvas-holder">
+	<canvas id="preview"></canvas>
+	<br>
+	<canvas id="tilemap"></canvas>
+	<br>
+	<button id="save">Save</button>
+</div>
+  
+<h1>Select Image</h1>
+<input type="file" accept="image/*" id="image-upload"/>
+<img src="#" id="input">
+
+<br><br>
+
+<div>
+	<h1>Block Options</h1>
+	<input type="text" id="block-type" placeholder="Block Type (BLOCK:varient)">
+	<input type="text" id="block-varient" placeholder="Block Type (block:VARIENT)">
+	<input type="text" id="block-source" placeholder="./path/to/image.png">
+
+	<h1>Positioning</h1>
+	<input type="number" id="pos-x" placeholder="Crop Position X">
+	<input type="number" id="pos-y" placeholder="Crop Position Y">
+
+	<br>
+
+	<h1>Sizing</h1>
+	<input type="number" id="width" placeholder="Crop Width">
+	<input type="number" id="height" placeholder="Crop Height">
+
+	<h1>Animation</h1>
+	<input type="number" step="1" id="animation-length" placeholder="Number of Animation Frames">
+	<input type="number" step="1" id="animation-spacing" placeholder="Spacing Between Frames">
+	<select id="animation-direction">
+		<option value="horizontal">Horizontal</option>
+		<option value="vertical">Vertical</option>
+	</select>
+</div>
+
+<code title="blocks.json" id="blocks.json" class="json">
+{
+	"tile.json": "./json/tile.json"
+}
+</code>
+
+<code title="./json/block.json" id="block.json" class="json"></code>
+
+<script type="module" src="./js/index.js"></script>

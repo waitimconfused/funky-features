@@ -1,0 +1,21 @@
+@import url("./cursor.css");
+
+html, body {
+	height: 200vh;
+	width: 200vw;
+	margin: 0px;
+	padding: 0px;
+	overflow: hidden;
+}
+
+canvas#screen {
+	position: fixed;
+	background-color: #7a8ba1;
+	left: 0px;
+	top: 0px;
+	width: 100vw;
+	height: 100vh;
+	image-rendering: pixelated;
+	pointer-events: none;
+	user-select: none;
+}

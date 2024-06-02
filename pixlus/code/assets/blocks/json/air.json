@@ -1,0 +1,22 @@
+{
+	"block": {
+		"": {
+			"img": {
+				"source": "",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 32,
+					"Y": 16
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		}
+	}
+}

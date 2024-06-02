@@ -1,0 +1,296 @@
+{
+	"block": {
+		"": {
+			"img": {
+				"source": "Homes/inside.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"0-0": {
+			"img": {
+				"source": "Homes/inside.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"1-0": {
+			"img": {
+				"source": "Homes/inside.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 16,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"2-0": {
+			"img": {
+				"source": "Homes/inside.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 32,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+
+		"0-1": {
+			"img": {
+				"source": "Homes/inside.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 16
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"1-1": {
+			"img": {
+				"source": "Homes/inside.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 16,
+					"Y": 16
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"2-1": {
+			"img": {
+				"source": "Homes/inside.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 32,
+					"Y": 16
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+
+		"0-2": {
+			"img": {
+				"source": "Homes/inside.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 32
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"1-2": {
+			"img": {
+				"source": "Homes/inside.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 16,
+					"Y": 32
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"2-2": {
+			"img": {
+				"source": "Homes/inside.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 32,
+					"Y": 32
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+
+		"0-3": {
+			"img": {
+				"source": "Homes/inside.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 48
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"1-3": {
+			"img": {
+				"source": "Homes/inside.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 16,
+					"Y": 48
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"2-3": {
+			"img": {
+				"source": "Homes/inside.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 32,
+					"Y": 48
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+
+		"0-4": {
+			"img": {
+				"source": "Homes/inside.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 64
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"1-4": {
+			"img": {
+				"source": "Homes/inside.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 16,
+					"Y": 64
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"2-4": {
+			"img": {
+				"source": "Homes/inside.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 32,
+					"Y": 64
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		}
+	}
+}

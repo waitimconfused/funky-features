@@ -1,0 +1,220 @@
+{
+	"block": {
+		"": {
+			"img": {
+				"source": "grass_block.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 16,
+					"Y": 16
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"slope-down": {
+			"img": {
+				"source": "grass_block.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 32,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","O","X"],
+					["X","O","X"],
+					["O","O","O"]
+				]
+			}
+		},
+		"slope-up": {
+			"img": {
+				"source": "grass_block.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 32,
+					"Y": 32
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["X","O","X"],
+					["X","O","X"]
+				]
+			}
+		},
+		"top-left": {
+			"img": {
+				"source": "grass_block.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","X","X"],
+					["X","O","O"],
+					["X","O","O"]
+				]
+			}
+		},
+		"top": {
+			"img": {
+				"source": "grass_block.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 16,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","X","X"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"top-right": {
+			"img": {
+				"source": "grass_block.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 48,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","X","X"],
+					["O","O","X"],
+					["O","O","X"]
+				]
+			}
+		},
+		"center-left": {
+			"img": {
+				"source": "grass_block.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 16
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","O","O"],
+					["X","O","O"],
+					["X","O","O"]
+				]
+			}
+		},
+		"center": {
+			"img": {
+				"source": "grass_block.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 16,
+					"Y": 16
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"center-right": {
+			"img": {
+				"source": "grass_block.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 48,
+					"Y": 16
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","X"],
+					["O","O","X"],
+					["O","O","X"]
+				]
+			}
+		},
+		"bottom-left": {
+			"img": {
+				"source": "grass_block.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 32
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","X","O"],
+					["X","X","X"],
+					["X","X","X"]
+				]
+			}
+		},
+		"bottom": {
+			"img": {
+				"source": "grass_block.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 16,
+					"Y": 32
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["X","X","X"],
+					["X","X","X"]
+				]
+			}
+		},
+		"bottom-right": {
+			"img": {
+				"source": "grass_block.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 48,
+					"Y": 32
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","X","X"],
+					["X","X","X"],
+					["X","X","X"]
+				]
+			}
+		}
+	}
+}

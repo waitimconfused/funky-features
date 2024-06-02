@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>PIXLUS | Credits</title>
+
+		<link rel="stylesheet" href="../../code/styles/web/credits.css">
+	</head>
+
+	<body>
+
+		<h1 class="title" id="title">Credits</h1>
+
+		<div id="ground"></div>
+
+		<div class="content">
+
+			<h1>Artwork</h1>
+			<a href="" target="_blank">O_LOBSTER</a>
+			<a href="https://elthen.itch.io/" target="_blank">Elthen</a>
+			
+			<h1>Development</h1>
+			<a href="" target="_blank">Blockbuilder384</a>
+
+			<br>
+
+			<a href="../index.html">Exit</a>
+		</div>
+
+		<script src="../../code/pages/web_fonts.js" type="module"></script>
+
+		<script>
+			let scrollSpeed = 10;
+			document.body.style.cursor = "none"; 
+			window.scrollTo(0, 0);
+			var timer = undefined;
+
+			setTimeout(() => {
+				timer = setInterval(scroll, scrollSpeed);
+			}, 1000);
+
+			window.onscroll = () => {
+				if((this.oldScroll || 0) > this.scrollY){
+					clearInterval(timer);
+				}
+				this.oldScroll = this.scrollY;
+			}
+
+			function scroll(){
+				let oldScrollY = JSON.parse( JSON.stringify(window.scrollY) );
+				window.scrollBy(0, 5);
+				let newScrollY = window.scrollY;
+				if(window.scrollY == document.body.scrollHeight){
+					clearInterval(timer);
+				}
+			}
+		</script>
+	</body>
+</html>

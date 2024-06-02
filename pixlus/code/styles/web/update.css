@@ -1,0 +1,38 @@
+@import url("../font_pixlus-ttf.css");
+
+
+a[href], button {
+	font-size: xx-large;
+	text-decoration: none;
+	color: #333333;
+	background-color: #7a8ba1;
+	border: none;
+	box-shadow:
+		0px 5px 0px 0px #333333,
+		0px -5px 0px 0px #333333,
+		5px 0px 0px 0px #333333,
+		-5px 0px 0px 0px #333333,
+		inset -5px -5px 0px 0px #00000080;
+	transition: all 1s;
+	padding: 10px 50px;
+
+	&:hover {
+		background-color: #f2f2f0;
+		box-shadow:
+			0px 5px 0px 0px #333333,
+			0px -5px 0px 0px #333333,
+			5px 0px 0px 0px #333333,
+			-5px 0px 0px 0px #333333,
+			inset -5px -5px 0px 0px #00000080;
+	}
+	&:disabled {
+		color: white;
+		background-color: #3e5472;
+		box-shadow:
+			0px 5px 0px 0px #333333,
+			0px -5px 0px 0px #333333,
+			5px 0px 0px 0px #333333,
+			-5px 0px 0px 0px #333333,
+			inset -5px -5px 0px 0px #00000080;
+	}
+}

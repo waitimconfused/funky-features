@@ -1,0 +1,118 @@
+{
+	"block": {
+
+		"": {
+			"img": {
+				"source": "Nature/rocks.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","X","X"],
+					["X","X","X"],
+					["X","X","X"]
+				]
+			}
+		},
+
+		"boulder": {
+			"img": {
+				"source": "Nature/rocks.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","X","X"],
+					["X","X","X"],
+					["X","X","X"]
+				]
+			}
+		},
+
+		"large": {
+			"img": {
+				"source": "Nature/rocks.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 16,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","X","X"],
+					["X","X","X"],
+					["X","X","X"]
+				]
+			}
+		},
+
+		"mid": {
+			"img": {
+				"source": "Nature/rocks.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 32,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","X","X"],
+					["X","X","X"],
+					["X","X","X"]
+				]
+			}
+		},
+
+		"small": {
+			"img": {
+				"source": "Nature/rocks.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 48,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+
+		"tiny": {
+			"img": {
+				"source": "Nature/rocks.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 64,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		}
+	}
+}

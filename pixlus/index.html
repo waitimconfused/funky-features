@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>PIXLUS | Game Setup</title>
+		<style>
+			@import url('https://fonts.googleapis.com/css2?family=Akatab:wght@900&display=swap');
+			html, body {
+				background-color: #7a8ba1;
+				color: black;
+			}
+			* {
+				font-family: 'Akatab', sans-serif;
+			}
+			.logo {
+				position: fixed;
+				top: 10px;
+				right: 10px;
+				width: 10vw;
+				aspect-ratio: 1 / 1;
+				background-image: url("../code/assets/PIXLUS-logo-large.png");
+				image-rendering: pixelated;
+				background-size: contain;
+				background-position: center center;
+			}
+			code {
+				font-family: monospace;
+				display: block;
+				background-color: rgba(127.5, 127.5, 127.5, 0.5);
+				white-space: pre-line;
+				padding: 10px;
+				border-radius: 3px;
+
+				&>* {
+					font-family: monospace;
+				}
+
+				&::before {
+					content: attr(type);
+					background-color: #8f8f8f;
+					text-transform: uppercase;
+					position: relative;
+					top: -13px;
+					left: -10px;
+					border-top-left-radius: 3px;
+					border-bottom-right-radius: 3px;
+					padding: 3px;
+					animation: load-codeblock 5s;
+				}
+			}
+			@keyframes load-codeblock {
+				from {
+					transform: scale(0.5);
+				}
+				to {
+					
+				}
+			}
+			div.typing {
+				display: inline-block;
+				animation: typing 1s infinite linear;
+				height: 10px;
+				width: 1px;
+				background-color: black;
+			}
+			@keyframes typing {
+				from, 25%, 75%, to{
+					opacity: 0;
+				}
+				26%, 50%, 74% {
+					opacity: 1;
+				}
+			}
+		</style>
+		<link rel="icon" type="image/x-icon" href="./favicon.ico">
+	</head>
+	<body>
+		<div id="unzipped" style="display: none;">
+			<div class="logo"></div>
+			<h1>Game Setup</h1>
+			<p>Installing a few dependencies to be able to host a local server. Using a server allows for more complex Javascript, using <a href="https://developer.mozilla.org/en-US/docs/web/javascript/reference/statements/import">imports</a> and <a href="https://developer.mozilla.org/en-US/docs/web/javascript/reference/statements/export">exports</a> between javascript files</p>
+			<p>To be able to play, you will need to do the following:</p>
+
+			<h2>Install Node.js</h2>
+			<p>Go to <a href="https://nodejs.org/en/download" target="_blank">Download Node.js</a></p>
+			<p>PIXLUS uses NodeJS to host the local server, which allows for <a href="https://developer.mozilla.org/en-US/docs/web/javascript/reference/statements/import">imports</a> and <a href="https://developer.mozilla.org/en-US/docs/web/javascript/reference/statements/export">exports</a> between javascript files. Without this, you would be unable to play PIXLUS</p>
+
+			<h2>Open the PIXLUS Server</h2>
+			<p>In this directory, Run the file </p>
+			<a href="./startup.windows.bat">startup.windows.bat</a>
+			<p>NOTE: Clicking this link <i>WILL NOT RUN THE FILE</i></p>
+
+			<h2>Playing PIXLUS</h2>
+			<p>After running the terminal commands, a message will show appear inside the terminal with the following message:</p>
+			<code type="terminal" style="white-space: break-spaces;">
+╭────────┬────────┬────────────────╮    
+│ PIXLUS │ V0.0.7 │ Server Hosting │    
+╰────────┴────────┴────────────────╯    
+╭───────────────┬──────────────────────────────────────────────╮
+│ Server Online │ Server is running on port (3000)             │
+╰───────────────┴──────────────────────────────────────────────╯
+╭───────────────┬──────────────────────────────────────────────╮
+│ Server Online │ Veiw the server at: (<a href="http://localhost:3000/">http://localhost:3000/</a>) │
+╰───────────────┴──────────────────────────────────────────────╯
+╭───────────────┬──────────────────────────────────────────────╮
+│   !Warning!   │ Closing this terminal will end the server    │
+╰───────────────┴──────────────────────────────────────────────╯
+			</code>
+			<p>This message tells you the location of the web server. In this case, the server is located at <a href="http://localhost:3000/">http://localhost:3000/</a> (Line 2 in terminal message). This is the URL to go to for playing PIXLUS</p>
+			<p>Without this terminal open, you will not have access to play PIXLUS, the terminal is keeping the server up and running.</p>
+		</div>
+
+		<div id="zipped">
+			<h1>This file is Zipped</h1>
+			<p>This file is inside a zip file (.zip)</p>
+			<p>You'll have to unzip/extract the folder to be able to open this.</p>
+		</div>
+
+		<script>
+			document.getElementById("unzipped").style.display = "none";
+			document.getElementById("zipped").style.display = "none";
+
+			if(window.location.href.startsWith("http")){
+				document.getElementById("unzipped").style.display = "none;";
+				document.getElementById("zipped").style.display = "none;";
+				window.location.href = "./web/";
+			}else {
+
+				document.getElementById("unzipped").style.display = "block";
+
+				let path = location.href.replace(location.origin+"/", "").split("/");
+				path.pop();
+				path = path.join("/");
+				let pathElements = document.getElementsByClassName("path");
+				for (let index = 0; index < pathElements.length; index++) {
+					pathElements[index].textContent = path;
+				}
+			}
+		</script>
+
+	</body>
+</html>

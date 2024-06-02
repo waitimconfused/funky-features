@@ -1,0 +1,52 @@
+{
+	"player": {
+		"animations": {
+			"idle": {
+
+				"left": {
+					"source": "player.png",
+					"animationLength": 4,
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				},
+				"right": {
+					"source": "player.png",
+					"animationLength": 4,
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 16
+					}
+				}
+			},
+			"walk": {
+
+				"left": {
+					"source": "player.png",
+					"animationLength": 6,
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 32
+					}
+				},
+				"right": {
+					"source": "player.png",
+					"animationLength": 6,
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 48
+					}
+				}
+			}
+		}
+	}
+}

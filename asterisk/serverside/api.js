@@ -110,19 +110,7 @@ export function setPrefix(string=""){
  * SERVER-SIDE
  * 
  * Turns on an IP lock for all API endpoints
- * 
- * 
- * 
- * **Example**:
- * ```js
- * 
- * setPrefix("/foobar/"); // Set API path prefix
- * 
- * createEndpoint( function(dataIn){
- *   return {"message": "You sent: " + JSON.stringify(dataIn)};
- * }, "/my_api"); // Create API endpoint at "localhost:<PORT>/foobar/my_api"
- * 
- * ```
+ * AKA: Only allowing your current device from using the API endpoints
 */
 export function lock(){
 	lockedIP = true;

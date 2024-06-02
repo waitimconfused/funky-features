@@ -1,0 +1,61 @@
+#input {
+	display: none;
+}
+
+canvas {
+	border: 1rem solid #060606;
+	width: calc(100% - 16rem - 10px);
+	background-color: white;
+	z-index: 99999;
+
+	background: #333;
+	background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"%3E%3Cg fill="%239C92AC" fill-opacity="0.4"%3E%3Cpath fill-rule="evenodd" d="M0 0h4v4H0V0zm4 4h4v4H4V4z"/%3E%3C/g%3E%3C/svg%3E');
+	background-size: 1rem 1rem;
+}
+
+.canvas-holder {
+	position: fixed;
+	top: 8px;
+	right: 8px;
+	z-index: 9999;
+}
+
+canvas#tilemap {
+	position: relative;
+	top: -20px;
+	width: 16rem;
+}
+
+canvas#preview {
+	width: 16rem;
+	height: 16rem;
+	background-size: 2rem 2rem;
+	image-rendering: pixelated;
+}
+
+.json {
+	white-space: pre;
+}
+
+code {
+	position: relative;
+	background-color: #1d1e22;
+	display: block;
+	color: white;
+	margin: 10px 0px;
+	box-sizing: border-box;
+	padding: 10px;
+	padding-top: 42px;
+}
+code:before {
+	content: attr(title);
+	display: block;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	background-color: #060606;
+	color: #aaaebc;
+	box-sizing: border-box;
+	padding: 10px;
+}

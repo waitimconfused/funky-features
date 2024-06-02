@@ -1,0 +1,43 @@
+{
+	"block": {
+		"": {
+			"img": {
+				"source": "campfire.png",
+				"animationLength": 5,
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","X","X"],
+					["X","X","X"],
+					["X","X","X"]
+				],
+				"action": "set block ( 'campfire:unlit' )"
+			}
+		},
+		"unlit": {
+			"img": {
+				"source": "campfire.png",
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 80,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["X","X","X"],
+					["X","X","X"],
+					["X","X","X"]
+				],
+				"action": "set block ( 'campfire' )"
+			}
+		}
+	}
+}

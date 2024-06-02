@@ -1,0 +1,29 @@
+{
+	"keybinds": {
+		"action": " ",
+		"movement": {
+			"up": "w",
+			"left": "a",
+			"down": "s",
+			"right": "d"
+		},
+		"menu": {
+			"open": "escape",
+			"close": "escape"
+		},
+		"inventory": {
+			"open": "e"
+		}
+	},
+	"web": {
+		"font": "pixlus-block"
+	},
+	"advanced": {
+		"audio": false,
+
+		"show_version": true,
+		"show_paused_menu": true,
+		"DEVELOPER_MODE": true,
+		"OpenGameOnStart": false
+	}
+}

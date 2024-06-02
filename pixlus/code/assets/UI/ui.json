@@ -1,0 +1,658 @@
+{
+	"UI": {
+		"blockSelection": {
+			"img": {
+				"source": "block_selection.png",
+				"animationLength": 0,
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 0
+				}
+			}
+		},
+		"indicators": {
+			"blocks": {
+				"action": {
+					"source": [
+						"block_action/0.png",
+						"block_action/0.png",
+						"block_action/1.png"
+					],
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			}
+		}
+	},
+
+	"fonts": {
+		"numbers": {
+			"0": {
+				"img": {
+					"source": "numbers.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 16,
+						"Y": 48
+					}
+				}
+			},
+			"1": {
+				"img": {
+					"source": "numbers.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"2": {
+				"img": {
+					"source": "numbers.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 16,
+						"Y": 0
+					}
+				}
+			},
+			"3": {
+				"img": {
+					"source": "numbers.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 32,
+						"Y": 0
+					}
+				}
+			},
+			"4": {
+				"img": {
+					"source": "numbers.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 16
+					}
+				}
+			},
+			"5": {
+				"img": {
+					"source": "numbers.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 16,
+						"Y": 16
+					}
+				}
+			},
+			"6": {
+				"img": {
+					"source": "numbers.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 32,
+						"Y": 16
+					}
+				}
+			},
+			"7": {
+				"img": {
+					"source": "numbers.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 32
+					}
+				}
+			},
+			"8": {
+				"img": {
+					"source": "numbers.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 16,
+						"Y": 32
+					}
+				}
+			},
+			"9": {
+				"img": {
+					"source": "numbers.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 32,
+						"Y": 32
+					}
+				}
+			}
+		},
+		"icons": {
+			"!": {
+				"img": {
+					"source": "icons/exclamation.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"@": {
+				"img": {
+					"source": "icons/at.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"#": {
+				"img": {
+					"source": "icons/hashtag.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"$": {
+				"img": {
+					"source": "icons/dollar.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"%": {
+				"img": {
+					"source": "icons/percent.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"^": {
+				"img": {
+					"source": "icons/caret.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"&": {
+				"img": {
+					"source": "icons/and.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"*": {
+				"img": {
+					"source": "icons/asterisk.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"(": {
+				"img": {
+					"source": "icons/bracket_open.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			")": {
+				"img": {
+					"source": "icons/bracket_close.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"∇": {
+				"img": {
+					"source": "icons/pencil.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"«": {
+				"img": {
+					"source": "icons/open_quote.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"»": {
+				"img": {
+					"source": "icons/close_quote.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			",": {
+				"img": {
+					"source": "icons/comma.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			".": {
+				"img": {
+					"source": "icons/period.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"'": {
+				"img": {
+					"source": "icons/apostrophe.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"…": {
+				"img": {
+					"source": "icons/ellipsis.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"_": {
+				"img": {
+					"source": "icons/underscore.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"~": {
+				"img": {
+					"source": "icons/tilde.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			" ": {
+				"img": {
+					"source": "icons/space.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			}
+		},
+		"letters": {
+			"a": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 0
+					}
+				}
+			},
+			"b": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 16,
+						"Y": 0
+					}
+				}
+			},
+			"c": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 32,
+						"Y": 0
+					}
+				}
+			},
+			"d": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 48,
+						"Y": 0
+					}
+				}
+			},
+			"e": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 64,
+						"Y": 0
+					}
+				}
+			},
+			"f": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 16
+					}
+				}
+			},
+			"g": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 16,
+						"Y": 16
+					}
+				}
+			},
+			"h": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 32,
+						"Y": 16
+					}
+				}
+			},
+			"i": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 48,
+						"Y": 16
+					}
+				}
+			},
+			"j": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 64,
+						"Y": 16
+					}
+				}
+			},
+			"k": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 32
+					}
+				}
+			},
+			"l": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 16,
+						"Y": 32
+					}
+				}
+			},
+			"m": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 32,
+						"Y": 32
+					}
+				}
+			},
+			"n": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 48,
+						"Y": 32
+					}
+				}
+			},
+			"o": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 64,
+						"Y": 32
+					}
+				}
+			},
+			"p": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 48
+					}
+				}
+			},
+			"q": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 16,
+						"Y": 48
+					}
+				}
+			},
+			"r": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 32,
+						"Y": 48
+					}
+				}
+			},
+			"s": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 48,
+						"Y": 48
+					}
+				}
+			},
+			"t": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 64,
+						"Y": 48
+					}
+				}
+			},
+			"u": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 64
+					}
+				}
+			},
+			"v": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 16,
+						"Y": 64
+					}
+				}
+			},
+			"w": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 32,
+						"Y": 64
+					}
+				}
+			},
+			"x": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 48,
+						"Y": 64
+					}
+				}
+			},
+			"y": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 64,
+						"Y": 64
+					}
+				}
+			},
+			"z": {
+				"img": {
+					"source": "letters.png",
+					"width": 16,
+					"height": 16,
+					"tileCoords": {
+						"X": 0,
+						"Y": 80
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,46 @@
+{
+	"options": {
+		"addon": "addons/chest"
+	},
+	"block": {
+
+		"": {
+			"img": {
+				"source": "chest.png",
+				"animationLength": 8,
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		},
+		"opened": {
+			"img": {
+				"source": "chest.png",
+				"animationLength": 0,
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 80,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				]
+			}
+		}
+	}
+}

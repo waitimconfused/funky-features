@@ -1,0 +1,56 @@
+{
+	"block": {
+		"": {
+			"img": {
+				"source": "gem.png",
+				"animationLength": 6,
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 0
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				],
+				"standing": {
+					"img":  {
+						"source": "gem.png",
+						"animationLength": 5,
+						"width": 16,
+						"height": 16,
+						"tileCoords": {
+							"X": 0,
+							"Y": 16
+						}
+					}
+				},
+				"action": " set block ('gem:collected') ; wait (750) ; set block ('air')"
+			}
+		},
+		"collected": {
+			"img": {
+				"source": "gem.png",
+				"animationLength": 5,
+				"width": 16,
+				"height": 16,
+				"tileCoords": {
+					"X": 0,
+					"Y": 16
+				}
+			},
+			"aspects": {
+				"bounds": [
+					["O","O","O"],
+					["O","O","O"],
+					["O","O","O"]
+				],
+				"action": "set block ('air') "
+			}
+		}
+	}
+}

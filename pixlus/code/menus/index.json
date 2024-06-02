@@ -1,0 +1,7 @@
+{
+	"menus": {
+		"ingame": "index.js",
+		"paused": "menuData/pause.js",
+		"inventory": "menuData/inventory.js"
+	}
+}

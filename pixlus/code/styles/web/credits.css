@@ -1,0 +1,9 @@
+/* Home Page Styles */
+
+@import url("./cursor.css");
+@import url("./index.css");
+@import url("../font_pixlus-ttf.css");
+
+* {
+	scroll-snap-type: none !important;
+}

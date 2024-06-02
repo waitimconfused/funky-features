@@ -1,0 +1,12 @@
+{
+    "default": {
+        "source": "./images/block.png",
+        "crop": {
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16
+        },
+        "animation": false
+    }
+}
