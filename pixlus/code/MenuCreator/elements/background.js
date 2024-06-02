@@ -30,7 +30,7 @@ export class Background {
 		for(let y = 0; y < numOfTilesY; y++){
 			for(let x = 0; x < numOfTilesX; x++){
 				image(
-					"../../"+this.img.source,
+					this.img.source,
 					
 					x * this.img.tile.width,
 					y * this.img.tile.height,

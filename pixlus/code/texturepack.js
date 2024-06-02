@@ -10,7 +10,7 @@ export async function blockTextures_generate(){
 	for(let typeIndex = 0; typeIndex < blockTypeNames.length; typeIndex ++){
 		let blockTypeName = blockTypeNames[typeIndex];
 
-		let {default: blockVariants} = await import(`../../code/assets/blocks/${blocks.types[blockTypeName]}`, { with: { type: "json"} });
+		let {default: blockVariants} = await import(`./assets/blocks/${blocks.types[blockTypeName]}`, { with: { type: "json"} });
 
 		blockTextures[blockTypeName] = blockVariants.block
 	}

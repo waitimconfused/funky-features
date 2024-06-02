@@ -78,7 +78,7 @@ export class Image {
 		}
 
 		image(
-			"../../"+this.img.source,
+			this.img.source,
 
 			this.img.X + shiftX,
 			this.img.Y + shiftY,

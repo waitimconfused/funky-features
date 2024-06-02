@@ -4,6 +4,8 @@ const fonts = UI_file.fonts;
 
 export const speed = 1000;
 
+const rootURL = "/pixlus";
+
 let URL = window.location.href;
 let Path = URL.split("/");
 Path.shift(); // Remove HTTP
@@ -77,7 +79,7 @@ async function replaceText(element=HTMLElement){
 		letterElement.className = imageType;
 
 		letterElement.setAttribute("style", `--x: ${source.tileCoords.X}; --y: ${source.tileCoords.Y}`);
-		letterElement.style.backgroundImage = `url("${"../".repeat(Path.length)}code/assets/UI/images/fonts/${source.source}")`;
+		letterElement.style.backgroundImage = `url("${"../".repeat(Path.length - rootURL.replace(/$\//,"").split("/").length)}code/assets/UI/images/fonts/${source.source}")`;
 
 		if(element.getAttribute("class")?.includes("title")){
 			letterElement.style.transformOrigin = "center center";

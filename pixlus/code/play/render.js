@@ -13,7 +13,7 @@ import { Entity, EntityList } from "./entites/index.js";
 import { getBlockFromScreenPos } from "./ui/block_selection.js";
 import { text } from "./ui/fonts.js";
 
-import texturePack from "../../../code/assets/UI/ui.json" with {type: "json"};
+import texturePack from "../assets/UI/ui.json" with {type: "json"};
 import { blockTextures } from "../texturepack.js";
 import { addon } from "../addons/cache.js";
 

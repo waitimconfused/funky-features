@@ -13,12 +13,12 @@ let buttonSize = 64;
 
 menu.addElement(
 	(new Background)
-		.setSource("code/assets/blocks/images/Tiles/dirt.png")
+		.setSource("../../code/assets/blocks/images/Tiles/dirt.png")
 		.setTileSize(buttonSize * 2, buttonSize * 2)
 );
 
 const image = new Image;
-image.setSource(`code/assets/entities/player/images/idle/left.png`);
+image.setSource(`../../code/assets/entities/player/images/idle/left.png`);
 image.setAnimationLength(3);
 
 let imageSize = canvas.height * 0.75;

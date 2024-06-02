@@ -16,7 +16,7 @@ export default async function(){
 
 	menu.addElement(
 		(new Background)
-			.setSource("code/assets/blocks/images/Tiles/dirt.png")
+			.setSource("../../code/assets/blocks/images/Tiles/dirt.png")
 			.setTileSize(128, 128)
 	);
 	
@@ -93,7 +93,7 @@ async function blockTabs(){
 		if(currentBlockType.img.source !== ""){
 			let itemImage = new Image;
 			itemImage.setSource(
-				`./code/assets/blocks/images/${currentBlockType.img.source}`,
+				`../../code/assets/blocks/images/${currentBlockType.img.source}`,
 	
 				(currentBlockType.img?.tileCoords?.X || 0) + currentBlockType.img.width * getFrame(currentBlockType.img.animationLength),
 				(currentBlockType.img?.tileCoords.Y || 0),
