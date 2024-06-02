@@ -4,7 +4,7 @@ const fonts = UI_file.fonts;
 
 export const speed = 1000;
 
-const rootURL = "/pixlus";
+const rootURL = "/confusion-projects/pixlus";
 
 let URL = window.location.href;
 let Path = URL.split("/");
