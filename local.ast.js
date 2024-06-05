@@ -17,14 +17,21 @@ function writeFile(file="", content=""){
 	fs.writeFileSync(file, content);
 }
 
-Ast.serverside.api.createEndpoint((data={
+Ast.api.createEndpoint((data={
 	title: ""
 }) => {
 	writeFile(`./projects/markdown/${data.title}.md`);
 	writeFile(`./projects/demo/${data.title}/index.html`);
-}, "project/new");
+}, "/project/new");
 
-Ast.serverside.api.createEndpoint(function(dataIn, IP){
+Ast.api.createEndpoint((data={
+	path: "",
+	content: ""
+}) => {
+	console.log(`Saving file: "${data.path}"`);
+}, "/project/save");
+
+Ast.api.createEndpoint(function(dataIn, IP){
 	let fileName = dataIn.title.replace(/\.py$/, "");
 	writeFile(`./plugins/compiled/${fileName}.js`, dataIn.content);
 	return {status: 200};
@@ -50,7 +57,7 @@ function save(){
 	fs.writeFileSync("./faker_banker.json", JSON.stringify(faker_banker, null, 4));
 }
 
-Ast.serverside.api.createEndpoint(function(dataIn, IP){
+Ast.api.createEndpoint(function(dataIn, IP){
 	let accName = dataIn.name;
 	if(Object.keys(faker_banker).includes(accName)) return {status: 400};
 
@@ -62,7 +69,7 @@ Ast.serverside.api.createEndpoint(function(dataIn, IP){
 	return {status: 200};
 }, "/faker_banker/create");
 
-Ast.serverside.api.createEndpoint(function(dataIn, IP){
+Ast.api.createEndpoint(function(dataIn, IP){
 	let accName = dataIn.name;
 	let amount = dataIn.amount;
 	if(!Object.keys(faker_banker).includes(accName)) return {status: 400};
@@ -75,7 +82,7 @@ Ast.serverside.api.createEndpoint(function(dataIn, IP){
 	return {status: 200};
 }, "/faker_banker/set");
 
-Ast.serverside.api.createEndpoint(function(dataIn, IP){
+Ast.api.createEndpoint(function(dataIn, IP){
 	let accName = dataIn.name;
 	if(!Object.keys(faker_banker).includes(accName)) return {status: 400};
 
@@ -84,13 +91,13 @@ Ast.serverside.api.createEndpoint(function(dataIn, IP){
 	};
 }, "/faker_banker/get");
 
-Ast.serverside.api.createEndpoint(function(dataIn, IP){
+Ast.api.createEndpoint(function(dataIn, IP){
 	return {
 		accounts: faker_banker,
 	};
 }, "/faker_banker/get_all");
 
-Ast.serverside.api.createEndpoint(function(dataIn, IP){
+Ast.api.createEndpoint(function(dataIn, IP){
 	let accFromName = dataIn.from;
 	let accToName = dataIn.to;
 	let amount = dataIn.amount;
@@ -105,7 +112,3 @@ Ast.serverside.api.createEndpoint(function(dataIn, IP){
 
 	return {status: 200};
 }, "/faker_banker/trade");
-
-
-
-Ast.message.write("Local IP Address", `You are working locally.\nWhen asked by Confusion "Enter your machine key:"\nanswer with :"${ btoa(Ast.getIP()) }"`)

@@ -1,5 +1,6 @@
 import { networkInterfaces } from "node:os";
 export * as serverside from "./serverside/index.js";
+export * as api from "./serverside/api.js";
 export * as files from "./files/index.js";
 export * as message from "./messages/index.js";
 export * as clientside from "./client/index.js";

@@ -72,7 +72,11 @@ export function onRequest(request=http.IncomingMessage, response=http.ServerResp
 	
 			let API_response = API.handleRequest(body, req_url, ip);
 			let API_responseString = JSON.stringify(API_response.content || {status: 200});
-			response.writeHead(API_response.content?.status || 200, { "Content-Type": "plain/text" });
+			
+			let header = {};
+			header["Content-Type"] = API_response.type || "plain/text";
+
+			response.writeHead(API_response.content?.status || 200, header);
 			
 			let chunks = API_responseString.match(/.{1,8}/g);
 
@@ -84,14 +88,11 @@ export function onRequest(request=http.IncomingMessage, response=http.ServerResp
 
 	}else{
 		let filePath = req_url;
-		let file = FILES.get(filePath);
+		let file = FILES.get(filePath, ip);
 		let fileType = file.type;
 		let fileHeader = file.header || {};
 		let fileContent = file.content;
 
-		fileHeader["Access-Control-Allow-Origin"] = "*";
-		fileHeader["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
-		fileHeader["Access-Control-Allow-Headers"] = "Content-Type";
 		fileHeader["Content-Type"] = fileType;
 		
 		response.writeHead(file.status, fileHeader);

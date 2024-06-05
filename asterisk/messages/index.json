@@ -1,9 +1,9 @@
 {
 	"server-open":"Server opened on port \"%d\"\nTo view: http://localhost:%d",
-
+	
+	"403": "Error: \"403 Forbidden\".\n\nThe request of file \"%d\" was denied.\n\nThe server has set file-visibility to false.",
 	"404": "Error: \"404 Not Found\".\n\nNo file found at path: \"%d\"",
 	"404-dir": "Error: \"404 Not Found\".\n\nClient requested directory \"%d\". Failed to provide HTML file",
-	"403": "Error: \"403 Forbidden\".\n\nThe request of file \"%d\" was denied.\n\nThe server has set file-visibility to false.",
 
 	"api-new": "New API Endpoint created\n\nAPI endpoint located at \"%d\""
 }

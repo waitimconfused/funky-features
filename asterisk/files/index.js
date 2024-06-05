@@ -1,12 +1,15 @@
 import * as fs from "node:fs";
 import * as MESSAGES from "../messages/index.js";
+import * as Ast from "../index.js";
 import TYPES from "./types.json" assert {type: "json"};
-import exp from "node:constants";
 
 export var visibility = true;
 
-export var page_404 = "/404.html";
-var page_404_message = "<h1>Error 404: Page not found</h1><p>The file you have requested can not be found.</p>"
+export var statusPages = {
+	"404": "/404.html"
+};
+
+export var lockedIP = false;
 
 /**
  * Disable the ability to return files to any client
@@ -27,8 +30,8 @@ export function show(){
  * 
  * @param { string } path path to file the 404 page
  */
-export function regester404(path=page_404){
-	page_404 = path
+export function regester404(path=statusPages["404"]){
+	statusPages["404"] = path
 }
 /**
  * SERVER-SIDE
@@ -45,7 +48,16 @@ export function regester404(path=page_404){
  * @param { string } callback path to file, relative to the `server.js` file
  * @returns { object } { type:string, content: string }
  */
-export function get(path=""){
+export function get(path="", IP=""){
+
+	if(lockedIP && !Ast.isThisMachine(IP)){
+		MESSAGES.code("403", path);
+		let content404 = MESSAGES.code("403", path);
+		if(statusPages["403"]) content404 = get(statusPages["403"]);
+		content404.status = 404;
+		return content404;
+	}
+
 	if(path.startsWith("./") == false){
 		if(path.startsWith("/") == false) path = "/" + path;
 		if(path.startsWith(".") == false) path = "." + path;
@@ -55,11 +67,12 @@ export function get(path=""){
 		path = path.split("?")[0];
 	}
 
-	if(visibility == false) return {
-		type: "text/plain",
-		content: MESSAGES.code("403", path),
-		status: 403
-	};
+	if(visibility == false){
+		let content404 = MESSAGES.code("403", path);
+		if(statusPages["403"]) content404 = get(statusPages["403"]);
+		content404.status = 404;
+		return content404;
+	}
 
 	if(path.split(/(\w*\.\w*)$/).length == 1 && !path.endsWith("/")){
 		if(fs.existsSync(path+".html")) path += ".html";
@@ -73,25 +86,18 @@ export function get(path=""){
 			status: 302
 		};
 		else {
-			MESSAGES.code("404", path);
-			let content404 = {
-				type: "text/html",
-				content: page_404_message,
-				status: 404
-			};
-			if(fs.existsSync(page_404)) content404.content = get(page_404);
+			let content404 = MESSAGES.code("404", path);
+			if(statusPages["404"]) content404 = get(statusPages["404"]);
+			content404.status = 404;
 			return content404;
 		}
 	}
 
 	if(fs.existsSync(path) == false){
 		MESSAGES.code("404", path);
-		let content404 = {
-			type: "text/html",
-			content: page_404_message,
-			status: 404
-		};
-		if(fs.existsSync(page_404)) content404.content = get(page_404);
+		let content404 = MESSAGES.code("404", path);
+		if(statusPages["404"]) content404 = get(statusPages["404"]);
+		content404.status = 404;
 		return content404;
 	}
 
@@ -104,16 +110,11 @@ export function get(path=""){
 			message = fs.readFileSync(path+"/index.htm");
 		}
 
-		if(message == ""){
-			MESSAGES.code("404", path);
-			let content404 = {
-				type: "text/html",
-				content: page_404_message,
-				status: 404
-			};
-			if(fs.existsSync(page_404)) content404.content = get(page_404);
-			return content404;
-		}
+		if(message == "") return {
+			type: "text/plain",
+			content: MESSAGES.code("404-dir", path),
+			status: 404
+		};
 
 		return {
 			type: "text/html",
@@ -134,4 +135,22 @@ export function get(path=""){
 		status: 200,
 	};
 
+}
+
+/**
+ * SERVER-SIDE
+ * 
+ * Locks all API endpoints to the device opening the server
+*/
+export function lock(){
+	lockedIP = true;
+}
+
+/**
+ * SERVER-SIDE
+ * 
+ * Allowes all devices to access the API endpoints
+*/
+export function unlock(){
+	lockedIP = false;
 }

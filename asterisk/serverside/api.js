@@ -4,7 +4,7 @@ import * as Ast from "../index.js";
 export var endpoints = [];
 
 export var prefix = "";
-setPrefix("api");
+setPrefix("/api/");
 
 export var lockedIP = false;
 
@@ -24,9 +24,12 @@ export var lockedIP = false;
  * This creates an endpoint at the path `localhost:<PORT>/api/my_api`, and outputs a JSON object
  */
 export function createEndpoint(callback=(data={})=>{return data}, name="/my_api"){
-	while( name.startsWith("/") ) name = name.replace("/", "");
 
-	name = `${prefix}${ name }`;
+	prefix = prefix.replace(/^\/+|\/+$/, "");
+
+	name = name.replace(/^\/+|\/+$/, "");
+
+	name = `/${prefix}/${ name }`;
 
 	endpoints.push({
 		name: name,
@@ -48,7 +51,7 @@ export function handleRequest(data, endpoint="", IP=""){
 		return apiEndpoint.name == endpoint;
 	} );
 
-	if(!data){
+	if(typeof data == "undefined"){
 		return {
 			type: undefined,
 			content: {
@@ -65,9 +68,11 @@ export function handleRequest(data, endpoint="", IP=""){
 
 	let returnData = api.callback(data, IP) || {};
 	if(typeof returnData.status != "number") returnData.status = 200;
+	
+	let type = returnData.type || "application/json";
 
 	return {
-		type: undefined,
+		type: type,
 		content: returnData
 	};
 }
@@ -94,13 +99,7 @@ export function handleRequest(data, endpoint="", IP=""){
 */
 export function setPrefix(string=""){
 
-	while(string.startsWith("/")){
-		string = string.replace("/", "")
-	}
-
-	while(string.endsWith("/")){
-		string = string.split("").reverse().join("").replace("/", "").split("").reverse().join("");
-	}
+	string = string.replace(/^\/+|\/+$/, "");
 
 	prefix = "/"+string+"/";
 
@@ -109,13 +108,17 @@ export function setPrefix(string=""){
 /**
  * SERVER-SIDE
  * 
- * Turns on an IP lock for all API endpoints
- * AKA: Only allowing your current device from using the API endpoints
+ * Locks all API endpoints to the device opening the server
 */
 export function lock(){
 	lockedIP = true;
 }
 
+/**
+ * SERVER-SIDE
+ * 
+ * Allowes all devices to access the API endpoints
+*/
 export function unlock(){
 	lockedIP = false;
 }

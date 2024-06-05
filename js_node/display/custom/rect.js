@@ -8,10 +8,17 @@ export default class Rect extends Node {
 		let displayY = globalGraph.canvas.height / 2 + (this.display.y - camera.y) * camera.zoom;
 		let radius = Math.abs(this.display.radius * camera.zoom) + lerp(0, 10, this.lerp.radius);
 
-		let hovering = calcDistance({
-			x: displayX,
-			y: displayY
-		}, mouse.position.relative(globalGraph.canvas)) < radius;
+		let mousePos = mouse.position.relative(globalGraph.canvas);
+
+		let hovering = false;
+
+		if(
+			mousePos.x > displayX-radius &&
+			mousePos.y > displayY-radius &&
+
+			mousePos.x < displayX+radius &&
+			mousePos.y > displayY+radius
+		) hovering = true;
 
 		return hovering;
 	}

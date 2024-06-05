@@ -1,5 +1,7 @@
 import messageData from "./index.json" assert {type: "json"};
 
+var showLogs = true;
+
 const styles = {
 	reset: "\x1b[0m",
 
@@ -71,6 +73,18 @@ export function write(header="", message){
 */
 export function code(code="", data){
 	let message = messageData[code].replaceAll("%d", data);
-	write(code, message);
+	if(showLogs)write(code, message);
 	return message;
+}
+
+/**
+ * SERVER-SIDE
+ * 
+ * Enables
+
+ * @param { string } code The desired type of the log (see: `/Asterisk/messages/index.json`)
+ * @param { string } data Message data
+*/
+export function enable(){
+	showLogs = true;
 }
