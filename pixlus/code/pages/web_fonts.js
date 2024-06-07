@@ -1,16 +1,19 @@
 import UI_file from "../assets/UI/ui.json" with {type: "json"};
 import options from "../../options/index.json" with {type: "json"};
+import packageJSON from "../../package.json" with {type: "json"};
 const fonts = UI_file.fonts;
 
 export const speed = 1000;
 
-const rootURL = "/confusion-projects/pixlus";
+var rootURL = "/confusion-projects/pixlus/";
 
-let URL = window.location.href;
-let Path = URL.split("/");
-Path.shift(); // Remove HTTP
-Path.shift(); // Remove ""
-Path.shift(); // Remove LOCALHOST
+if(window.location.host.startsWith("localhost")){
+	if(window.location.host != `localhost:${packageJSON.port}`) rootURL = "/pixlus/";
+	else rootURL = "/"
+}
+
+rootURL = rootURL.replace(/\/+$/, "");
+rootURL = rootURL.replace(/^\/{1,}/, "/");
 
 reloadTexts();
 
@@ -71,7 +74,7 @@ async function replaceText(element=HTMLElement){
 		}else if(currentLetter == "\t"){
 			continue;
 		}else{
-			console.error(`Unknown character "${currentLetter}"\n\tCharacter "${currentLetter}" does not exist inside font JSON`, "../".repeat(Path.length-1)+"code/assets/UI/ui.json");
+			console.error(`Unknown character "${currentLetter}"\n\tCharacter "${currentLetter}" does not exist inside font JSON`, `${rootURL}/code/assets/UI/ui.json`);
 		}
 		
 		let letterElement = document.createElement("div");
@@ -79,7 +82,7 @@ async function replaceText(element=HTMLElement){
 		letterElement.className = imageType;
 
 		letterElement.setAttribute("style", `--x: ${source.tileCoords.X}; --y: ${source.tileCoords.Y}`);
-		letterElement.style.backgroundImage = `url("${"../".repeat(Path.length - rootURL.replace(/$\//,"").split("/").length)}code/assets/UI/images/fonts/${source.source}")`;
+		letterElement.style.backgroundImage = `url("${rootURL}/code/assets/UI/images/fonts/${source.source}")`;
 
 		if(element.getAttribute("class")?.includes("title")){
 			letterElement.style.transformOrigin = "center center";
