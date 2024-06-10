@@ -88,6 +88,14 @@ export function onRequest(request=http.IncomingMessage, response=http.ServerResp
 
 	}else{
 		let filePath = req_url;
+
+		if(filePath.endsWith("/") && request.headers.accept.includes("tex/html")) filePath += "index.html";
+
+		if(filePath.endsWith("/")){
+			if(request.headers.accept.includes("text/html")) filePath += "index.html";
+			if(request.headers.accept.includes("application/javascript")) filePath += "index.js";
+		}
+
 		let file = FILES.get(filePath, ip);
 		let fileType = file.type;
 		let fileHeader = file.header || {};
@@ -98,6 +106,10 @@ export function onRequest(request=http.IncomingMessage, response=http.ServerResp
 		response.writeHead(file.status, fileHeader);
 		response.end( fileContent );
 	}
+}
+
+function requestAcceptsFiletype(request, type=""){
+	return request.headers.accept.includes(type)
 }
 
 export * as api from "./api.js";

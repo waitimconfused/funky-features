@@ -17,6 +17,7 @@ export var keyboard = new class {
 		this.script = callback;
 	}
 };
+
 export var mouse = new class {
 	click_l = false;
 	click_r = false;

@@ -1,4 +1,4 @@
-import * as toolkit from "./index.js";
+import * as toolkit from "./";
 
 toolkit.keyboard.setKeybind((event) => {
 	console.log(event);

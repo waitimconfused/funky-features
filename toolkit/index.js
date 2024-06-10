@@ -1,4 +1,4 @@
-export * as keyboard from "./keyboard.js";
+export * from "./keyboard.js";
 export * as image from "./image.js";
 
 export function isMobile(){

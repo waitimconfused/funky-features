@@ -2,8 +2,5 @@
 	"type": "module",
 	"scripts": {
 		"serve": "node local.ast.js"
-	},
-	"dependencies": {
-		"nw": "^0.87.0-3"
 	}
 }
