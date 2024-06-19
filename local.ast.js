@@ -4,6 +4,7 @@ import * as path from "node:path";
 
 Ast.clearLogs();
 Ast.serverside.open(1201);
+Ast.message.disable();
 Ast.files.regester404("./404.html");
 Ast.serverside.api.lock();
 
@@ -16,20 +17,6 @@ function writeFile(file="", content=""){
 	mkdir(dir);
 	fs.writeFileSync(file, content);
 }
-
-Ast.api.createEndpoint((data={
-	title: ""
-}) => {
-	writeFile(`./projects/markdown/${data.title}.md`);
-	writeFile(`./projects/demo/${data.title}/index.html`);
-}, "/project/new");
-
-Ast.api.createEndpoint((data={
-	path: "",
-	content: ""
-}) => {
-	console.log(`Saving file: "${data.path}"`);
-}, "/project/save");
 
 Ast.api.createEndpoint(function(dataIn, IP){
 	let fileName = dataIn.title.replace(/\.py$/, "");

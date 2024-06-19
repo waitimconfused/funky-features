@@ -45,8 +45,8 @@
 		"link": "/testing_page/index.html"
 	},
 	{
-		"title": "Toolkit",
-		"readme": "/toolkit/readme.md",
-		"link": "/toolkit/index.html"
+		"title": "Toolbelt",
+		"readme": "/toolbelt/readme.md",
+		"link": "/toolbelt/index.html"
 	}
 ]

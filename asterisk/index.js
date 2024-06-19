@@ -4,7 +4,6 @@ export * as api from "./serverside/api.js";
 export * as files from "./files/index.js";
 export * as message from "./messages/index.js";
 export * as clientside from "./client/index.js";
-export var generateLogs = false;
 
 /**
  * Exactally like `console.log`
@@ -12,27 +11,6 @@ export var generateLogs = false;
 export function clearLogs(){
 	console.clear();
 }
-/**
- * SERVER-SIDE
- * 
- * Show all terminal messages/warnings/errors
- * 
- * By default, the terminal will show all messages
-*/
-export function showLogs(){
-	generateLogs = true;
-}
-/**
- * SERVER-SIDE
- * 
- * Show all terminal messages/logs/warnings/errors
- * 
- * By default, the terminal will show all messages
-*/
-export function hideLogs(){
-	generateLogs = false;
-}
-
 
 /**
  * SERVER-SIDE
@@ -58,7 +36,7 @@ export function getIP() {
 		}
 	}
 
-	return results["Wi-Fi"][0] || "";
+	return (results["Wi-Fi"] || ["127.0.0.1"])[0];
 }
 
 /**

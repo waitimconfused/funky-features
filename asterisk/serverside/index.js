@@ -2,6 +2,7 @@ import * as API from "./api.js";
 import * as FILES from "../files/index.js";
 import * as MESSAGE from "../messages/index.js";
 import http from "node:http";
+import { getIP } from "../index.js";
 
 var SERVER = null;
 
@@ -24,7 +25,7 @@ export var port = 0;
  * Ast.serverside.open(8080);
  * 
  * // Server opened on port "8080"
- * // To view: http://localhost:8080
+ * // To view: 'http://localhost:8080' OR 'http://YOUR_IP:8080/'
  * ```
 */
 export function open(portNumber=8080){
@@ -33,7 +34,10 @@ export function open(portNumber=8080){
 	SERVER = http.createServer(onRequest);
 	SERVER.listen(portNumber);
 
-	MESSAGE.code("server-open", portNumber);
+	let ip = getIP();
+	let message = `http://localhost:${portNumber}`;
+	if(ip) message += `' OR 'http://${getIP()}:${portNumber}`;
+	MESSAGE.code("server-open", message);
 }
 /**
  * SERVER-SIDE

@@ -1,7 +1,3 @@
-...
-link: none
-...
-
 # Components
 
 ## Description

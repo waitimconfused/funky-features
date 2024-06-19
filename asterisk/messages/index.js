@@ -80,11 +80,17 @@ export function code(code="", data){
 /**
  * SERVER-SIDE
  * 
- * Enables
-
- * @param { string } code The desired type of the log (see: `/Asterisk/messages/index.json`)
- * @param { string } data Message data
+ * Enables all default messages inside the terminal
 */
 export function enable(){
 	showLogs = true;
+}
+
+/**
+ * SERVER-SIDE
+ * 
+ * Desables all default messages inside the terminal
+*/
+export function disable(){
+	showLogs = false;
 }

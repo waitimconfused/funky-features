@@ -11,7 +11,6 @@ export class Rect extends Component {
 	getType(){ return "Rect"; }
 
 	render(context=new CanvasRenderingContext2D, defaultOffset={x:0,y:0}){
-		context.fillStyle = this.colour;
 
 		let offset = { x: 0, y: 0 };
 
@@ -50,6 +49,8 @@ export class Rect extends Component {
 		if(this.displayOffset.y > engine.canvas.height) return;
 		if(this.displayOffset.x + this.display.w < 0) return;
 		if(this.displayOffset.y + this.display.h < 0) return;
+
+		context.fillStyle = this.colour;
 
 		context.fillRect(
 			this.displayOffset.x,
