@@ -1,5 +1,5 @@
 import { globalGraph, calcDistance, camera, applyFocus, cameraGlideTo, delta, lerp, hexToRgb, nodeTransitionSpeed } from "../index.js";
-import { keyboard, mouse } from "../../toolkit/keyboard.js";
+import { keyboard, mouse } from "../../toolbelt/lib/keyboard.js";
 import { nodeIsShiftClicked } from "./graph.js";
 
 export default class Node {

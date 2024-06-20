@@ -1,4 +1,4 @@
-import { mouse } from "./toolkit/index.js";
+import { mouse } from "./toolbelt/toolbelt.js";
 
 const canvas = document.createElement("canvas");
 document.body.appendChild(canvas);

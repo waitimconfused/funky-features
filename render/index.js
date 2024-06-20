@@ -1,6 +1,6 @@
 import Rect from "./rect.js";
 import camera from "./camera.js";
-import * as tk from "../toolkit/index.js";
+import * as tk from "../toolbelt/toolbelt.js";
 import Circle from "./circle.js";
 
 export const canvas = document.createElement("canvas");

@@ -1,5 +1,5 @@
 import { calcDistance, camera, delta, fps, globalGraph, hexToRgb, hideOptionsPane, lerp, redraw, showOptionsPane } from "../index.js";
-import { keyboard, mouse } from "../../toolkit/keyboard.js";
+import { keyboard, mouse } from "../../toolbelt/lib/keyboard.js";
 import Node from "./nodes.js";
 
 var shiftClickedParent = "";

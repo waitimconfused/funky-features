@@ -1,5 +1,5 @@
-import { calcDistance, camera, delta, globalGraph, lerp, nodeTransitionSpeed } from "../../index.js";
-import { mouse } from "../../../toolkit/keyboard.js";
+import { camera, delta, globalGraph, lerp, nodeTransitionSpeed } from "../../index.js";
+import { mouse } from "../../../toolbelt/lib/keyboard.js";
 import Node from "../nodes.js";
 
 export default class Rect extends Node {

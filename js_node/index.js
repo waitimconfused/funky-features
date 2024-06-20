@@ -1,6 +1,6 @@
 import Graph from "./display/graph.js";
 import Node from "./display/nodes.js";
-import { keyboard, mouse } from "../toolkit/keyboard.js";
+import { keyboard, mouse } from "../toolbelt/lib/keyboard.js";
 import { Pane } from 'https://cdn.skypack.dev/tweakpane';
 
 export var globalGraph = new Graph;

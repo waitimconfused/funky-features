@@ -2,7 +2,7 @@ import { globalGraph, getRegexGroups } from "../index.js";
 import { getFileOptions } from "./options.js";
 import Node from "../display/nodes.js";
 import { showFile } from "./show.js";
-import { keyboard } from "../../toolkit/keyboard.js";
+import { keyboard } from "../../toolbelt/lib/keyboard.js";
 
 var readFiles = [];
 var readFileNodes = [];

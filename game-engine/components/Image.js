@@ -1,4 +1,4 @@
-import { draw as drawImage } from "../../toolkit/image.js";
+import { draw as drawImage } from "../../toolbelt/lib/image.js";
 import { Component, engine, Point4 } from "../utils.js";
 
 export class Image extends Component {
