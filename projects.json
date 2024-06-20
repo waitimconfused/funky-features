@@ -48,7 +48,7 @@
 		"title": "Toolbelt",
 		"readme": "/toolbelt/readme.md",
 		"link": "/toolbelt/index.html"
-	}
+	},
 	{
 		"title": "Bezier",
 		"readme": "/bezier/readme.md",
