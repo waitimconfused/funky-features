@@ -1,4 +1,4 @@
-function arrayIncludesArray(array=[], target=[]){
+function arrayIncludesArray(array=[], target=[]) {
 	return array.sort().join(',') === target.sort().join(',')
 }
 
@@ -7,43 +7,65 @@ export var keyboard = new class {
 	#keybinds = [];
 
 	list = [];
-	isPressed(key=""){
+	isPressed(key="") {
 		return this.list.includes(key);
 	}
-	setKey(key="", value=true, keyboardEvent=KeyboardEvent){
-		if(value == true && !this.isPressed(key)){
+	setKey(key="", value=true, keyboardEvent=KeyboardEvent) {
+		if (value == true && !this.isPressed(key)) {
 			this.list.push(key);
-		}else if(value == false && this.isPressed(key)){
-			while(this.isPressed(key)){
-				this.list.splice( this.list.indexOf(key), 1 );
+			this.#runevent_ON(keyboardEvent);
+		} else if(value == false && this.isPressed(key)) {
+			while (this.isPressed(key)) {
+				this.list.splice( this.list.indexOf(key), 1);
 			}
+			this.#runevent_OFF(keyboardEvent);
 		}
-		if(value == true) this.#testKeybinds(keyboardEvent);
-	}
-	script = function(e=new KeyboardEvent){}
-	setScript(callback=this.script){
-		this.script = callback;
 	}
 
-	setKeybind(callback=function(){}, keys=["control", "b"]){
-		this.#keybinds.push({
+	#eventListener_ON = [];
+	#eventListener_OFF = [];
+
+	on(keys=["control", "b"], callback=function(){}, options={}) {
+		if (typeof keys == "string") keys = [keys];
+		this.#eventListener_ON.push({
 			keys,
 			callback,
+			options
 		})
 	}
-	#testKeybinds(keyboardEvent=new KeyboardEvent){
-		let keybindMatch = false;
-		for(let index = 0; index < this.#keybinds.length; index ++){
-			let keybinding = this.#keybinds[index];
+	off(keys=["control", "b"], callback=function(){}, options={}) {
+		if (typeof keys == "string") keys = [keys];
+		this.#eventListener_OFF.push({
+			keys,
+			callback,
+			options
+		})
+	}
+	#runevent_ON(keyboardEvent=new KeyboardEvent){
+		let clearKeys = false;
+		for (let index = 0; index < this.#eventListener_ON.length; index ++) {
+			let keybinding = this.#eventListener_ON[index];
 			let hasMatch = arrayIncludesArray(this.list, keybinding.keys);
-			if(hasMatch) {
-				keyboardEvent.preventDefault();
+			if (hasMatch) {
+				if (!keybinding.options?.passive) keyboardEvent.preventDefault();
 				keybinding.callback(keyboardEvent);
-				keybindMatch = true;
+				clearKeys = clearKeys || !keybinding.options?.passive;
 			}
 		}
-		if(keybindMatch) this.list = [];
-		(arr, target) => target.every(v => arr.includes(v))
+		if(clearKeys) this.list = [];
+	}
+	#runevent_OFF(keyboardEvent=new KeyboardEvent){
+		let clearKeys = false;
+		for(let index = 0; index < this.#eventListener_OFF.length; index ++){
+			let keybinding = this.#eventListener_OFF[index];
+			let hasMatch = arrayIncludesArray(this.list, keybinding.keys);
+			if(hasMatch) {
+				if (!keybinding.options?.passive) keyboardEvent.preventDefault();
+				keybinding.callback(keyboardEvent);
+				clearKeys = clearKeys || !keybinding.options?.passive;
+			}
+		}
+		if(clearKeys) this.list = [];
 	}
 };
 
@@ -74,11 +96,6 @@ export var mouse = new class {
 			return { x, y };
 		},
 	};
-
-	script = function(e=new KeyboardEvent){};
-	setScript(callback=this.script){
-		this.script = callback;
-	};
 };
 
 window.onfocus = (e) => {
@@ -87,32 +104,28 @@ window.onfocus = (e) => {
 
 document.onkeydown = (e) => {
 	let key = e.key.toLowerCase();
-	keyboard.setKey(key, true, e);
-	keyboard.script(e);
+	if(!keyboard.list.includes(key)) {
+		keyboard.setKey(key, true, e);
+	}
 }
 document.onkeyup = (e) => {
 	keyboard.setKey(e.key, false, e);
 	keyboard.setKey("control", e.ctrlKey, e);
 	keyboard.setKey("shift", e.shiftKey, e);
-	keyboard.script(e);
 }
 
 document.onmousedown = (e) => {
 	mouse.click_l = true;
-	mouse.script(e);
 }
 document.onmouseup = (e) => {
 	mouse.click_l = false;
 	mouse.click_r = false;
-	mouse.script(e);
 }
 document.oncontextmenu = (e) => {
 	e.preventDefault();
 	mouse.click_r = true;
-	mouse.script(e);
 }
 document.onmousemove = (e) => {
 	mouse.position.x = e.clientX;
 	mouse.position.y = e.clientY;
-	mouse.script(e);
 }

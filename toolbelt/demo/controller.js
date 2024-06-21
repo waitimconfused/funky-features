@@ -1,20 +1,4 @@
-import * as toolbelt from "./toolbelt.js";
-
-function print(...msg) {
-	msg = msg.join(" ");
-	console.log(msg);
-}
-
-let alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
-
-alphabet.forEach((char) => {
-	if(char == "r") return;
-	if(char == "i") return;
-	if(char == "w") return;
-	toolbelt.keyboard.setKeybind(() => {
-		print(`Keybind [control + ${char}] triggered`);
-	}, [ "control", char ]);
-});
+import * as toolbelt from "../toolbelt.js";
 
 var xboxController = toolbelt.controller.XBOX.fromIndex(0);
 

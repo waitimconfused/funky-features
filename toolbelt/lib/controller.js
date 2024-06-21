@@ -24,14 +24,14 @@ export class Controller {
 	}
 }
 
-import * as Xbox from "./controller/xbox.js";
+import * as Xbox from "./controllers/xbox.js";
 export var XBOX = new Xbox.XboxConstructor;
 
 console.log("To connect any controller, press any button")
 window.addEventListener("gamepadconnected", (e) => {
 
-	let gamepadListeners = controllers.filter((listener=new Xbox) => {
-		return listener.index == e.gamepad.index;
+	let gamepadListeners = controllers.filter((elem) => !!elem).filter((listener=new Xbox, index) => {
+		return listener.index == index;
 	});
 	for(let i = 0; i < gamepadListeners.length; i ++){
 		let gamepadListener = gamepadListeners[i];
@@ -50,7 +50,7 @@ window.addEventListener("gamepadconnected", (e) => {
 
 window.addEventListener("gamepaddisconnected", (e) => {
 
-	let gamepadListeners = controllers.filter((listener=new Xbox) => {
+	let gamepadListeners = controllers.filter((elem) => !!elem).filter((listener=new Xbox) => {
 		return listener.index == e.gamepad.index;
 	});
 	for(let i = 0; i < gamepadListeners.length; i ++){
