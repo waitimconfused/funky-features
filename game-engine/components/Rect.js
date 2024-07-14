@@ -4,9 +4,9 @@ export class Rect extends Component {
 	display = new Point4(0, 0, 100, 100);
 	displayOffset = new Point4(0, 0, 100, 100);
 	colour = "purple";
+	outline = { colour: "black", size: 0 }
 	fixedPosition = true;
 	cameraTracking = false;
-	wrapAround = false;
 
 	getType(){ return "Rect"; }
 
@@ -17,8 +17,8 @@ export class Rect extends Component {
 		offset.x += defaultOffset.x;
 		offset.y += defaultOffset.y;
 
-		offset.x -= this.display.w / 2;
-		offset.y -= this.display.h / 2;
+		offset.x -= this.display.w * this.transform.x;
+		offset.y -= this.display.h * this.transform.y;
 
 		if(this.cameraTracking) {
 			engine.camera.moveTo(this.display.x, this.display.y);
@@ -50,13 +50,18 @@ export class Rect extends Component {
 		if(this.displayOffset.x + this.display.w < 0) return;
 		if(this.displayOffset.y + this.display.h < 0) return;
 
+		context.beginPath();
 		context.fillStyle = this.colour;
-
-		context.fillRect(
+		context.strokeStyle = this.outline.colour;
+		context.lineWidth = this.outline.size;
+		context.rect(
 			this.displayOffset.x,
 			this.displayOffset.y,
 			this.displayOffset.w,
 			this.displayOffset.h
 		);
+		context.fill();
+		if(this.outline.size > 0) context.stroke();
+		context.closePath();
 	}
 }

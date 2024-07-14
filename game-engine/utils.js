@@ -1,3 +1,4 @@
+import * as toolbelt from "../toolbelt/toolbelt.js";
 import { Point2, Point3, Point4 } from "./points.js";
 export { Point2, Point3, Point4 };
 
@@ -5,36 +6,21 @@ export class Camera {
 	position = { x: 0, y: 0 };
 	zoom = 1;
 	
-	moveTo(x=0, y=0){
+	moveTo(x=0, y=0) {
 		this.position.x = x;
 		this.position.y = y;
 	}
 
-	script(){}
+	script() {}
 
-	update(){
+	update() {
 		this.script();
-	}
-}
-
-export class Time {
-	timestamp = Date.now()
-	fps = 0;
-	delta = 0;
-
-	#lastCalledTime = 0;
-
-	update(){
-		this.timestamp = Date.now();
-		this.delta = (this.timestamp - this.#lastCalledTime) / 1000;
-		this.#lastCalledTime = this.timestamp;
-		this.fps = 1 / this.delta;
 	}
 }
 export class Keyboard {
 	keys = {};
 
-	constructor(){
+	constructor() {
 		document.addEventListener("keydown", (e) => {
 			this.setKey(e.key, true);
 		});
@@ -43,16 +29,16 @@ export class Keyboard {
 		});
 	}
 
-	isKeyPressed(...keys){
+	isKeyPressed(...keys) {
 		let hasKeyPressed = false;
-		for(let i = 0; i < keys.length; i++){
+		for(let i = 0; i < keys.length; i++) {
 			let key = keys[i];
 			if(key.length == 1) key = key.toUpperCase();
 			if(this.keys[key]) hasKeyPressed = true;
 		}
 		return hasKeyPressed;
 	}
-	setKey(key="", value=false){
+	setKey(key="", value=false) {
 		if(key.length == 1) key = key.toUpperCase();
 		this.keys[key] = value;
 	}
@@ -61,7 +47,6 @@ export class Keyboard {
 export class EngineClass {
 	camera = new Camera;
 	keyboard = new Keyboard;
-	time = new Time;
 
 	canvas = document.createElement("canvas");
 
@@ -69,11 +54,15 @@ export class EngineClass {
 	componentHashes = [];
 	isPixelArt = false;
 
-	fps = 0;
-	delta = 0;
-	#timeSinceLastFrame = 0;
+	stats = {
+		fps: 0,
+		delta: 0
+	}
+	#lastCalledTime = 0;
 
-	#resizeCanvas(){
+	loadAsset = toolbelt.image.cacheImage;
+
+	#resizeCanvas() {
 		let width = window.innerWidth;
 		let height = window.innerHeight;
 
@@ -92,7 +81,13 @@ export class EngineClass {
 			if(width != prevCanvasWidth || height != prevCanvasHeight) this.canvas.onresize();
 		}
 	}
-	constructor(){
+	#updateStats() {
+		this.stats.timestamp = Date.now();
+		this.stats.delta = (this.stats.timestamp - this.#lastCalledTime) / 1000;
+		this.#lastCalledTime = this.stats.timestamp;
+		this.stats.fps = Math.round(1 / this.stats.delta);
+	}
+	constructor() {
 		document.body.style.backgroundColor = "#232323";
 		document.body.appendChild(this.canvas);
 		this.canvas.style.position = "fixed";
@@ -106,25 +101,33 @@ export class EngineClass {
 		this.tick();
 	}
 
-	addObject(component=new Component){
+	addObject(component=new Component) {
 		if(component instanceof Component == false) throw new Error("Cannot add object to engine if object is not of type: Component");
 		if(this.hasObject(component)) throw new Error("Cannot add object to engine if object was already added.");
 		let randomToken = "";
-		while(this.componentHashes.includes(randomToken) || randomToken.length < 14){
+		while(this.componentHashes.includes(randomToken) || randomToken.length < 14) {
 			randomToken = `${Math.floor(Math.random() * 9999)}`;
 			while(randomToken.length < 10) randomToken += Math.floor(Math.random() * 10);
 			randomToken = btoa(randomToken).replace(/==$/, "");
 		}
 		component.hash = randomToken;
 		this.componentHashes.push(randomToken);
-		this.components[randomToken] = (component);
+		this.components[randomToken] = component;
+		let fakeContext = document.createElement("canvas").getContext("2d");
+		component.render(fakeContext);
+		component.script();
 	}
-	hasObject(component=new Component){
+	hasObject(component=new Component) {
 		if(component instanceof Component == false) throw new Error("Cannot find object in engine if object is not of type: Component");
 		let indexOfComponent = this.componentHashes.indexOf(component.hash);
 		return indexOfComponent > -1;
 	}
-	removeObject(component=new Component){
+	getObject(hash) {
+		if(hash instanceof String == false) throw new Error("Cannot find object in engine if hash is not of type: String");
+		let indexOfComponent = this.componentHashes.indexOf(hash);
+		return this.components[indexOfComponent];
+	}
+	removeObject(component=new Component) {
 		if(component instanceof Component == false) throw new Error("Cannot remove object to engine if object is not of type: Component");
 		if(this.hasObject(component) == false) throw new Error("Cannot remove object from engine if object was never added");
 		let indexOfComponent = this.componentHashes.indexOf(component.hash);
@@ -132,19 +135,33 @@ export class EngineClass {
 		delete this.components[component.hash];
 	}
 
-	setBackground(colour=""){
+	#disableZoomFunction = (e=new WheelEvent) => {
+		if(e.target == this.canvas) e.preventDefault();
+	}
+
+	disableZoom() {
+		window.addEventListener('wheel', this.#disableZoomFunction, {passive: false});
+	}
+	enableZoom() {
+		// window.addEventListener('wheel', (e) => {
+		// 	if(e.target == this.canvas) e.preventDefault();
+		// }, {passive: false});
+		window.removeEventListener("wheel", this.#disableZoomFunction);
+	}
+
+	setBackground(colour="") {
 		this.canvas.style.backgroundColor = colour;
 	}
-	setIcon(href=""){
+	setIcon(href="") {
 		document.querySelector("link[rel=icon]").href = href;
 	}
 
-	tick(){
+	tick() {
 		this.camera.update();
-		this.time.update();
+		this.#updateStats();
 
 		let context = this.canvas.getContext("2d");
-		if(this.isPixelArt){
+		if(this.isPixelArt) {
 			this.canvas.style.imageRendering = "pixelated";
 		}else{
 			this.canvas.style.imageRendering = null;
@@ -157,7 +174,7 @@ export class EngineClass {
 
 		context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		let numberOfComponents = this.componentHashes.length;
-		for(let i = 0; i < numberOfComponents; i ++){
+		for(let i = 0; i < numberOfComponents; i ++) {
 			let hash = this.componentHashes[i];
 			let component = this.components[hash];
 			component.script(component);
@@ -170,56 +187,50 @@ export class EngineClass {
 }
 export const engine = new EngineClass;
 
-class Attribute {
-	#data = null;
-
-	set(data){
-		this.#data = data;
-		return this;
-	}
-
-	get(){
-		return this.#data;
-	}
-
-	log(){
-		console.log(this.#data);
-	}
-}
 
 export class Component {
 	hash = "";
 	display = new Point4(0, 0, 100, 100);
+	transform = new Point2(0.5, 0.5);
 
 	#attributes = {};
 
-	getType(){ return "Default Component"; }
+	getType() { return "Default Component"; }
 
-	moveTo(x=0, y=0){
+	moveTo(x=0, y=0) {
 		this.display.x = x;
 		this.display.y = y;
+		return this;
 	}
-	moveBy(x=0, y=0){
+	moveBy(x=0, y=0) {
 		this.display.x += x;
 		this.display.y += y;
+		return this;
 	}
 
-	setSize(w=0, h=0){
+	setSize(w=0, h=0) {
 		this.display.w = w;
 		this.display.h = h;
+		return this;
 	}
 
-	script(){}
-	render(){}
-
-	customAttribute(attributeName="") {
-		if(!this.#attributes[attributeName]) this.#attributes[attributeName] = new Attribute;
-
-		return this.#attributes[attributeName];
+	script() {}
+	render() {
+		this.script();
+		return this;
 	}
 
-	remove(){
+	setAttribute(name="", value) {
+		this.#attributes[name] = value;
+		return this;
+	}
+	getAttribute(name="") {
+		return this.#attributes[name];
+	}
+
+	remove() {
 		engine.removeObject(this);
+		return undefined;
 	}
 }
 
@@ -228,41 +239,47 @@ export class ComponentGroup extends Component {
 	display = new Point2(0, 0);
 
 	componentHashes = [];
-	components = [];
+	components = {};
 
-	getType(){
+	getType() {
 		return "Component Group";
 	}
 
-	setSize(){
+	setSize() {
 		throw new Error("The setSize() function is not supported with type ComponentGroup")
 	}
 
-	constructor(){
+	constructor() {
 		super();
 		delete this.setSize
 	}
 	
-	addObject(component=new Component){
+	addObject(component=new Component) {
 		if(engine.hasObject(component)) engine.removeObject(component);
 		if(component instanceof Component == false) throw new Error("Cannot add object to group if object is not of type: Component");
 		if(this.hasObject(component)) throw new Error("Cannot add object to group if object was already added.");
 		let randomToken = "";
-		while(this.componentHashes.includes(randomToken) || randomToken.length < 14){
+		while(this.componentHashes.includes(randomToken) || randomToken.length < 14) {
 			randomToken = `${Math.floor(Math.random() * 9999)}`;
 			while(randomToken.length < 10) randomToken += Math.floor(Math.random() * 10);
 			randomToken = btoa(randomToken).replace(/==$/, "");
 		}
 		component.hash = randomToken;
 		this.componentHashes.push(randomToken);
-		this.components[randomToken] = (component);
+		this.components[randomToken] = component;
+		let fakeContext = document.createElement("canvas").getContext("2d");
+		component.render(fakeContext);
+		component.script();
 	}
-	hasObject(component=new Component){
+	getObject(hash="") {
+		return this.components[hash];
+	}
+	hasObject(component=new Component) {
 		if(component instanceof Component == false) throw new Error("Cannot find object in group if object is not of type: Component");
 		let indexOfComponent = this.componentHashes.indexOf(component.hash);
 		return indexOfComponent > -1;
 	}
-	removeObject(component=new Component){
+	removeObject(component=new Component) {
 		if(component instanceof Component == false) throw new Error("Cannot remove object to group if object is not of type: Component");
 		if(this.hasObject(component) == false) throw new Error("Cannot remove object from group if object was never added");
 		let indexOfComponent = this.componentHashes.indexOf(component.hash);
@@ -270,9 +287,9 @@ export class ComponentGroup extends Component {
 		this.components.splice(indexOfComponent, 1);
 	}
 
-	render(context=new CanvasRenderingContext2D){
+	render(context=new CanvasRenderingContext2D) {
 		let numberOfComponents = this.componentHashes.length;
-		for(let i = 0; i < numberOfComponents; i ++){
+		for(let i = 0; i < numberOfComponents; i ++) {
 			let hash = this.componentHashes[i];
 			let component = this.components[hash];
 			component.script(component);

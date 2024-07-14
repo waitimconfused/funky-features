@@ -67,7 +67,7 @@ export function draw(
 	try {
 		if(CropWidth && CropHeight){
 			context.drawImage(
-				CacheImage(imgSource),
+				cacheImage(imgSource),
 	
 				CropXPos || 0, CropYPos || 0,
 				CropWidth, CropHeight,
@@ -77,7 +77,7 @@ export function draw(
 			);
 		}else{
 			context.drawImage(
-				CacheImage(imgSource),
+				cacheImage(imgSource),
 	
 				DestinationXPos, DestinationYPos,
 				DestinationWidth, DestinationHeight,
@@ -97,7 +97,7 @@ export function draw(
 	context.globalAlpha = 1;
 }
 
-export function CacheImage(imgSource=""){
+export function cacheImage(imgSource=""){
 	let loadedImage = document.querySelector(`div#assets>img[src="${imgSource}"]`);
 	if(loadedImage == null){
 		let newlyLoadedImage = document.createElement("img");

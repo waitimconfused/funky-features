@@ -1,21 +1,25 @@
-import { draw as drawImage } from "../../toolbelt/lib/image.js";
 import { Component, engine, Point2, Point4 } from "../utils.js";
 
-export class Image extends Component {
+export class Text extends Component {
 	crop = new Point4(0, 0);
-	isPixelArt = false;
-	source = "";
 
-	getType(){ return "Image"; }
+	content = "Text Object";
+
+	color = "black";
+	textSize = "10px";
+	font = "sans-serif";
+	textAlign = "start";
+	textBaseLine = "alphabetic";
+	direction = "inherit";
+	styling = "normal";
+
+	fixedPosition = true;
+
+	getType(){ return "Text"; }
 
 	constructor(){
 		super();
 		delete this.colour;
-		return this;
-	}
-
-	setSourcePath(path=""){
-		this.source = path;
 		return this;
 	}
 
@@ -29,12 +33,17 @@ export class Image extends Component {
 
 	render(context=new CanvasRenderingContext2D){
 
-		this.transform.x = Math.max( Math.min( this.transform.x, 1 ), 0 );
-		this.transform.y = Math.max( Math.min( this.transform.y, 1 ), 0 );
+		context.font = `${this.styling} ${this.textSize} ${this.font}`;
+		context.fillStyle = this.color;
+		context.textAlign = this.textAlign;
+		context.textBaseline = this.textBaseLine;
+		context.direction = this.direction;
+
+		let metrics = context.measureText(this.content);
+		this.display.w = metrics.width;
+		this.display.h = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
 
 		let offset = { x: 0, y: 0 };
-		offset.x -= this.display.w * this.transform.x;
-		offset.y -= this.display.h * this.transform.y;
 		if(this.cameraTracking) {
 			engine.camera.moveTo(this.display.x, this.display.y);
 			this.fixedPosition = false;
@@ -45,22 +54,12 @@ export class Image extends Component {
 			offset.x += engine.canvas.width / 2;
 			offset.y += engine.canvas.height / 2;
 		}
+
 		let destinationX = this.display.x + offset.x;
 		let destinationY = this.display.y + offset.y;
-		drawImage(
-			this.source,
 
-			destinationX,
-			destinationY,
-			this.display.w,
-			this.display.h,
-
-			this.crop.x,
-			this.crop.y,
-			this.crop.w,
-			this.crop.h,
-			{ pixelated: engine.isPixelArt || this.isPixelArt }, engine.canvas
-		);
+		context.fillText(this.content, destinationX, destinationY);
+	
 		return this;
 	}
 

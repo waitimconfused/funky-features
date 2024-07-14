@@ -1,4 +1,5 @@
 import * as toolbelt from "../toolbelt.js";
+toolbelt.controller.initialize();
 
 var xboxController = toolbelt.controller.XBOX.fromIndex(0);
 
