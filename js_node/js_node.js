@@ -55,15 +55,7 @@ globalGraph.addTag(".gif", {
 	glyph: "🖼️"
 });
 
-// readFile("./index.html");
-
-// readFile("/index.html");
-
 readFile("/404.html");
 
-readFile("/projects/demo.html");
-readFile("/projects/view.html");
-
-(new Rect)
-	.setColour("#0000FF")
-	.setTitle("RECTANGLE!");
+readFile("./index.html");
+readFile("./readme.md");

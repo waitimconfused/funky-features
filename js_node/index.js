@@ -33,38 +33,41 @@ var focusedNode_prev = null;
 
 var customScript = function(){}
 
-keyboard.setScript((e) => {
+document.addEventListener("keydown", (e) => {
 	let key = e.key.toLowerCase();
 
 	if(globalGraph.canvas.matches(':hover') == false) return;
 
-	if(e.type == "keydown") {
-		if(key == "escape" && !escapePressed){
-			redraw = !redraw;
-			escapePressed = true;
-		}
-		if(e.ctrlKey == false) return;
+	if(key == "escape" && !escapePressed){
+		redraw = !redraw;
+		escapePressed = true;
+	}
+	if(e.ctrlKey == false) return;
 
-		if(key == "+" || key == "=") {
-			e.preventDefault();
-			changeZoom(camera.zoom / 10);
-		}else if(key == "-" || e.key == "_") {
-			e.preventDefault();
-			changeZoom(camera.zoom / -10);
-		}else if(key == "0") {
-			e.preventDefault();
-			setZoom(initalCameraZoom);
-			cameraTo(0, 0);
-		}
-	}else if(e.type == "keyup"){
-		if(key == "escape"){
-			escapePressed = false;
-		}
+	if(key == "+" || key == "=") {
+		e.preventDefault();
+		changeZoom(camera.zoom / 10);
+	}else if(key == "-" || e.key == "_") {
+		e.preventDefault();
+		changeZoom(camera.zoom / -10);
+	}else if(key == "0") {
+		e.preventDefault();
+		setZoom(initalCameraZoom);
+		cameraTo(0, 0);
 	}
 });
-mouse.setScript((e) => {
-	if(e.type != "mousedown") return;
-	
+
+document.addEventListener("keyup", (e) => {
+	let key = e.key.toLowerCase();
+
+	if(globalGraph.canvas.matches(':hover') == false) return;
+
+	if(key == "escape"){
+		escapePressed = false;
+	}
+});
+
+document.addEventListener("mousedown", (e) => {
 	if(e.target == globalGraph.canvas) globalGraph.tryClick();
 });
 
