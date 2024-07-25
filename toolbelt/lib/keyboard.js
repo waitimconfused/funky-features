@@ -2,7 +2,7 @@ function arrayIncludesArray(array=[], target=[]) {
 	return array.sort().join(',') === target.sort().join(',')
 }
 
-export var keyboard = new class {
+export var keyboard = new class Keyboard {
 
 	#keybinds = [];
 
@@ -69,7 +69,7 @@ export var keyboard = new class {
 	}
 };
 
-export var mouse = new class {
+export var mouse = new class Mouse {
 	click_l = false;
 	click_r = false;
 

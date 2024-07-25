@@ -62,6 +62,9 @@ export class EngineClass {
 
 	loadAsset = toolbelt.image.cacheImage;
 
+	preRenderingScript = () => {};
+	postRenderingScript = () => {};
+
 	#resizeCanvas() {
 		let width = window.innerWidth;
 		let height = window.innerHeight;
@@ -88,7 +91,6 @@ export class EngineClass {
 		this.stats.fps = Math.round(1 / this.stats.delta);
 	}
 	constructor() {
-		document.body.style.backgroundColor = "#232323";
 		document.body.appendChild(this.canvas);
 		this.canvas.style.position = "fixed";
 		this.canvas.style.borderRadius = "0px";
@@ -135,18 +137,20 @@ export class EngineClass {
 		delete this.components[component.hash];
 	}
 
-	#disableZoomFunction = (e=new WheelEvent) => {
+	#disableWheelZoomFunction = (e=new WheelEvent) => {
 		if(e.target == this.canvas) e.preventDefault();
+	}
+	#disableKeyboardZoomFunction = (e=new KeyboardEvent) => {
+		if(e.ctrlKey && ["+","-","=","_"].includes(e.key)) e.preventDefault();
 	}
 
 	disableZoom() {
-		window.addEventListener('wheel', this.#disableZoomFunction, {passive: false});
+		window.addEventListener('wheel', this.#disableWheelZoomFunction, {passive: false});
+		window.addEventListener('keydown', this.#disableKeyboardZoomFunction, {passive: false});
 	}
 	enableZoom() {
-		// window.addEventListener('wheel', (e) => {
-		// 	if(e.target == this.canvas) e.preventDefault();
-		// }, {passive: false});
-		window.removeEventListener("wheel", this.#disableZoomFunction);
+		window.removeEventListener("wheel", this.#disableWheelZoomFunction);
+		window.removeEventListener('keydown', this.#disableKeyboardZoomFunction);
 	}
 
 	setBackground(colour="") {
@@ -172,14 +176,21 @@ export class EngineClass {
 		context.webkitImageSmoothingEnabled = this.isPixelArt;
 		context.imageSmoothingEnabled = this.isPixelArt;
 
+		this.preRenderingScript();
+
 		context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		let numberOfComponents = this.componentHashes.length;
 		for(let i = 0; i < numberOfComponents; i ++) {
 			let hash = this.componentHashes[i];
 			let component = this.components[hash];
-			component.script(component);
+			try {
+				component.script(component);
+			} catch(e) {
+				// throw new Error(`Could not run script of Component:${component.getType()} due to ${e}`)
+			}
 			component.render(context);
 		}
+		this.postRenderingScript();
 		window.requestAnimationFrame(() => {
 			this.tick();
 		});
@@ -198,6 +209,11 @@ export class Component {
 	getType() { return "Default Component"; }
 
 	moveTo(x=0, y=0) {
+		if(x instanceof Point2 || typeof x == "object" ) {
+			this.display.x = x.x;
+			this.display.y = x.y;
+			return this;
+		}
 		this.display.x = x;
 		this.display.y = y;
 		return this;
@@ -237,6 +253,7 @@ export class Component {
 export class ComponentGroup extends Component {
 
 	display = new Point2(0, 0);
+	displayOffset = new Point2(0, 0);
 
 	componentHashes = [];
 	components = {};
@@ -287,7 +304,34 @@ export class ComponentGroup extends Component {
 		this.components.splice(indexOfComponent, 1);
 	}
 
-	render(context=new CanvasRenderingContext2D) {
+	render(context=new CanvasRenderingContext2D, defaultOffset=new Point2) {
+
+		let offset = { x: 0, y: 0 };
+
+		offset.x += defaultOffset.x;
+		offset.y += defaultOffset.y;
+
+		if(this.cameraTracking) {
+			engine.camera.moveTo(this.display.x, this.display.y);
+			this.fixedPosition = false;
+		}
+
+		if(!this.fixedPosition) {
+			offset.x -= engine.camera.position.x;
+			offset.y -= engine.camera.position.y;
+			offset.x += engine.canvas.width / 2;
+			offset.y += engine.canvas.height / 2;
+		}
+
+		this.displayOffset.x = this.display.x + offset.x;
+		this.displayOffset.y = this.display.y + offset.y;
+
+		if(engine.isPixelArt){
+			this.displayOffset.x = Math.floor(this.displayOffset.x);
+			this.displayOffset.y = Math.floor(this.displayOffset.y);
+			this.displayOffset.x = Math.floor(this.displayOffset.x);
+		}
+
 		let numberOfComponents = this.componentHashes.length;
 		for(let i = 0; i < numberOfComponents; i ++) {
 			let hash = this.componentHashes[i];

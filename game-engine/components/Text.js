@@ -58,7 +58,13 @@ export class Text extends Component {
 		let destinationX = this.display.x + offset.x;
 		let destinationY = this.display.y + offset.y;
 
-		context.fillText(this.content, destinationX, destinationY);
+		// context.fillText(this.content, destinationX, destinationY);
+
+		var lines = this.content.split('\n');
+
+		for (var i = 0; i < lines.length; i++) {
+			context.fillText(lines[i], destinationX, destinationY + (i * this.display.h * 1.25) );
+		}
 	
 		return this;
 	}
