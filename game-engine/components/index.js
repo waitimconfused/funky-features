@@ -7,7 +7,3 @@ export { Player } from "./Player.js";
 export { Image } from "./Image.js";
 export { Text } from "./Text.js";
 export { Path } from "./Path.js";
-
-export class Dummy extends Component {
-	render() {}
-}

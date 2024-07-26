@@ -1,101 +1,261 @@
 import { ComponentGroup, engine, Point2 } from "./utils.js";
 import * as components from "./components/index.js";
-import { keyboard, mouse, toRange } from "../toolbelt/toolbelt.js";
+import { mouse, toRange } from "../toolbelt/toolbelt.js";
 
-engine.setBackground("black");
+engine.setIcon("./DEMO_assets/4/favicon.svg");
+
+var gamePaused = false;
 
 var tiles = [];
-var tilesThatCanRedirectLight = [ "reflect" ];
 const tileSize = 100;
-
-// mouse.position.alwaysRelativeTo(engine.canvas);
-
 var userSelectedComponentHash = "";
 
-var mapWidth = 5;
-var mapHeight = 5;
+const colours = {
 
-engine.camera.moveTo(mapWidth/2 * 100, mapHeight/2 * 100);
+	background: "#000000",
 
-var mapBackgroundPadding = 20;
+	outline: "#343434",
+	fill: "#232323",
 
+	custom: {
+		absorb_fill: "#660000",
+		action: "#336600",
+	},
+
+	lightRay1: "#FDD78B",
+	lightRay2: "#FFE524",
+};
+
+engine.setBackground(colours.background);
+engine.disableZoom();
+
+var mapBackgroundPadding = 40;
 var mapBackground = new components.Rect();
 engine.addObject(mapBackground);
-mapBackground.display.set(mapWidth/2*100, mapHeight/2*100, mapWidth*100 + mapBackgroundPadding*2, mapHeight*100 + mapBackgroundPadding*2);
-mapBackground.colour = "black";
-mapBackground.outline.colour = "#343434";
-mapBackground.outline.size = 10;
+mapBackground.colour = "transparent";
+mapBackground.outline.colour = colours.outline;
+mapBackground.outline.size = 20;
 mapBackground.radius = 10 + mapBackgroundPadding;
-
-let mapResizerRadius = 40;
-var mapResizer = new components.Path();
-// engine.addObject(mapResizer);
-mapResizer.fixedPosition = true;
-mapResizer.moveTo(engine.canvas.width / 2 + mapWidth/2 * 100, engine.canvas.height / 2 + mapHeight/2 * 100);
-mapResizer.pen.moveTo(mapResizerRadius, 0);
-mapResizer.pen.quadraticCurveTo(mapResizerRadius, mapResizerRadius, 0, mapResizerRadius);
-mapResizer.colour = "transparent";
-mapResizer.outline.colour = "#454545";
-mapResizer.outline.size = 20;
-
-mapResizer.script = () => {
-	let isHovering = (
-		mouse.position.x > mapResizer.display.x - mapResizerRadius - mapResizer.outline.size &&
-		mouse.position.y > mapResizer.display.y - mapResizerRadius - mapResizer.outline.size &&
-		
-		mouse.position.x < mapResizer.display.x + mapResizerRadius + mapResizer.outline.size &&
-		mouse.position.y < mapResizer.display.y + mapResizerRadius + mapResizer.outline.size
-	);
-
-	if (isHovering) {
-		isHovering = Math.hypot(mouse.position.x - mapResizer.display.x, mouse.position.y - mapResizer.display.y) < mapResizerRadius;
-	}
-
-	if (
-		mouse.click_l &&
-		mapResizer.getAttribute("isResizing") == true &&
-		userSelectedComponentHash == mapResizer.hash
-	) {
-		mapResizer.moveTo( mouse.position.x, mouse.position.y );
-		mapResizer.setAttribute("isResizing", mouse.click_l);
-		mapResizer.outline.colour = "white";
-	} else {
-		mapResizer.setAttribute("isResizing", isHovering && mouse.click_l && userSelectedComponentHash == "");
-		if ( mapResizer.getAttribute("isResizing") ) userSelectedComponentHash = mapResizer.hash;
-		mapResizer.outline.colour = "red";
-		if (isHovering) {
-			mapResizer.outline.colour = "pink";
-		}
-	
-	}
-	if (userSelectedComponentHash == mapResizer.hash && !mapResizer.getAttribute("isResizing") ) userSelectedComponentHash = "";
-}
 
 var lightRay = new components.Path();
 engine.addObject(lightRay);
 lightRay.colour = "transparent";
-lightRay.outline.colour = "#fdd78b";
+lightRay.outline.colour = colours.lightRay1;
 lightRay.outline.size = 50;
 
 var lightRayEffect = new components.Path();
 engine.addObject(lightRayEffect);
 lightRayEffect.colour = "transparent";
-lightRayEffect.outline.colour = "#FFE524";
+lightRayEffect.outline.colour = colours.lightRay2;
 lightRayEffect.outline.size = 25;
 
-makeTile("source", Math.round(Math.random()) * 90, 0, 0);
+var levelTitle = new components.Text();
+levelTitle.fixedPosition = false;
+engine.addObject(levelTitle);
+levelTitle.content = "";
+levelTitle.textColour = "yellow";
+levelTitle.textBaseLine = "middle";
+levelTitle.font = "Inter";
+levelTitle.styling = "bold";
+levelTitle.outline.colour = colours.background;
+levelTitle.outline.size = 10;
+levelTitle.letterSpacing = 10;
+levelTitle.textAlign = "center";
+levelTitle.textSize = 50;
+levelTitle.moveTo(0, 0);
+levelTitle.script = () => {
+	levelTitle.moveTo(map.width*tileSize/2, -tileSize/3);
+}
 
-makeTile("reflect", Math.round(Math.random()) * 90, 3, 2);
-makeTile("reflect", Math.round(Math.random()) * 90, 2, 3);
-makeTile("reflect", Math.round(Math.random()) * 90, 3, 4);
-makeTile("reflect", Math.round(Math.random()) * 90, 4, 3);
+var map = new class Map {
+	width = 5;
+	height = 5;
 
-makeTile("box", 0, 4, 4);
+	targetsHit = 0;
+	targetsRequired = NaN;
 
-function makeTile(type="", direction=90, x=0, y=0) {
+	#level = 0;
+	#unlockedLevels = [];
+	
+	constructor() {
+		Object.keys(localStorage).forEach((item) => {
+			if( (/^level#(\d*?)$/).test(item) == false ) return;
+			let achievedLevel =  parseInt(item.split(/^level#(\d*?)$/)[1]) ;
+			this.#unlockedLevels.push(achievedLevel);
+		});
+	}
 
-	x = toRange(0, x, mapWidth);
-	y = toRange(0, y, mapHeight);
+	loadLevel(level=this.#level, delay=400) {
+		if(level > this.levels.length) level = 1;
+		if(level < 0) level = this.levels.length + level + 1;
+		this.#level = level;
+		let generateMap = this.levels[level-1];
+
+		localStorage.setItem(`level#${this.#level}`, "");
+		
+		gamePaused = true;
+
+		setTimeout( () => {
+			tiles.forEach( (tile) => {
+				tile.remove();
+			} )
+			tiles = [];
+			this.targetsHit = 0;
+			this.targetsRequired = 0;
+			generateMap();
+			gamePaused = false;
+		}, delay );
+	}
+
+	nextLevel(delay=400) {
+		if(this.#level + 1 > this.levels.length) return;
+		this.loadLevel(this.#level + 1, delay);
+	}
+
+	reload() {
+		engine.camera.moveTo(this.width/2 * 100, this.height/2 * 100);
+
+		mapBackground.display.set(this.width/2*100, this.height/2*100, this.width*100 + mapBackgroundPadding*2, this.height*100 + mapBackgroundPadding*2);
+
+		engine.removeObject(lightRay);
+		engine.removeObject(lightRayEffect);
+
+		engine.addObject(lightRay);
+		engine.addObject(lightRayEffect);
+	}
+
+	levels = [
+		() => {
+			this.width = 5;
+			this.height = 5;
+
+			this.reload();
+			levelTitle.content = "REFLECT";
+
+			makeTile("start", 90, 0, 0, {dragLock: true, rotationLock: true});
+			makeTile("reflect", 90, 2, 2);
+			makeTile("end", 180, 4, 4, {dragLock: true, rotationLock: true});
+		},
+		() => {
+			this.width = 5;
+			this.height = 5;
+
+			this.reload();
+			levelTitle.content = "BOX";
+
+			makeTile("start", 90, 0, 0, {dragLock: true, rotationLock: true});
+			makeTile("reflect", 0, 0, 4);
+			makeTile("reflect", 0, 2, 2);
+			makeTile("box", 0, 3, 4, {dragLock: true, rotationLock: true});
+			makeTile("end", -90, 4, 4, {dragLock: true, rotationLock: true});
+		},
+		() => {
+			this.width = 5;
+			this.height = 5;
+
+			this.reload();
+			levelTitle.content = "SPLIT";
+
+			makeTile("start", 90, 2, 0, {dragLock: true, rotationLock: true});
+			makeTile("reflect", 0, 0, 2);
+			makeTile("reflect", 0, 4, 2);
+			makeTile("end", -90, 0, 4, {dragLock: true, rotationLock: true});
+			makeTile("end", -90, 4, 4, {dragLock: true, rotationLock: true});
+			makeTile("split", 90, 2, 4);
+		},
+		() => {
+			let padding = 200;
+			let buttonCount = 0;
+			this.width = Math.floor((engine.canvas.width-padding*2) / tileSize) - 1;
+			this.height = Math.floor(engine.canvas.height / tileSize) - 1;
+
+			this.reload();
+
+			engine.camera.moveBy(-padding, 0);
+			levelTitle.content = "DEMO COMPLETE";
+
+			setTimeout( () => {
+				levelTitle.content = "";
+			}, 2000 );
+
+			makeTile("start", 90, 0, 0);
+			makeTile("reflect", 0, 0, 2);
+			makeTile("reflect", 0, 4, 2);
+			makeTile("end", -90, 0, 4);
+			makeTile("end", -90, 4, 4);
+			makeTile("split", 90, 2, 4);
+
+			makeButton("Light Source", "start");
+
+			function makeButton(title="", type="") {
+				let button = new ComponentGroup();
+				let background = new components.Rect();
+				let text = new components.Text();
+
+				button.fixedPosition = true;
+				background.fixedPosition = true;
+				text.fixedPosition = true;
+
+				engine.addObject(button);
+				button.addObject(background);
+				button.addObject(text);
+
+				button.moveTo(mapBackgroundPadding/2, mapBackgroundPadding/2 + buttonCount*100);
+
+				background.colour = "red";
+				background.display.set(0, 0, 0, 0);
+				background.transform.set(0, 0);
+				background.radius = 10 + mapBackgroundPadding/2;
+				
+				text.content = title.toUpperCase();
+				text.textColour = colours.custom.action;
+				text.textAlign = "left";
+				text.textBaseLine = "top";
+				text.styling = "bold";
+				text.moveTo(mapBackgroundPadding, mapBackgroundPadding);
+
+				background.script = () => {
+					background.setSize(text.display.w + mapBackgroundPadding, text.display.h + mapBackgroundPadding);
+
+					if(
+						mouse.position.x > background.displayOffset.x &&
+						mouse.position.y > background.displayOffset.y &&
+						mouse.position.x < background.displayOffset.x + background.displayOffset.w &&
+						mouse.position.y < background.displayOffset.y + background.displayOffset.h
+					) {
+						background.colour = colours.outline;
+						if (mouse.click_l && userSelectedComponentHash == "") {
+							background.setAttribute("click", true);
+							userSelectedComponentHash = button.hash;
+						}
+					} else {
+						background.colour = colours.fill;
+					}
+
+					if (!mouse.click_l && background.getAttribute("click") && userSelectedComponentHash == button.hash) {
+						let posX = Math.round( (mouse.position.x - engine.camera.position.x) / tileSize );
+						let posY = Math.round( (mouse.position.y - engine.camera.position.y) / tileSize );
+						console.log(posX, posY);
+						makeTile(type, 0, posX, posY);
+						background.setAttribute("click", false);
+						userSelectedComponentHash = "";
+					}
+				};
+
+				buttonCount += 1;
+			}
+		}
+	]
+}
+
+map.loadLevel(1, 0);
+
+function makeTile(type="", direction=90, x=0, y=0, tileOptions={ dragLock: false, rotationLock: false }) {
+
+	if (type == "end") map.targetsRequired += 1;
+
+	x = toRange(0, x, map.width-1);
+	y = toRange(0, y, map.height-1);
 
 	direction = Math.round(direction / 90) * 90
 
@@ -116,39 +276,34 @@ function makeTile(type="", direction=90, x=0, y=0) {
 	tile.addObject(tileDragHandle);
 	tile.addObject(tileRotateHandle);
 
-	tileBackground.colour = "#232323";
-	tileBackground.radius = 10;
+	tileBackground.colour = colours.fill;
+	tileBackground.radius = tileSize/10;
 	tileBackground.transform.set(0, 0);
-	tileBackground.display.set(12.5, 12.5, 75, 75);
-	if (type == "box") tileBackground.display.set(0, 0, 100, 100);
+	tileBackground.display.set(tileSize/8, tileSize/8, tileSize*0.75, tileSize*0.75);
+	if (type == "box") tileBackground.display.set(0, 0, tileSize, tileSize);
 
-	tileSymbol.outline.colour = "#343434";
-	tileSymbol.colour = "#600";
+	tileSymbol.outline.colour = colours.outline;
+	tileSymbol.colour = colours.custom.absorb_fill;
 	tileSymbol.outline.size = 20;
 
 	tileDragHandle.colour = "none";
-	tileDragHandle.outline.colour = "#360";
+	tileDragHandle.outline.colour = colours.custom.action;
 	tileDragHandle.outline.size = 0;
-	tileDragHandle.radius = 25;
-	tileDragHandle.display.set(50, 50);
+	tileDragHandle.radius = tileSize/4;
+	tileDragHandle.display.set(tileSize*0.5, tileSize*0.5);
 
 	tileRotateHandle.colour = "none";
-	tileRotateHandle.outline.colour = "#360";
+	tileRotateHandle.outline.colour = colours.custom.action;
 	tileRotateHandle.outline.size = 0;
-	tileRotateHandle.radius = 12.5;
+	tileRotateHandle.radius = tileSize/8;
 
 	let radian = direction * Math.PI/180;
 	tileRotateHandle.display.set( Math.cos(radian) * tileSize/2 + 50, Math.sin(radian) * tileSize/2 + 50);
 
 	tile.script = (tile) => {
-		dragTile(tile);
-		updateSymbol(tile);
+		if(!gamePaused) dragTile(tile);
+		if(!gamePaused) updateSymbol(tile);
 	}
-
-	let tileOptions = {
-		dragLock: false,
-		rotationLock: false
-	};
 
 	if (type == "box") tileOptions.rotationLock = true;
 	
@@ -167,99 +322,115 @@ function makeTile(type="", direction=90, x=0, y=0) {
 }
 
 
+function moveUntilIntersection(lightRay=new components.Path(), radian=0, posX=0, posY=0) {
+	let intersection = null;
+	let stepSize = tileSize / 10;
+	while (!intersection) {
+		posX += Math.round(Math.cos(radian) * stepSize);
+		posY += Math.round(Math.sin(radian) * stepSize);
+
+		if (
+			posX < 0 ||
+			posX > map.width*tileSize ||
+			posY < 0 ||
+			posY > map.height*tileSize
+		) {
+			intersection = { getAttribute: () => "edge" };
+		}
+
+		for (let i = 1; i < tiles.length; i ++) {
+			let tile = tiles[i];
+			
+			let roundedTilePosX = Math.round(tile.display.x / tileSize) * tileSize;
+			let roundedTilePosY = Math.round(tile.display.y / tileSize) * tileSize;
+			if (
+				Math.round(posX) == roundedTilePosX + tileSize/2 &&
+				Math.round(posY) == roundedTilePosY + tileSize/2
+			) intersection = tile;
+		}
+	}
+	lightRay.pen.lineTo(
+		posX,
+		posY
+	);
+	return intersection;
+}
+
+function marchRay(startingTile=new ComponentGroup, degree=0) {
+	let posX = Math.round(startingTile.display.x / tileSize) * tileSize + tileSize/2;
+	let posY = Math.round(startingTile.display.y / tileSize) * tileSize + tileSize/2;
+	lightRay.pen.moveTo(posX, posY);
+
+	degree %= 360;
+	if(degree < 0) degree = 360 + degree;
+	let radian = degree * (Math.PI / 180);
+
+	let intersectedObject = moveUntilIntersection(lightRay, radian, posX, posY);
+	let angle = radian * (180 / Math.PI);
+	angle %= 360;
+	if (angle < 0) angle = 360 + angle;
+
+	let intersectedObjectRotation = intersectedObject.getAttribute("rotation");
+	intersectedObjectRotation = Math.round(intersectedObjectRotation / 90) * 90;
+	intersectedObjectRotation %= 360;
+	if(intersectedObjectRotation < 0) intersectedObjectRotation = 360 + intersectedObjectRotation;
+
+	let intersectedObjectType = intersectedObject.getAttribute("type");
+
+	if (intersectedObjectType == "reflect") {
+		if (intersectedObjectRotation == 0 || intersectedObjectRotation == 180) {
+			if(angle == 0) radian += (90 * Math.PI) / 180;
+			if(angle == 90) radian -= (90 * Math.PI) / 180;
+			if(angle == 180) radian += (90 * Math.PI) / 180;
+			if(angle == 270) radian -= (90 * Math.PI) / 180;
+		} else if(intersectedObjectRotation == 90 || intersectedObjectRotation == 270) {
+			if(angle == 0) radian -= (90 * Math.PI) / 180;
+			if(angle == 90) radian += (90 * Math.PI) / 180;
+			if(angle == 180) radian -= (90 * Math.PI) / 180;
+			if(angle == 270) radian += (90 * Math.PI) / 180;
+		} else {
+			return;
+		}
+		marchRay(intersectedObject, radian * (180 / Math.PI));
+	} else if (intersectedObjectType == "split") {
+		let oppositeAngle = intersectedObjectRotation + 180;
+		oppositeAngle %= 360;
+		if (oppositeAngle < 0) oppositeAngle = 360 + angle;
+		if (angle != oppositeAngle) return;
+		marchRay(intersectedObject, angle - 90);
+		marchRay(intersectedObject, angle + 90);
+	} else if (intersectedObjectType == "end") {
+		let oppositeAngle = intersectedObjectRotation + 180;
+		oppositeAngle %= 360;
+		if (oppositeAngle < 0) oppositeAngle = 360 + angle;
+		if (angle == oppositeAngle && !intersectedObject.getAttribute("hit")) {
+			intersectedObject.setAttribute("hit", true);
+			map.targetsHit += 1;
+		}
+	}
+}
+
 lightRay.script = () => {
 
-	lightRay.clearPath();
+	if(gamePaused) return;
 
-	if (userSelectedComponentHash != "") {
-		lightRayEffect.clearPath();
-		return;
-	}
+	lightRay.clearPath();
+	lightRayEffect.clearPath();
+
+	if (userSelectedComponentHash != "") return;
 
 	for (let i = 0; i < tiles.length; i ++) {
 		let tile = tiles[i];
-		if (tile.getAttribute("type") != "source") continue;
+		if (tile.getAttribute("type") != "start") continue;
 
-		let symbol = tiles[i].getObject( tiles[i].componentHashes[1] );
-		let background = tiles[i].getObject( tiles[i].componentHashes[0] );
-		let degree = Math.round( tiles[i].getAttribute("rotation") / 90 ) * 90;
+		let degree = Math.round( tile.getAttribute("rotation") / 90 ) * 90;
 		degree %= 360;
-		let radian = degree * (Math.PI / 180);
-
-		let posX = Math.round(tiles[i].display.x / tileSize) * tileSize + 50;
-		let posY = Math.round(tiles[i].display.y / tileSize) * tileSize + 50;
-		let stepSize = 10;
-
-		function moveUntilIntersection(radian=0, lightRay=new components.Path(), rect=new components.Rect()) {
-			let hasIntersected = false;
-			while (!hasIntersected) {
-				posX += Math.round(Math.cos(radian) * stepSize);
-				posY += Math.round(Math.sin(radian) * stepSize);
-		
-				if (
-					posX - engine.camera.position.x < -mapWidth/2*100  ||
-					posX - engine.camera.position.x > mapWidth/2*100  ||
-					posY - engine.camera.position.y < -mapHeight/2*100 ||
-					posY - engine.camera.position.y > mapHeight/2*100
-				) {
-					hasIntersected = { getAttribute: () => "edge" };
-				}
-		
-				for (let i = 1; i < tiles.length; i ++) {
-					let tile = tiles[i];
-					
-					let roundedTilePosX = Math.round(tile.display.x / tileSize) * tileSize;
-					let roundedTilePosY = Math.round(tile.display.y / tileSize) * tileSize;
-					if (
-						Math.round(posX) == roundedTilePosX + tileSize/2 &&
-						Math.round(posY) == roundedTilePosY + tileSize/2
-					) hasIntersected = tile;
-				}
-			}
-			lightRay.pen.lineTo(
-				posX,
-				posY
-			);
-			return hasIntersected;
-		}
-		lightRay.pen.moveTo(posX, posY);
-		let intersectedObject = moveUntilIntersection(radian, lightRay, background);
-		while (tilesThatCanRedirectLight.includes( intersectedObject.getAttribute("type") )) {
-			let angle = radian * (180 / Math.PI);
-			angle %= 360;
-
-			if (angle < 0) {
-				angle = 360 + angle;
-			}
-
-			let intersectedObjectRotation = intersectedObject.getAttribute("rotation");
-			intersectedObjectRotation = Math.round(intersectedObjectRotation / 90) * 90;
-			intersectedObjectRotation %= 360;
-			if(intersectedObjectRotation < 0) intersectedObjectRotation = 360 + intersectedObjectRotation;
-
-			let intersectedObjectType = intersectedObject.getAttribute("type");
-
-			if (intersectedObjectType == "reflect") {
-				if (intersectedObjectRotation == 0 || intersectedObjectRotation == 180) {
-					if(angle == 0) radian += (90 * Math.PI) / 180;
-					if(angle == 90) radian -= (90 * Math.PI) / 180;
-					if(angle == 180) radian += (90 * Math.PI) / 180;
-					if(angle == 270) radian -= (90 * Math.PI) / 180;
-				} else if(intersectedObjectRotation == 90 || intersectedObjectRotation == 270) {
-					if(angle == 0) radian -= (90 * Math.PI) / 180;
-					if(angle == 90) radian += (90 * Math.PI) / 180;
-					if(angle == 180) radian -= (90 * Math.PI) / 180;
-					if(angle == 270) radian += (90 * Math.PI) / 180;
-				} else {
-					break;
-				}
-			} else if (intersectedObjectType == "source") {
-				throw new Error("Collided with tile:source")
-			}
-			intersectedObject = moveUntilIntersection(radian, lightRay, background);
-		}
-
+		if(degree < 0) degree = 360 + degree;
+		marchRay(tile, degree);
 	}
+
+	if (map.targetsHit == map.targetsRequired) map.nextLevel();
+
 	lightRayEffect.path = lightRay.path;
 }
 
@@ -275,49 +446,129 @@ function updateSymbol(tile) {
 
 	if (symbolDirection != tileDirection) {
 		tileSymbol.clearPath();
-		if (tileType == "source") {
+		if (tileType == "start") {
 			if (tileDirection == 0) {
-				tileSymbol.pen.moveTo(100, 0);
-				tileSymbol.pen.lineTo(100, 100);
+				tileSymbol.pen.moveTo(tileSize, 0);
+				tileSymbol.pen.lineTo(tileSize, tileSize);
 				tileSymbol.pen.cubicCurveTo(
-					0, 100,
+					0, tileSize,
 					0, 0,
-					100, 0
+					tileSize, 0
 				);
 			} else if (tileDirection == 90) {
-				tileSymbol.pen.moveTo(0, 100);
-				tileSymbol.pen.lineTo(100, 100);
+				tileSymbol.pen.moveTo(0, tileSize);
+				tileSymbol.pen.lineTo(tileSize, tileSize);
 				tileSymbol.pen.cubicCurveTo(
-					100, 0,
+					tileSize, 0,
 					0, 0,
-					0, 100
+					0, tileSize
 				);
 			} else if (tileDirection == 180) {
 				tileSymbol.pen.moveTo(0, 0);
-				tileSymbol.pen.lineTo(0, 100);
+				tileSymbol.pen.lineTo(0, tileSize);
 				tileSymbol.pen.cubicCurveTo(
-					100, 100,
-					100, 0,
+					tileSize, tileSize,
+					tileSize, 0,
 					0, 0
 				);
 			} else if (tileDirection == 270) {
 				tileSymbol.pen.moveTo(0, 0);
-				tileSymbol.pen.lineTo(100, 0);
+				tileSymbol.pen.lineTo(tileSize, 0);
 				tileSymbol.pen.cubicCurveTo(
-					100, 100,
-					0, 100,
+					tileSize, tileSize,
+					0, tileSize,
+					0, 0
+				);
+			}
+		} else if (tileType == "end") {
+			if (tileDirection == 0) {
+				tileSymbol.pen.moveTo(tileSize, 0);
+				tileSymbol.pen.lineTo(tileSize, tileSize*0.25);
+				tileSymbol.pen.cubicCurveTo(
+					tileSize*0.75, tileSize*0.25,
+					tileSize*0.75, tileSize*0.75,
+					tileSize, tileSize*0.75
+				);
+				tileSymbol.pen.lineTo(tileSize, tileSize);
+				tileSymbol.pen.cubicCurveTo(
+					tileSize*0.25, tileSize,
+					tileSize*0.25, 0,
+					tileSize, 0
+				);
+			} else if (tileDirection == 90) {
+				tileSymbol.pen.moveTo(0, tileSize);
+				tileSymbol.pen.lineTo(tileSize*0.25, tileSize);
+				tileSymbol.pen.cubicCurveTo(
+					tileSize*0.25, tileSize*0.75,
+					tileSize*0.75, tileSize*0.75,
+					tileSize*0.75, tileSize
+				);
+				tileSymbol.pen.lineTo(tileSize, tileSize);
+				tileSymbol.pen.cubicCurveTo(
+					tileSize, tileSize*0.25,
+					0, tileSize*0.25,
+					0, tileSize
+				);
+			} else if (tileDirection == 180) {
+				tileSymbol.pen.moveTo(0, 0);
+				tileSymbol.pen.lineTo(0, tileSize*0.25);
+				tileSymbol.pen.cubicCurveTo(
+					tileSize*0.25, tileSize*0.25,
+					tileSize*0.25, tileSize*0.75,
+					0, tileSize*0.75
+				);
+				tileSymbol.pen.lineTo(0, tileSize);
+				tileSymbol.pen.cubicCurveTo(
+					tileSize*0.75, tileSize,
+					tileSize*0.75, 0,
+					0, 0
+				);
+			} else if (tileDirection == 270) {
+				tileSymbol.pen.moveTo(0, 0);
+				tileSymbol.pen.lineTo(tileSize*0.25, 0);
+				tileSymbol.pen.cubicCurveTo(
+					tileSize*0.25, tileSize*0.25,
+					tileSize*0.75, tileSize*0.25,
+					tileSize*0.75, 0
+				);
+				tileSymbol.pen.lineTo(tileSize, 0);
+				tileSymbol.pen.cubicCurveTo(
+					tileSize, tileSize*0.75,
+					0, tileSize*0.75,
 					0, 0
 				);
 			}
 		} else if (tileType == "reflect") {
 			if (tileDirection == 0 || tileDirection == 180) {
-				tileDirection == 0
+				tileDirection = 0;
 				tileSymbol.pen.moveTo(0, 0);
-				tileSymbol.pen.lineTo(100, 100);
+				tileSymbol.pen.lineTo(tileSize, tileSize);
 			} else if (tileDirection == 90 || tileDirection == 270) {
-				tileDirection == 90;
-				tileSymbol.pen.moveTo(100, 0);
-				tileSymbol.pen.lineTo(0, 100);
+				tileDirection = 270;
+				tileSymbol.pen.moveTo(tileSize, 0);
+				tileSymbol.pen.lineTo(0, tileSize);
+			}
+		} else if (tileType == "split") {
+			if (tileDirection == 0) {
+				tileSymbol.pen.moveTo(tileSize, tileSize/2);
+				tileSymbol.pen.lineTo(tileSize*0.25, tileSize/2);
+				tileSymbol.pen.moveTo(tileSize*0.25, 0);
+				tileSymbol.pen.lineTo(tileSize*0.25, tileSize);
+			} else if (tileDirection == 90) {
+				tileSymbol.pen.moveTo(tileSize/2, tileSize);
+				tileSymbol.pen.lineTo(tileSize/2, tileSize*0.25);
+				tileSymbol.pen.moveTo(0, tileSize*0.25);
+				tileSymbol.pen.lineTo(tileSize, tileSize*0.25);
+			} else if (tileDirection == 180) {
+				tileSymbol.pen.moveTo(0, tileSize/2);
+				tileSymbol.pen.lineTo(tileSize*0.75, tileSize/2);
+				tileSymbol.pen.moveTo(tileSize*0.75, 0);
+				tileSymbol.pen.lineTo(tileSize*0.75, tileSize);
+			} else if (tileDirection == 270) {
+				tileSymbol.pen.moveTo(tileSize/2, 0);
+				tileSymbol.pen.lineTo(tileSize/2, tileSize*0.75);
+				tileSymbol.pen.moveTo(0, tileSize*0.75);
+				tileSymbol.pen.lineTo(tileSize, tileSize*0.75);
 			}
 		}
 		tileSymbol.setAttribute("rotation", tileDirection);
@@ -376,7 +627,7 @@ function dragTile(tile=new ComponentGroup) {
 		if(!dx) dx = mouse.position.x - tile.display.x; tile.setAttribute("offsetX", dx);
 		if(!dy) dy = mouse.position.y - tile.display.y; tile.setAttribute("offsetY", dy);
 
-		tile.moveTo(toRange(0, mouse.position.x - dx, (mapWidth-1)*100), toRange(0, mouse.position.y - dy, (mapHeight-1)*100));
+		tile.moveTo(toRange(0, mouse.position.x - dx, (map.width-1)*100), toRange(0, mouse.position.y - dy, (map.height-1)*100));
 		tile.setAttribute("isDragging", mouse.click_l);
 		tileDragHandle.colour = tileDragHandle.outline.colour;
 		userSelectedComponentHash = tile.hash;

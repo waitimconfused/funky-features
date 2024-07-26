@@ -1,43 +1,34 @@
-import { Component, engine, Point2, Point4 } from "../utils.js";
+import { Component, engine } from "../utils.js";
 
 export class Text extends Component {
-	crop = new Point4(0, 0);
-
 	content = "Text Object";
 
-	color = "black";
-	textSize = "10px";
-	font = "sans-serif";
+	textColour = "purple";
+	textSize = 48 | "48px";
+	fontFamily = "sans-serif";
 	textAlign = "start";
 	textBaseLine = "alphabetic";
+	letterSpacing = 0 || "0px";
 	direction = "inherit";
 	styling = "normal";
+	
+	outline = { colour: "black", size: 0 };
 
 	fixedPosition = true;
 
 	getType(){ return "Text"; }
 
-	constructor(){
-		super();
-		delete this.colour;
-		return this;
-	}
-
-	setCrop(x=0, y=0, w=0, h=0){
-		this.crop.x = x;
-		this.crop.y = y;
-		this.crop.w = w;
-		this.crop.h = h;
-		return this;
-	}
-
 	render(context=new CanvasRenderingContext2D){
 
-		context.font = `${this.styling} ${this.textSize} ${this.font}`;
-		context.fillStyle = this.color;
+		if (typeof this.textSize == "number") this.textSize += "px";
+		if (typeof this.letterSpacing == "number") this.letterSpacing += "px";
+
+		context.font = `${this.styling} ${this.textSize} ${this.fontFamily}`;
+		context.fillStyle = this.textColour;
 		context.textAlign = this.textAlign;
 		context.textBaseline = this.textBaseLine;
 		context.direction = this.direction;
+		context.letterSpacing = this.letterSpacing;
 
 		let metrics = context.measureText(this.content);
 		this.display.w = metrics.width;
@@ -62,7 +53,11 @@ export class Text extends Component {
 
 		var lines = this.content.split('\n');
 
+		context.strokeStyle = this.outline.colour;
+		context.lineWidth = this.outline.size;
+
 		for (var i = 0; i < lines.length; i++) {
+			if (this.outline.size > 0) context.strokeText(lines[i], destinationX, destinationY + (i * this.display.h * 1.25) );
 			context.fillText(lines[i], destinationX, destinationY + (i * this.display.h * 1.25) );
 		}
 	

@@ -3,8 +3,13 @@ import { Point2, Point3, Point4 } from "./points.js";
 export { Point2, Point3, Point4 };
 
 export class Camera {
-	position = { x: 0, y: 0 };
+	position = new Point2(0, 0);
 	zoom = 1;
+
+	moveBy(x=0, y=0) {
+		this.position.x += x;
+		this.position.y += y;
+	}
 	
 	moveTo(x=0, y=0) {
 		this.position.x = x;
@@ -124,10 +129,9 @@ export class EngineClass {
 		let indexOfComponent = this.componentHashes.indexOf(component.hash);
 		return indexOfComponent > -1;
 	}
-	getObject(hash) {
-		if(hash instanceof String == false) throw new Error("Cannot find object in engine if hash is not of type: String");
-		let indexOfComponent = this.componentHashes.indexOf(hash);
-		return this.components[indexOfComponent];
+	getObject(hash="") {
+		if(typeof hash != "string") throw new Error("Cannot find object in engine if hash is not of type: String");
+		return this.components[hash];
 	}
 	removeObject(component=new Component) {
 		if(component instanceof Component == false) throw new Error("Cannot remove object to engine if object is not of type: Component");
@@ -157,7 +161,13 @@ export class EngineClass {
 		this.canvas.style.backgroundColor = colour;
 	}
 	setIcon(href="") {
-		document.querySelector("link[rel=icon]").href = href;
+		let favicon = document.querySelector("link[rel=icon]");
+		if (!favicon) {
+			favicon = document.createElement("link");
+			favicon.setAttribute("rel", "icon");
+			document.head.appendChild(favicon);
+		}
+		favicon.href = href;
 	}
 
 	tick() {
@@ -183,11 +193,8 @@ export class EngineClass {
 		for(let i = 0; i < numberOfComponents; i ++) {
 			let hash = this.componentHashes[i];
 			let component = this.components[hash];
-			try {
-				component.script(component);
-			} catch(e) {
-				// throw new Error(`Could not run script of Component:${component.getType()} due to ${e}`)
-			}
+			if (!component) continue;
+			component.script(component);
 			component.render(context);
 		}
 		this.postRenderingScript();
