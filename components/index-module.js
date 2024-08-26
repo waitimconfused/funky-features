@@ -1,7 +1,6 @@
 var cachedPages = {};
 
-reloadTemplateElements();
-async function reloadTemplateElements(){
+export async function reloadTemplateElements(){
 	let templateElements = document.querySelectorAll("template[from]");
 
 	for(let index = 0; index < templateElements.length; index ++){
