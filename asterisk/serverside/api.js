@@ -29,7 +29,9 @@ export function createEndpoint(callback=(data={})=>{return data}, name="/my_api"
 
 	name = name.replace(/^\/+|\/+$/, "");
 
-	name = `/${prefix}/${ name }`;
+	name = `/${prefix}/${name}`;
+
+	while (name.includes("//")) name = name.replaceAll("//", "/");
 
 	endpoints.push({
 		name: name,

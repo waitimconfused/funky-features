@@ -1,6 +1,6 @@
-import { ComponentGroup, engine } from "./utils.js";
+import { engine } from "./utils.js";
 import * as components from "./components/index.js";
-import { isInRange, mouse } from "../toolbelt/toolbelt.js";
+import { isInRange, keyboard, mouse } from "../toolbelt/toolbelt.js";
 
 let worldData = [
 	["red", "green", "blue"],
@@ -10,7 +10,7 @@ let worldData = [
 
 engine.disableZoom();
 engine.isPixelArt = true;
-engine.setBackground("cyan");
+engine.setBackground("white");
 engine.setIcon("./DEMO_assets/sit.png");
 engine.loadAsset("./DEMO_assets/sit.png")
 
@@ -28,9 +28,14 @@ let blockCountY = () => Math.floor(window.innerHeight / scale) + 1;
 // };
 // engine.addObject(background);
 
-let world = new ComponentGroup;
+let world = new components.ComponentGroup;
 world.moveBy(0, 0);
 engine.addObject(world);
+
+var dummyRect = new components.Rect;
+dummyRect.colour = "purple";
+dummyRect.setSize(100, 100);
+engine.addObject(dummyRect);
 
 
 var player = new components.Image;
@@ -42,6 +47,15 @@ player.source = "./DEMO_assets/sit.png";
 player.colour = "cyan";
 player.moveTo(blockCountX() / 2, 0);
 
+var screenCenterDot = new components.Circle;
+screenCenterDot.colour = "orange";
+screenCenterDot.radius = 5;
+screenCenterDot.fixedPosition = true;
+engine.addObject(screenCenterDot);
+screenCenterDot.script = () => {
+	screenCenterDot.moveTo(engine.canvas.width/2, engine.canvas.height/2)
+};
+
 player.script = function(){
 	let speed = scale / 16;
 	speed = Math.floor(speed);
@@ -50,10 +64,10 @@ player.script = function(){
 	let speedX = 0;
 	let speedY = 0;
 
-	if(engine.keyboard.isKeyPressed("w", "ArrowUp"))    speedY -= speed * delta;
-	if(engine.keyboard.isKeyPressed("s", "ArrowDown"))  speedY += speed * delta;
-	if(engine.keyboard.isKeyPressed("a", "ArrowLeft"))  speedX -= speed * delta;
-	if(engine.keyboard.isKeyPressed("d", "ArrowRight")) speedX += speed * delta;
+	if(keyboard.isPressed("w", "ArrowUp"))    speedY -= speed * delta;
+	if(keyboard.isPressed("s", "ArrowDown"))  speedY += speed * delta;
+	if(keyboard.isPressed("a", "ArrowLeft"))  speedX -= speed * delta;
+	if(keyboard.isPressed("d", "ArrowRight")) speedX += speed * delta;
 
 	speedX = Math.floor(speedX);
 	speedY = Math.floor(speedY);
@@ -116,7 +130,7 @@ function updateRectDisplay(rect=new components.Rect) {
 		blockPosY > worldData.length-1 ||
 		blockPosX > worldData[blockPosY].length-1
 	) {
-		rect.colour = "rgba(0, 0, 0, 0)";
+		rect.colour = "rgba(255, 255, 255, 1)";
 		return;
 	}
 
@@ -129,24 +143,24 @@ function rectWrapAround(rect=new components.Rect) {
 	let blockPosX = rect.getAttribute("x") || 0;
 	let blockPosY = rect.getAttribute("y") || 0;
 
-	if (this.displayOffset.x < engine.canvas.width / 2 - (blockCountX()+2) * scale / 2) {
+	if (rect.displayOffset.x < engine.canvas.width / 2 - (blockCountX()+2) * scale / 2) {
 		// Block is off to the left
 		rect.moveBy( (blockCountX()+1) * scale, 0 );
 		blockPosX += blockCountX() + 1;
 		rect.setAttribute("x", blockPosX);
-	} else if (this.displayOffset.x > engine.canvas.width / 2 + blockCountX() * scale / 2) {
+	} else if (rect.displayOffset.x > engine.canvas.width / 2 + blockCountX() * scale / 2) {
 		// Block is off to the right
 		rect.moveBy( -(blockCountX()+1) * scale, 0 );
 		blockPosX -= blockCountX() + 1;
 		rect.setAttribute("x", blockPosX);
 	}
 
-	if (this.displayOffset.y < engine.canvas.height / 2 - (blockCountY()+2) * scale / 2) {
+	if (rect.displayOffset.y < engine.canvas.height / 2 - (blockCountY()+2) * scale / 2) {
 		// Block is off to the top
 		rect.moveBy(0, (blockCountY()+1) * scale);
 		blockPosY += blockCountY() + 1;
 		rect.setAttribute("y", blockPosY);
-	} else if (this.displayOffset.y > engine.canvas.height / 2 + blockCountY() * scale / 2) {
+	} else if (rect.displayOffset.y > engine.canvas.height / 2 + blockCountY() * scale / 2) {
 		// Block is off to the bottom
 		rect.moveBy(0, -(blockCountY()+1) * scale);
 		blockPosY -= blockCountY() + 1;
@@ -208,6 +222,6 @@ function resize(){
 		}
 	}
 }
-resize();
+// resize();
 
-engine.canvas.onresize = resize;
+// engine.canvas.onresize = resize;

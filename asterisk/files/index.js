@@ -5,6 +5,8 @@ import TYPES from "./types.json" assert {type: "json"};
 
 export var visibility = true;
 
+var registeredFiles = [];
+
 export var statusPages = {
 	"404": "/404.html"
 };
@@ -17,12 +19,14 @@ export var lockedIP = false;
 export function hide(){
 	visibility = false;
 }
+
 /**
  * Enable the ability to return files to any client (default)
  */
 export function show(){
 	visibility = true;
 }
+
 /**
  * SERVER-SIDE
  * 
@@ -33,6 +37,7 @@ export function show(){
 export function regester404(path=statusPages["404"]){
 	statusPages["404"] = path
 }
+
 /**
  * SERVER-SIDE
  * 
@@ -94,6 +99,14 @@ export function get(path="", IP=""){
 	}
 
 	if(fs.existsSync(path) == false){
+		if(fs.existsSync(path+".html")) {
+			let fileContent = fs.readFileSync(path+".html");
+			return {
+				type: "text/html",
+				content: fileContent,
+				status: 200
+			};
+		}
 		MESSAGES.code("404", path);
 		let content404 = MESSAGES.code("404", path);
 		if(statusPages["404"]) content404 = get(statusPages["404"]);

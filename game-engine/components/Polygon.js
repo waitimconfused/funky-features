@@ -23,7 +23,9 @@ export class Polygon extends Component {
 
 	getType(){ return "Polygon"; }
 
-	render(context=new CanvasRenderingContext2D, defaultOffset={x:0,y:0}){
+	render(context=new CanvasRenderingContext2D, defaultOffset=new Point2){
+		
+		if (!this.visibility) return this;
 
 		if( this.positions.length == 0 ) return;
 
@@ -40,8 +42,6 @@ export class Polygon extends Component {
 		if(!this.fixedPosition) {
 			offset.x -= engine.camera.position.x;
 			offset.y -= engine.camera.position.y;
-			offset.x += engine.canvas.width / 2;
-			offset.y += engine.canvas.height / 2;
 		}
 
 		this.displayOffset.x = this.display.x + offset.x;
@@ -53,11 +53,11 @@ export class Polygon extends Component {
 			this.displayOffset.x = Math.floor(this.displayOffset.x);
 		}
 
-		if(this.displayOffset.x > engine.canvas.width) return;
-		if(this.displayOffset.y > engine.canvas.height) return;
-		if(this.displayOffset.x + this.radius < 0) return;
-		if(this.displayOffset.y + this.radius < 0) return;
-
+		context.save();
+		if (!this.fixedPosition) {
+			context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
+			context.scale(engine.camera.zoom, engine.camera.zoom);
+		}
 		context.beginPath();
 		context.fillStyle = this.colour;
 		context.strokeStyle = this.outline.colour;

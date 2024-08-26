@@ -1,3 +1,5 @@
+import { isInRange } from "../toolbelt/toolbelt.js";
+
 export class Point2 {
 	x = 0;
 	y = 0;
@@ -20,6 +22,17 @@ export class Point2 {
 		this.y *= y;
 	}
 
+	/**
+	 * 
+	 * @param {number | Point2} x 
+	 * @param {number | undefined} y 
+	 * @returns 
+	 */
+	equals(x=0,y=0) {
+		if (x instanceof Point2) { y = x.x; x = x.x; }
+		return this.x == x && this.y == y;
+	}
+
 	toObject() {
 		return {
 			x: this.x,
@@ -28,7 +41,7 @@ export class Point2 {
 	}
 }
 
-export class Point3 {
+export class Point3 extends Point2 {
 	x = 0;
 	y = 0;
 	z = 0;
@@ -55,6 +68,18 @@ export class Point3 {
 		this.z *= z;
 	}
 
+	/**
+	 * 
+	 * @param {number | Point2} x
+	 * @param {number | undefined} y
+	 * @param {number | undefined} z
+	 * @returns 
+	 */
+	equals(x=0, y=0, z=0) {
+		if (x instanceof Point3) { y = x.x; z = x.z; x = x.x; }
+		return this.x == x && this.y == y && this.z == z;
+	}
+
 	toObject() {
 		return {
 			x: this.x,
@@ -77,7 +102,20 @@ export class Point4 {
 		this.h = h;
 	}
 
-	set(x=0, y=0, w=0, h=0) {
+	/**
+	 * 
+	 * @param { number | Point4 } x
+	 * @param { number | undefined } y
+	 * @param { number | undefined } w
+	 * @param { number | undefined } h
+	 */
+	set(x, y, w, h) {
+		if (x instanceof Point4 || (x?.w && x?.h)) {
+			y = x.y;
+			w = x.w;
+			h = x.h;
+			x = x.x;
+		}
 		this.x = x;
 		this.y = y;
 		this.w = w;
@@ -94,6 +132,18 @@ export class Point4 {
 		this.y *= y;
 		this.w *= w;
 		this.h *= h;
+	}
+
+	/**
+	 * 
+	 * @param {number | Point2} x
+	 * @param {number | undefined} y
+	 * @param {number | undefined} z
+	 * @returns 
+	 */
+	contains(x=0, y=0) {
+		if (x instanceof Point4) { y = x.x; x = x.x; }
+		return isInRange(this.x, x, this.x+this.w) && isInRange(this.y, y, this.y+this.h);
 	}
 
 	toObject() {

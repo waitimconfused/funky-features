@@ -1,24 +1,56 @@
-import { Component, engine } from "../utils.js";
+import { Component, engine, Point2 } from "../utils.js";
 
 export class Text extends Component {
 	content = "Text Object";
 
+	setContent(content="") {
+		this.content = content;
+		return this;
+	}
+
 	textColour = "purple";
+	setColour(colour=this.textColour) {
+		this.textColour = colour;
+		return this;
+	}
+
+	/**
+	 * @type {number | string}
+	 */
 	textSize = 48 | "48px";
+
 	fontFamily = "sans-serif";
-	textAlign = "start";
-	textBaseLine = "alphabetic";
+
+	/**
+	 * @type {"left" | "right" | "center" | "start" | "end"}
+	 */
+	textAlign = "center";
+
+	/**
+	 * @type {"top" | "hanging" | "middle" | "alphabetic" | "ideographic" | "bottom"}
+	 */
+	textBaseLine = "middle";
+	setTextBaseLine(textBaseLine=this.textBaseLine) {
+		this.textBaseLine = textBaseLine;
+		return this;
+	}
+
 	letterSpacing = 0 || "0px";
+
+	/**
+	 * @type {"ltr" | "rtl" | "inherit"}
+	 */
 	direction = "inherit";
+
 	styling = "normal";
 	
 	outline = { colour: "black", size: 0 };
 
-	fixedPosition = true;
-
 	getType(){ return "Text"; }
 
-	render(context=new CanvasRenderingContext2D){
+	render(context=new CanvasRenderingContext2D, defaultOffset=new Point2){
+		
+		if (!this.visibility) return this;
 
 		if (typeof this.textSize == "number") this.textSize += "px";
 		if (typeof this.letterSpacing == "number") this.letterSpacing += "px";
@@ -35,7 +67,11 @@ export class Text extends Component {
 		this.display.h = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
 
 		let offset = { x: 0, y: 0 };
-		if(this.cameraTracking) {
+
+		offset.x += defaultOffset.x;
+		offset.y += defaultOffset.y;
+
+		if(this.cameraTracking == true) {
 			engine.camera.moveTo(this.display.x, this.display.y);
 			this.fixedPosition = false;
 		}

@@ -58,7 +58,7 @@ export function onRequest(request=http.IncomingMessage, response=http.ServerResp
 
 	let isAPI = false;
 
-	let req_url = request.url;
+	let req_url = decodeURI(request.url);
 
 	API.endpoints.forEach( (apiData) => {
 		if(apiData.name == req_url) isAPI = true;
@@ -93,7 +93,7 @@ export function onRequest(request=http.IncomingMessage, response=http.ServerResp
 	}else{
 		let filePath = req_url;
 
-		if(filePath.endsWith("/") && request.headers.accept.includes("tex/html")) filePath += "index.html";
+		if(filePath.endsWith("/") && request.headers.accept.includes("text/html")) filePath += "index.html";
 
 		if(filePath.endsWith("/")){
 			if(request.headers.accept.includes("text/html")) filePath += "index.html";

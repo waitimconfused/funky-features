@@ -12,6 +12,8 @@ export class Circle extends Component {
 	getType(){ return "Circle"; }
 
 	render(context=new CanvasRenderingContext2D, defaultOffset={x:0,y:0}){
+		
+		if (!this.visibility) return this;
 
 		let offset = { x: 0, y: 0 };
 
@@ -28,8 +30,6 @@ export class Circle extends Component {
 		if(!this.fixedPosition) {
 			offset.x -= engine.camera.position.x;
 			offset.y -= engine.camera.position.y;
-			offset.x += engine.canvas.width / 2;
-			offset.y += engine.canvas.height / 2;
 		}
 
 		this.displayOffset.x = this.display.x + offset.x;
@@ -40,11 +40,17 @@ export class Circle extends Component {
 			this.displayOffset.y = Math.floor(this.displayOffset.y);
 			this.displayOffset.x = Math.floor(this.displayOffset.x);
 		}
-
-		if(this.displayOffset.x > engine.canvas.width) return;
-		if(this.displayOffset.y > engine.canvas.height) return;
-		if(this.displayOffset.x + this.radius < 0) return;
-		if(this.displayOffset.y + this.radius < 0) return;
+		
+		context.save();
+		if (!this.fixedPosition) {
+			if (engine.isPixelArt || this.isPixelArt) {
+				context.translate(Math.round(engine.canvas.width / 2), Math.round(engine.canvas.height / 2));
+				context.scale(Math.round(engine.camera.zoom), Math.round(engine.camera.zoom));
+			} else {
+				context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
+				context.scale(engine.camera.zoom, engine.camera.zoom);
+			}
+		}
 
 		context.beginPath();
 		context.fillStyle = this.colour;
@@ -54,5 +60,7 @@ export class Circle extends Component {
 		context.fill();
 		if(this.outline.size > 0) context.stroke();
 		context.closePath();
+
+		context.restore();
 	}
 }

@@ -1,0 +1,339 @@
+{
+	"playback": "loop",
+	"fps": 7,
+
+	"animations": {
+		"error": [
+			{
+				"source": "",
+				"x": 0,
+				"y": 0,
+				"width": 16,
+				"height": 16
+			}
+		],
+		"fountain:fountain": [
+			{
+				"source": "./desert_/desert_[fountain].png",
+				"x": 16,
+				"y": 12,
+				"width": 64,
+				"height": 68
+			},
+			{
+				"source": "./desert_/desert_[fountain].png",
+				"x": 80,
+				"y": 12,
+				"width": 64,
+				"height": 68
+			},
+			{
+				"source": "./desert_/desert_[fountain].png",
+				"x": 144,
+				"y": 12,
+				"width": 64,
+				"height": 68
+			},
+			{
+				"source": "./desert_/desert_[fountain].png",
+				"x": 208,
+				"y": 12,
+				"width": 64,
+				"height": 68
+			}
+		],
+
+		"resources:cactus[size=large]": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 19,
+				"y": 19,
+				"width": 10,
+				"height": 25
+			}
+		],
+		"resources:cactus[size=medium]": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 34,
+				"y": 27,
+				"width": 11,
+				"height": 17
+			}
+		],
+		"resources:cactus[size=small]": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 35,
+				"y": 19,
+				"width": 10,
+				"height": 25
+			}
+		],
+		"resources:skull": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 97,
+				"y": 34,
+				"width": 14,
+				"height": 9
+			}
+		],
+		"resources:boulder": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 37,
+				"y": 50,
+				"width": 22,
+				"height": 26
+			}
+		],
+		"resources:stone[count=1]": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 66,
+				"y": 49,
+				"width": 12,
+				"height": 12
+			}
+		],
+		"resources:stone[count=2]": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 65,
+				"y": 63,
+				"width": 14,
+				"height": 16
+			}
+		],
+		"resources:copper": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 82,
+				"y": 48,
+				"width": 12,
+				"height": 13
+			}
+		],
+		"resources:gold": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 96,
+				"y": 48,
+				"width": 12,
+				"height": 13
+			}
+		],
+		"resources:coal": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 82,
+				"y": 64,
+				"width": 12,
+				"height": 13
+			}
+		],
+		"resources:diamond": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 96,
+				"y": 64,
+				"width": 12,
+				"height": 13
+			}
+		],
+		"resources:chest[size=1]": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 17,
+				"y": 88,
+				"width": 14,
+				"height": 21
+			}
+		],
+		"resources:chest[size=1,open]": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 17,
+				"y": 88,
+				"width": 14,
+				"height": 21
+			}
+		],
+		"resources:chest[size=2]": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 83,
+				"y": 85,
+				"width": 26,
+				"height": 24
+			}
+		],
+		"resources:chest[size=2,open]": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 83,
+				"y": 85,
+				"width": 26,
+				"height": 24
+			}
+		],
+		"resources:chest[sunken]": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 113,
+				"y": 97,
+				"width": 14,
+				"height": 12
+			}
+		],
+		"resources:fire": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 113,
+				"y": 125,
+				"width": 14,
+				"height": 16
+			},
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 129,
+				"y": 125,
+				"width": 14,
+				"height": 16
+			},
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 145,
+				"y": 125,
+				"width": 14,
+				"height": 16
+			},
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 161,
+				"y": 125,
+				"width": 14,
+				"height": 16
+			}
+		],
+		"resources:fire[off]": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 97,
+				"y": 125,
+				"width": 14,
+				"height": 16
+			}
+		],
+		"resources:sign[wooden]": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 18,
+				"y": 125,
+				"width": 12,
+				"height": 14
+			}
+		],
+		"resources:sign[size=small]": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 34,
+				"y": 125,
+				"width": 12,
+				"height": 14
+			}
+		],
+		"resources:sign[size=medium]": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 66,
+				"y": 125,
+				"width": 12,
+				"height": 14
+			}
+		],
+		"resources:sign[size=large]": [
+			{
+				"source": "./desert_/desert_[resources].png",
+				"x": 50,
+				"y": 125,
+				"width": 12,
+				"height": 14
+			}
+		],
+
+		":hill[top,left]": [
+			{
+				"source": "./desert_/desert_.png",
+				"x": 16,
+				"y": 16,
+				"width": 16,
+				"height": 16
+			}
+		],
+		":hill[top]": [
+			{
+				"source": "./desert_/desert_.png",
+				"x": 32,
+				"y": 16,
+				"width": 16,
+				"height": 16
+			}
+		],
+		":hill[top,path_part=left]": [
+			{
+				"source": "./desert_/desert_.png",
+				"x": 48,
+				"y": 16,
+				"width": 16,
+				"height": 16
+			}
+		],
+		":hill[top,path_part=right]": [
+			{
+				"source": "./desert_/desert_.png",
+				"x": 64,
+				"y": 16,
+				"width": 16,
+				"height": 16
+			}
+		],
+		":hill[top,right]": [
+			{
+				"source": "./desert_/desert_.png",
+				"x": 80,
+				"y": 16,
+				"width": 16,
+				"height": 16
+			}
+		],
+		":hill[center,left]": [
+			{
+				"source": "./desert_/desert_.png",
+				"x": 16,
+				"y": 32,
+				"width": 16,
+				"height": 16
+			}
+		],
+		":hill[center,center]": [
+			{
+				"source": "./desert_/desert_.png",
+				"x": 32,
+				"y": 32,
+				"width": 16,
+				"height": 16
+			}
+		],
+		":hill[center,right]": [
+			{
+				"source": "./desert_/desert_.png",
+				"x": 80,
+				"y": 32,
+				"width": 16,
+				"height": 16
+			}
+		]
+	}
+}

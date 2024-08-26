@@ -1,4 +1,4 @@
-import * as toolbelt from "../toolbelt/toolbelt.js";
+import { image } from "../toolbelt/toolbelt.js";
 import { Point2, Point3, Point4 } from "./points.js";
 export { Point2, Point3, Point4 };
 
@@ -19,41 +19,20 @@ export class Camera {
 	script() {}
 
 	update() {
-		this.script();
-	}
-}
-export class Keyboard {
-	keys = {};
-
-	constructor() {
-		document.addEventListener("keydown", (e) => {
-			this.setKey(e.key, true);
-		});
-		document.addEventListener("keyup", (e) => {
-			this.setKey(e.key, false);
-		});
-	}
-
-	isKeyPressed(...keys) {
-		let hasKeyPressed = false;
-		for(let i = 0; i < keys.length; i++) {
-			let key = keys[i];
-			if(key.length == 1) key = key.toUpperCase();
-			if(this.keys[key]) hasKeyPressed = true;
-		}
-		return hasKeyPressed;
-	}
-	setKey(key="", value=false) {
-		if(key.length == 1) key = key.toUpperCase();
-		this.keys[key] = value;
+		this.script(this);
 	}
 }
 
 export class EngineClass {
 	camera = new Camera;
-	keyboard = new Keyboard;
 
 	canvas = document.createElement("canvas");
+	setSize(width=this.canvas.width, height=this.canvas.height) {
+		this.canvas.width = width;
+		this.canvas.height = height;
+		this.canvas.style.width = `${width}px`;
+		this.canvas.style.height = `${height}px`;
+	}
 
 	components = {};
 	componentHashes = [];
@@ -65,10 +44,12 @@ export class EngineClass {
 	}
 	#lastCalledTime = 0;
 
-	loadAsset = toolbelt.image.cacheImage;
+	loadAsset = image.cacheImage;
 
 	preRenderingScript = () => {};
 	postRenderingScript = () => {};
+
+	fullscreen = true;
 
 	#resizeCanvas() {
 		let width = window.innerWidth;
@@ -102,9 +83,9 @@ export class EngineClass {
 		this.canvas.style.top = "0px";
 		this.canvas.style.left = "0px";
 		window.addEventListener("resize", () => {
-			this.#resizeCanvas();
+			if (this.fullscreen) this.#resizeCanvas();
 		});
-		this.#resizeCanvas();
+		if (this.fullscreen) this.#resizeCanvas();
 		this.tick();
 	}
 
@@ -122,7 +103,7 @@ export class EngineClass {
 		this.components[randomToken] = component;
 		let fakeContext = document.createElement("canvas").getContext("2d");
 		component.render(fakeContext);
-		component.script();
+		component.script(component);
 	}
 	hasObject(component=new Component) {
 		if(component instanceof Component == false) throw new Error("Cannot find object in engine if object is not of type: Component");
@@ -175,9 +156,9 @@ export class EngineClass {
 		this.#updateStats();
 
 		let context = this.canvas.getContext("2d");
-		if(this.isPixelArt) {
+		if (this.isPixelArt) {
 			this.canvas.style.imageRendering = "pixelated";
-		}else{
+		} else {
 			this.canvas.style.imageRendering = null;
 		}
 
@@ -205,17 +186,37 @@ export class EngineClass {
 }
 export const engine = new EngineClass;
 
-
 export class Component {
 	hash = "";
 	display = new Point4(0, 0, 100, 100);
+	visibility = true;
+	show() { this.visibility = true; return this; }
+	hide() { this.visibility = false; return this; }
 	transform = new Point2(0.5, 0.5);
+	setTransform(x=0.5, y=0.5) {
+		this.transform.set(x, y);
+		return this;
+	}
+
+
+	cameraTracking = false;
+	fixedPosition = false;
+	setFixedPosition(fixedPosition=this.fixedPosition) {
+		this.fixedPosition = fixedPosition;
+		return this;
+	}
 
 	#attributes = {};
 
 	getType() { return "Default Component"; }
 
-	moveTo(x=0, y=0) {
+	/**
+	 * 
+	 * @param {number | Point2 | {x: number, y: number}} x
+	 * @param {number | undefined} y
+	 * @returns this
+	 */
+	moveTo(x, y) {
 		if(x instanceof Point2 || typeof x == "object" ) {
 			this.display.x = x.x;
 			this.display.y = x.y;
@@ -223,6 +224,10 @@ export class Component {
 		}
 		this.display.x = x;
 		this.display.y = y;
+		if (engine.isPixelArt || this?.isPixelArt) {
+			this.display.x = Math.round(this.display.x);
+			this.display.y = Math.round(this.display.y);
+		}
 		return this;
 	}
 	moveBy(x=0, y=0) {
@@ -231,15 +236,28 @@ export class Component {
 		return this;
 	}
 
-	setSize(w=0, h=0) {
-		this.display.w = w;
-		this.display.h = h;
+	/**
+	 * 
+	 * @param { number | Point4 } w
+	 * @param { number | undefined } h
+	 */
+	setSize(w, h) {
+		if (w instanceof Point4 || (w?.w && w?.h)) {
+			h = w.h;
+			w = w.w;
+		}
+		this.display.w = w || this.display.w;
+		this.display.h = h || this.display.h;
 		return this;
 	}
 
-	script() {}
+	script = (component=this) => {}
+	setScript(callback=(self=this)=>{}) {
+		this.script = callback;
+		return this;
+	}
 	render() {
-		this.script();
+		if (!this.visibility) return this;
 		return this;
 	}
 
@@ -248,7 +266,13 @@ export class Component {
 		return this;
 	}
 	getAttribute(name="") {
+		if (name in this.#attributes == false) return undefined;
 		return this.#attributes[name];
+	}
+	removeAttribute(name="") {
+		if (name in this.#attributes == false) return this;
+		delete this.#attributes[name];
+		return this;
 	}
 
 	remove() {
@@ -257,94 +281,146 @@ export class Component {
 	}
 }
 
-export class ComponentGroup extends Component {
+var animations = [];
+export class Animation {
+	playback = "loop";
 
-	display = new Point2(0, 0);
-	displayOffset = new Point2(0, 0);
+	animations = [];
+	fps = 1;
 
-	componentHashes = [];
-	components = {};
+	currentAnimation = "";
+	currentFrameData = {};
+	#locked = false;
 
-	getType() {
-		return "Component Group";
+	#startingTimestamp = 0;
+	playState = false;
+
+	onfinish = () => {};
+
+	constructor(playbackType="", animations={}, fps=0) {
+		if (playbackType && animations && fps) this.#locked = true;
+		this.playback = playbackType || "loop";
+		this.animations = animations;
+		this.fps = fps || 1;
+		this.currentAnimation = Object.keys(animations)[0] || "";
+		this.currentFrameData = this.animations[this.currentAnimation][0] || {};
 	}
+	/**
+	 * 
+	 * @returns {{ source: string, x: number, y: number, width: number, height: number }}
+	 */
+	currentFrame() {
+		if (this.currentAnimation in this.animations == false) throw new Error(`Cannot get frame from animation "${this.currentAnimation}" if it does not exist.`);
+		
+		let maxFrameNumber = this.animations[this.currentAnimation].length-1;
+		
+		if (maxFrameNumber < 0) throw new Error(`Cannot play animation "${this.currentAnimation}" if animation contains 0 frames.`);
+		
+		let timeDifference = (performance.now() * (this.playState != "play"?2:1)) - this.#startingTimestamp;
+		let frameNumber = timeDifference / (1000/this.fps);
+		frameNumber = Math.floor(frameNumber);
 
-	setSize() {
-		throw new Error("The setSize() function is not supported with type ComponentGroup")
-	}
+		if(this.playback == "loop") {
+			if (frameNumber >= maxFrameNumber) {
+				let currentAnimation = this.currentAnimation;
+				this.onfinish();
+				if (this.currentAnimation != currentAnimation) {
+					return this.currentFrame();
+				}
+			}
+			frameNumber = frameNumber % (maxFrameNumber+1);
 
-	constructor() {
-		super();
-		delete this.setSize
-	}
-	
-	addObject(component=new Component) {
-		if(engine.hasObject(component)) engine.removeObject(component);
-		if(component instanceof Component == false) throw new Error("Cannot add object to group if object is not of type: Component");
-		if(this.hasObject(component)) throw new Error("Cannot add object to group if object was already added.");
-		let randomToken = "";
-		while(this.componentHashes.includes(randomToken) || randomToken.length < 14) {
-			randomToken = `${Math.floor(Math.random() * 9999)}`;
-			while(randomToken.length < 10) randomToken += Math.floor(Math.random() * 10);
-			randomToken = btoa(randomToken).replace(/==$/, "");
-		}
-		component.hash = randomToken;
-		this.componentHashes.push(randomToken);
-		this.components[randomToken] = component;
-		let fakeContext = document.createElement("canvas").getContext("2d");
-		component.render(fakeContext);
-		component.script();
-	}
-	getObject(hash="") {
-		return this.components[hash];
-	}
-	hasObject(component=new Component) {
-		if(component instanceof Component == false) throw new Error("Cannot find object in group if object is not of type: Component");
-		let indexOfComponent = this.componentHashes.indexOf(component.hash);
-		return indexOfComponent > -1;
-	}
-	removeObject(component=new Component) {
-		if(component instanceof Component == false) throw new Error("Cannot remove object to group if object is not of type: Component");
-		if(this.hasObject(component) == false) throw new Error("Cannot remove object from group if object was never added");
-		let indexOfComponent = this.componentHashes.indexOf(component.hash);
-		this.componentHashes.splice(indexOfComponent, 1);
-		this.components.splice(indexOfComponent, 1);
-	}
-
-	render(context=new CanvasRenderingContext2D, defaultOffset=new Point2) {
-
-		let offset = { x: 0, y: 0 };
-
-		offset.x += defaultOffset.x;
-		offset.y += defaultOffset.y;
-
-		if(this.cameraTracking) {
-			engine.camera.moveTo(this.display.x, this.display.y);
-			this.fixedPosition = false;
+		} else if(this.playback == "playonce") {
+			if (frameNumber >= maxFrameNumber) {
+				frameNumber = maxFrameNumber;
+				if (this.playState == "play") {
+					this.playState = "stop";
+					this.onfinish();
+					return this.currentFrame();
+				}
+			}
 		}
 
-		if(!this.fixedPosition) {
-			offset.x -= engine.camera.position.x;
-			offset.y -= engine.camera.position.y;
-			offset.x += engine.canvas.width / 2;
-			offset.y += engine.canvas.height / 2;
+		this.currentFrameData = this.animations[this.currentAnimation][frameNumber];
+		return this.currentFrameData;
+	}
+
+	play() {
+		if (this.playState == "stop") this.#startingTimestamp = performance.now();
+		this.playState = "play";
+		if (this.currentFrameData.length == 1) this.playState = "pause";
+		return this;
+	}
+
+	playAnimation(name="") {
+		if (name in this.animations == false) throw new Error(`Animation "${name}" does not exist.`);
+		this.currentAnimation = name;
+		this.currentFrameData = this.animations[this.currentAnimation][0];
+		this.#startingTimestamp = performance.now();
+		this.playState = "play";
+		if (this.currentFrameData.length == 1) this.playState = "pause";
+		return this;
+	}
+
+	pause() {
+		this.playState = "pause";
+		return this;
+	}
+
+	stop() {
+		this.playState = "stop";
+		return this;
+	}
+
+	clone() {
+		return new Animation(this.playback, this.animations, this.fps);
+	}
+
+	toJSON() {
+		return {
+			playback: this.playback,
+			fps: this.fps,
+			animations: this.animations
+		}
+	}
+
+	/**
+	 * @returns {string[]}
+	 */
+	addTimeline(name="") {
+		if (this.#locked) throw new Error("Cannot add animation timelines to a locked animation.");
+		if (!name) throw new Error("Animation timeline must have a name.");
+		this.animations[name] = [];
+		return this.animations[name];
+	}
+}
+
+export const animation = new class AnimationConstructor {
+
+	async fromFile(url="") {
+		let response = await fetch(url);
+		let json = await response.json();
+
+		let timelineNames = Object.keys(json.animations);
+
+		for (let i = 0; i < timelineNames.length; i++) {
+			let timeline = json.animations[ timelineNames[i] ];
+
+			for (let frame = 0; frame < timeline.length; frame ++) {
+				let frameData = timeline[frame];
+				let source = frameData.source;
+				source = url.replace(/([^\/\\]+)$/, "") + source;
+				source = source.replace(/([^\/\\]+[\/\\]\.\.[\/\\])/g, "");
+				source = source.replace(/([\/\\]\.[\/\\])/g, "/");
+				json.animations[timelineNames[i]][frame].source = source;
+				if (source != "") image.cacheImage(source);
+			}
 		}
 
-		this.displayOffset.x = this.display.x + offset.x;
-		this.displayOffset.y = this.display.y + offset.y;
+		return new Animation(json.playback, json.animations, json.fps);
+	}
 
-		if(engine.isPixelArt){
-			this.displayOffset.x = Math.floor(this.displayOffset.x);
-			this.displayOffset.y = Math.floor(this.displayOffset.y);
-			this.displayOffset.x = Math.floor(this.displayOffset.x);
-		}
-
-		let numberOfComponents = this.componentHashes.length;
-		for(let i = 0; i < numberOfComponents; i ++) {
-			let hash = this.componentHashes[i];
-			let component = this.components[hash];
-			component.script(component);
-			component.render(context, this.display);
-		}
+	blankTemplate() {
+		return new Animation;
 	}
 }

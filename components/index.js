@@ -17,9 +17,7 @@ async function reloadTemplateElements(){
 		iframe.style.display = "none";
 		iframe.src = "about:blank";
 		document.body.appendChild(iframe);
-		iframe.contentWindow.document.open();
-		iframe.contentWindow.document.write(html);
-		iframe.contentWindow.document.close();
+		iframe.contentWindow.document.documentElement.innerHTML = html;
 
 		let template = iframe.contentWindow.document.querySelector(`template#${id}`) || document.createElement("template");
 		template = template.content.cloneNode(true);

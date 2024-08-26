@@ -1,4 +1,4 @@
-import { ComponentGroup, engine } from "./utils.js";
+import { engine } from "./utils.js";
 import * as components from "./components/index.js";
 import * as toolbelt from "../toolbelt/toolbelt.js";
 
@@ -10,7 +10,7 @@ class DialogueBubble {
 	icon = new components.Image;
 	text = new components.Text;
 
-	group = new ComponentGroup;
+	group = new components.ComponentGroup;
 
 	constructor() {
 		this.group.addObject(this.icon);
@@ -37,7 +37,7 @@ dialogueBubbleIconPaths.forEach((source) => {
 
 dialogueBubble.icon.setSourcePath(dialogueBubbleIconPaths[0]);
 dialogueBubble.icon.setSize(591, 591);
-dialogueBubble.icon.transform.set(0, 0);
+dialogueBubble.icon.transform.set(0.5, 0.5);
 dialogueBubble.icon.script = function() {
 
 	let mouseX = toolbelt.mouse.position.relative(engine.canvas).x;
@@ -48,7 +48,7 @@ dialogueBubble.icon.script = function() {
 	dialogueBubble.text.content = dialogueBubbleIconPaths[index].replace(/.\/DEMO_assets\/2\/elephant-|\.png/g, "").toUpperCase();
 }
 
-dialogueBubble.text.moveTo(0, 0);
+dialogueBubble.text.moveTo(0, -200);
 dialogueBubble.text.textSize = "50px";
 dialogueBubble.text.styling = "bold";
 dialogueBubble.text.textBaseLine = "top";

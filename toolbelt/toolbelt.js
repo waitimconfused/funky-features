@@ -11,3 +11,7 @@ export function toRange(min=0, value=0.5, max=1) {
 export function isInRange(min=0, value=0.5, max=1) {
 	return value >= min && value <= max;
 }
+
+export function roundToNearest(number=3.14, nearest=1) {
+	return Math.round(number / nearest) * nearest;
+}

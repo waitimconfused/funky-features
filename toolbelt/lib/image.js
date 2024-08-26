@@ -1,8 +1,8 @@
 const assetDIV = loadAssets();
 
-const ErrorImage = document.createElement("img");
-ErrorImage.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV/TSqVUHewg4pChOlkQLeIoVSyChdJWaNXB5NIvaGJIUlwcBdeCgx+LVQcXZ10dXAVB8APE1cVJ0UVK/F9SaBHjwXE/3t173L0DhGaNqWZgAlA1y8gkE2K+sCIGXxFCAP2Iwy8xU09lF3LwHF/38PH1LsazvM/9OfqUoskAn0g8y3TDIl4nnt60dM77xBFWkRTic+Jxgy5I/Mh12eU3zmWHBZ4ZMXKZOeIIsVjuYrmLWcVQiePEUUXVKF/Iu6xw3uKs1uqsfU/+wnBRW85yneYIklhECmmIkFFHFTVYiNGqkWIiQ/sJD/+w40+TSyZXFYwc89iACsnxg//B727N0tSkmxROAD0vtv0xCgR3gVbDtr+Pbbt1AvifgSut499oAjOfpDc6WvQIGNgGLq47mrwHXO4AQ0+6ZEiO5KcplErA+xl9UwEYvAVCq25v7X2cPgA56mrpBjg4BMbKlL3m8e7e7t7+PdPu7wdhVHKgRoo0GwAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+cKBA8WIsDjvWIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAJklEQVQoz2P8z/CfARtgZGDEKs7EQCIY1UAMYMQlgSt+RoOVJhoAKAMEHdElw9AAAAAASUVORK5CYII=";
-assetDIV.appendChild(ErrorImage);
+const errorImage = document.createElement("img");
+errorImage.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV/TSqVUHewg4pChOlkQLeIoVSyChdJWaNXB5NIvaGJIUlwcBdeCgx+LVQcXZ10dXAVB8APE1cVJ0UVK/F9SaBHjwXE/3t173L0DhGaNqWZgAlA1y8gkE2K+sCIGXxFCAP2Iwy8xU09lF3LwHF/38PH1LsazvM/9OfqUoskAn0g8y3TDIl4nnt60dM77xBFWkRTic+Jxgy5I/Mh12eU3zmWHBZ4ZMXKZOeIIsVjuYrmLWcVQiePEUUXVKF/Iu6xw3uKs1uqsfU/+wnBRW85yneYIklhECmmIkFFHFTVYiNGqkWIiQ/sJD/+w40+TSyZXFYwc89iACsnxg//B727N0tSkmxROAD0vtv0xCgR3gVbDtr+Pbbt1AvifgSut499oAjOfpDc6WvQIGNgGLq47mrwHXO4AQ0+6ZEiO5KcplErA+xl9UwEYvAVCq25v7X2cPgA56mrpBjg4BMbKlL3m8e7e7t7+PdPu7wdhVHKgRoo0GwAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+cKBA8WIsDjvWIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAJklEQVQoz2P8z/CfARtgZGDEKs7EQCIY1UAMYMQlgSt+RoOVJhoAKAMEHdElw9AAAAAASUVORK5CYII=";
+assetDIV.appendChild(errorImage);
 
 export function loadAssets(){
 	if(document.querySelectorAll("div#assets").length == 0){
@@ -18,21 +18,21 @@ export function loadAssets(){
 export function draw(
 	imgSource="",
 
-	DestinationXPos=0, DestinationYPos=0,
-	DestinationWidth=0, DestinationHeight=0,
+	destinationXPos=0, destinationYPos=0,
+	destinationWidth=0, destinationHeight=0,
 
-	CropXPos=-1, CropYPos=-1,
-	CropWidth=-1, CropHeight=-1,
+	cropXPos=-1, cropYPos=-1,
+	cropWidth=-1, cropHeight=-1,
 	
 	filters={
 		alpha: 1,
 		brightness: 1,
 		pixelated: false
 	},
-	drawDestination=new HTMLCanvasElement
+	canvas=new HTMLCanvasElement
 ){
 
-	let context = drawDestination.getContext("2d");
+	let context = canvas.getContext("2d");
 	context.globalAlpha = 1;
 	context.globalAlpha = filters?.alpha;
 
@@ -41,56 +41,56 @@ export function draw(
 		context.mozImageSmoothingEnabled = false;
 		context.webkitImageSmoothingEnabled = false;
 		context.imageSmoothingEnabled = false;
-		DestinationXPos = Math.floor(DestinationXPos);
-		DestinationYPos = Math.floor(DestinationYPos);
-		DestinationWidth = Math.floor(DestinationWidth);
-		DestinationHeight = Math.floor(DestinationHeight);
+		destinationXPos = Math.floor(destinationXPos);
+		destinationYPos = Math.floor(destinationYPos);
+		destinationWidth = Math.floor(destinationWidth);
+		destinationHeight = Math.floor(destinationHeight);
 	}
 
 	context.save();
-	if(DestinationWidth < 0){
-		DestinationWidth = Math.abs(DestinationWidth);
+	if(destinationWidth < 0){
+		destinationWidth *= -1;
 		context.scale(-1, 1);
 		context.translate(
-			0 - drawDestination.width,
+			0 - canvas.width,
 			0
 		);
-		DestinationXPos = drawDestination.width - DestinationXPos;
+		destinationXPos = canvas.width - destinationXPos;
 	}
 
-	if(CropXPos == -1) CropXPos = 0;
-	if(CropYPos == -1) CropYPos = 0;
+	if(cropXPos == -1) cropXPos = 0;
+	if(cropYPos == -1) cropYPos = 0;
 
-	if(CropWidth == -1) CropWidth = undefined;
-	if(CropHeight == -1) CropHeight = undefined;
+	if(cropWidth == -1) cropWidth = undefined;
+	if(cropHeight == -1) cropHeight = undefined;
 
 	try {
-		if(CropWidth && CropHeight){
+		if(cropWidth && cropHeight){
 			context.drawImage(
 				cacheImage(imgSource),
 	
-				CropXPos || 0, CropYPos || 0,
-				CropWidth, CropHeight,
+				cropXPos || 0, cropYPos || 0,
+				cropWidth, cropHeight,
 	
-				DestinationXPos, DestinationYPos,
-				DestinationWidth, DestinationHeight,
+				destinationXPos, destinationYPos,
+				destinationWidth, destinationHeight,
 			);
 		}else{
 			context.drawImage(
 				cacheImage(imgSource),
 	
-				DestinationXPos, DestinationYPos,
-				DestinationWidth, DestinationHeight,
+				destinationXPos, destinationYPos,
+				destinationWidth, destinationHeight,
 			);
 		}
 	}catch {
 		context.drawImage(
-			ErrorImage,
+			errorImage,
 
 			0, 0, 16, 16,
 
-			Math.floor(DestinationXPos), Math.floor(DestinationYPos),
-			Math.floor(DestinationWidth), Math.floor(DestinationHeight),
+			Math.floor(destinationXPos), Math.floor(destinationYPos),
+			Math.floor(destinationWidth), Math.floor(destinationHeight),
 		);
 	}
 	context.restore();
@@ -98,6 +98,8 @@ export function draw(
 }
 
 export function cacheImage(imgSource=""){
+	if (imgSource == "") imgSource = errorImage.src;
+	else if (imgSource.endsWith("/")) imgSource = errorImage.src;
 	let loadedImage = document.querySelector(`div#assets>img[src="${imgSource}"]`);
 	if(loadedImage == null){
 		let newlyLoadedImage = document.createElement("img");

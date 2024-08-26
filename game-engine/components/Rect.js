@@ -1,17 +1,21 @@
-import { Component, Point4, engine } from "../utils.js";
+import { Component, Point2, Point4, engine } from "../utils.js";
 
 export class Rect extends Component {
 	display = new Point4(0, 0, 100, 100);
 	displayOffset = new Point4(0, 0, 100, 100);
 	colour = "purple";
+	setColour(colour="") { this.colour = colour; return this; }
 	outline = { colour: "black", size: 0 };
 	radius = 0;
+	setBorderRadius(radius=this.radius) { this.radius = radius; return this; }
 	fixedPosition = false;
 	cameraTracking = false;
 
 	getType(){ return "Rect"; }
 
-	render(context=new CanvasRenderingContext2D, defaultOffset={x:0,y:0}){
+	render(context=new CanvasRenderingContext2D, defaultOffset=new Point2){
+		
+		if (!this.visibility) return this;
 
 		let offset = { x: 0, y: 0 };
 
@@ -29,8 +33,6 @@ export class Rect extends Component {
 		if(!this.fixedPosition) {
 			offset.x -= engine.camera.position.x;
 			offset.y -= engine.camera.position.y;
-			offset.x += engine.canvas.width / 2;
-			offset.y += engine.canvas.height / 2;
 		}
 
 		this.displayOffset.x = this.display.x + offset.x;
@@ -46,11 +48,16 @@ export class Rect extends Component {
 			this.displayOffset.h = Math.floor(this.displayOffset.h);
 		}
 
-		if(this.displayOffset.x > engine.canvas.width) return;
-		if(this.displayOffset.y > engine.canvas.height) return;
-		if(this.displayOffset.x + this.display.w < 0) return;
-		if(this.displayOffset.y + this.display.h < 0) return;
-
+		context.save();
+		if (!this.fixedPosition) {
+			if (engine.isPixelArt || this.isPixelArt) {
+				context.translate(Math.round(engine.canvas.width / 2), Math.round(engine.canvas.height / 2));
+				context.scale(Math.round(engine.camera.zoom), Math.round(engine.camera.zoom));
+			} else {
+				context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
+				context.scale(engine.camera.zoom, engine.camera.zoom);
+			}
+		}
 		context.beginPath();
 		context.fillStyle = this.colour;
 		context.strokeStyle = this.outline.colour;
@@ -65,5 +72,6 @@ export class Rect extends Component {
 		context.fill();
 		if(this.outline.size > 0) context.stroke();
 		context.closePath();
+		context.restore();
 	}
 }

@@ -38,7 +38,9 @@ export class Path extends Component {
 
 	getType(){ return "Path"; }
 
-	render(context=new CanvasRenderingContext2D, defaultOffset={x:0,y:0}){
+	render(context=new CanvasRenderingContext2D, defaultOffset=new Point2){
+		
+		if (!this.visibility) return this;
 
 		let offset = { x: 0, y: 0 };
 
@@ -56,8 +58,6 @@ export class Path extends Component {
 		if(!this.fixedPosition) {
 			offset.x -= engine.camera.position.x;
 			offset.y -= engine.camera.position.y;
-			offset.x += engine.canvas.width / 2;
-			offset.y += engine.canvas.height / 2;
 		}
 
 		this.displayOffset.x = this.display.x + offset.x;
@@ -71,6 +71,10 @@ export class Path extends Component {
 
 
 		context.save();
+		if (!this.fixedPosition) {
+			context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
+			context.scale(engine.camera.zoom, engine.camera.zoom);
+		}
 		context.beginPath();
 		
 		context.fillStyle = this.colour;
