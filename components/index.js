@@ -14,10 +14,7 @@ async function reloadTemplateElements(){
 		let html = "";
 
 		if(importPath in cachedPages) {
-			let template = iframe.contentWindow.document.querySelector(`template#${id}`) || document.createElement("template");
-			template = template.content.cloneNode(true);
-			replaceMe.replaceWith(template);
-			document.body.removeChild(iframe);
+			html = cachedPages[importPath];
 		} else {
 			let response = await fetch(importPath);
 			html = await response.text();
