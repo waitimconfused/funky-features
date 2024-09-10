@@ -9,8 +9,7 @@ for (let key in sessionStorage) {
 	cachedTemplates[key.replace(/^template\./, "")] = value;
 }
 
-reloadTemplateElements();
-async function reloadTemplateElements(){
+export async function reloadTemplateElements(){
 	let templateElements = document.querySelectorAll("template[from]");
 
 	for(let index = 0; index < templateElements.length; index ++){
@@ -42,7 +41,7 @@ async function reloadTemplateElements(){
 			let response = await fetch(importPath);
 			html = await response.text();
 		}
-
+		
 		loadTemplateElement(replaceMe, html, importPath, id);
 
 		cachedPages[importPath] = html;

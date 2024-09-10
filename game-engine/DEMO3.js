@@ -27,7 +27,7 @@ const colours = {
 };
 
 engine.setBackground(colours.background);
-engine.disableZoom();
+// engine.camera.disableZoom();
 
 var mapBackgroundPadding = 40;
 var mapBackground = new components.Rect();

@@ -8,7 +8,7 @@ let worldData = [
 	["blue", "red", "green"],
 ]
 
-engine.disableZoom();
+engine.camera.disableZoom();
 engine.isPixelArt = true;
 engine.setBackground("white");
 engine.setIcon("./DEMO_assets/sit.png");

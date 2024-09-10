@@ -1,12 +1,17 @@
-import * as Ast from "./Asterisk/index.js";
-import * as fs from "node:fs";
-import * as path from "node:path";
+// import * as Ast from "./Asterisk/index.js";
+// import * as fs from "node:fs";
+// import * as path from "node:path";
+
+const Ast = require("asterisk-server");
+const fs = require("fs");
+const path = require("path");
+
+Ast.serverside.open
 
 Ast.clearLogs();
 Ast.serverside.open(1201);
-Ast.message.disable();
 Ast.files.regester404("./404.html");
-Ast.serverside.api.lock();
+Ast.api.lock();
 
 function mkdir(dir=""){
 	if(!fs.existsSync(dir)) fs.mkdirSync(dir);
@@ -21,7 +26,9 @@ function writeFile(file="", content=""){
 Ast.api.createEndpoint(function(dataIn, IP){
 	let fileName = dataIn.title.replace(/\.py$/, "");
 	writeFile(`./plugins/compiled/${fileName}.js`, dataIn.content);
-	return {status: 200};
+	return {
+		status: 200
+	};
 }, "/plugin/save");
 
 var faker_banker = {}
@@ -99,3 +106,36 @@ Ast.api.createEndpoint(function(dataIn, IP){
 
 	return {status: 200};
 }, "/faker_banker/trade");
+
+
+var players = [];
+
+Ast.api.createEndpoint((data) => {
+	let clientPlayer;
+	let crowd = [];
+	if (data.hash != "NEW") {
+		clientPlayer = players[data.hash];
+		clientPlayer.x = data.x;
+		clientPlayer.y = data.y;
+	} else {
+		let hash = "";
+		for (let i = 0; i < 5; i ++) {
+			hash += Math.floor(Math.random() * 10);
+		}
+		clientPlayer = {
+			hash,
+			x: 0, y: 0,
+			animation: "idle",
+		}
+	}
+
+	console.log(data);
+
+	players[clientPlayer.hash] = clientPlayer;
+
+	return  {
+		status: 200,
+		hash: clientPlayer.hash,
+		crowd: []
+	}
+}, "/game-engine/online");

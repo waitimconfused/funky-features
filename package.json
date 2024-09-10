@@ -1,6 +1,8 @@
 {
-	"type": "module",
 	"scripts": {
 		"serve": "node local.ast.js"
+	},
+	"dependencies": {
+		"asterisk-server": "^1.0.6"
 	}
 }

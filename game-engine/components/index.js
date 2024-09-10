@@ -110,7 +110,6 @@ export class ComponentGroup extends Component {
 
 export { Rect } from "./Rect.js";
 export { Circle } from "./Circle.js";
-export { Polygon } from "./Polygon.js";
 export { Image } from "./Image.js";
 export { Text } from "./Text.js";
 export { Path } from "./Path.js";

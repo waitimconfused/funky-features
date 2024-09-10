@@ -133,6 +133,32 @@ export var mouse = new class Mouse {
 	click_l = false;
 	click_r = false;
 
+	#hooks = [];
+
+	/**
+	 * 
+	 * @param { object } options 
+	 * @param { function } options.updateFunc
+	 */
+	addHook(options) {
+		if (typeof options?.updateFunc != "function") options.updateFunc = new Function;
+		let hook = new MouseHook({
+			x: this.position.x,
+			y: this.position.y,
+			...options
+		});
+		this.#hooks.push(hook);
+		return hook;
+	}
+	updateHooks() {
+		for (let i = 0; i < this.#hooks.length; i ++) {
+			let hook = this.#hooks[i];
+			hook.x = this.position.x;
+			hook.y = this.position.y;
+			hook.updateFunc();
+		}
+	}
+
 	touchDisabled = false;
 
 	disableTouch(){
@@ -157,6 +183,22 @@ export var mouse = new class Mouse {
 		},
 	};
 };
+class MouseHook {
+	x = 0;
+	y = 0;
+
+	/**
+	 * 
+	 * @param { object} options
+	 * @param { function } options.
+	 */
+	constructor(options) {
+		for (let key in options) {
+			if (["x", "y"].includes(key)) continue;
+			this[key] = options[key];
+		}
+	}
+}
 
 window.onfocus = (e) => {
 	keyboard.list = [];
@@ -181,6 +223,7 @@ window.onkeyup = (e) => {
 
 window.onmousedown = (e) => {
 	mouse.click_l = true;
+	mouse.updateHooks();
 }
 window.onmouseup = (e) => {
 	mouse.click_l = false;
@@ -189,8 +232,10 @@ window.onmouseup = (e) => {
 window.oncontextmenu = (e) => {
 	e.preventDefault();
 	mouse.click_r = true;
+	mouse.updateHooks();
 }
 window.onmousemove = (e) => {
 	mouse.position.x = e.clientX;
 	mouse.position.y = e.clientY;
+	mouse.updateHooks();
 }

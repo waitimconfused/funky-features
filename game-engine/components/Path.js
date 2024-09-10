@@ -18,11 +18,31 @@ export class Path extends Component {
 	}
 
 	pen = {
-		moveTo: (x=0, y=0) => {
+		/**
+		 * 
+		 * @param { number | Point2 } x
+		 * @param { number | undefined } y
+		 */
+		moveTo: (x, y) => {
+			if (typeof x == "object") {
+				if (typeof x?.x != "number" || typeof x?.x != "number") throw new Error;
+				y = x.y;
+				x = x.x;
+			}
 			this.path += `M ${x},${y} `;
 			return this.pen;
 		},
-		lineTo: (x=0, y=0) => {
+		/**
+		 * 
+		 * @param { number | Point2 } x
+		 * @param { number | undefined } y
+		 */
+		lineTo: (x, y) => {
+			if (typeof x == "object") {
+				if (typeof x?.x != "number" || typeof x?.x != "number") throw new Error;
+				y = x.y;
+				x = x.x;
+			}
 			this.path += `L ${x},${y} `;
 			return this.pen;
 		},
@@ -39,6 +59,9 @@ export class Path extends Component {
 	getType(){ return "Path"; }
 
 	render(context=new CanvasRenderingContext2D, defaultOffset=new Point2){
+
+		if (this.colour == "none") this.colour = "transparent";
+		if (this.colour == null) this.colour = "transparent";
 		
 		if (!this.visibility) return this;
 

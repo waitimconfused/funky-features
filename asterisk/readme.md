@@ -1,4 +1,6 @@
-# Asterisk
+# Asterisk Server
+
+[NPM: asterisk-server](https://www.npmjs.com/package/asterisk-server)
 
 ## Description
 
@@ -9,10 +11,6 @@ Using no external Node modules, only bult in NodeJS functions.
 Meaning, no dependencies with a small size
 
 ## Documentation
-
-This documentation uses the following import(s)
-
-` import * as Ast from "./Asterisk/index.js"; `
 
 ### `Ast.serverside.open(PORT);`
 

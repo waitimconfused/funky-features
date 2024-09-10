@@ -4,7 +4,45 @@ import * as toolbelt from "../toolbelt/toolbelt.js";
 
 engine.setBackground("black");
 engine.setIcon("./DEMO_assets/sit.png");
-engine.disableZoom();
+engine.camera.disableZoom();
+
+var myRectange = new components.Rect;
+
+myRectange.colour = "red";
+myRectange.moveTo(0, 0);
+myRectange.setSize(100, 100);
+
+engine.addObject(myRectange);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class DialogueBubble {
 	icon = new components.Image;

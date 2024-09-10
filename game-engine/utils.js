@@ -1,10 +1,23 @@
-import { image } from "../toolbelt/toolbelt.js";
+import { image, mouse, toRange } from "../toolbelt/toolbelt.js";
 import { Point2, Point3, Point4 } from "./points.js";
 export { Point2, Point3, Point4 };
 
 export class Camera {
 	position = new Point2(0, 0);
+
 	zoom = 1;
+
+	minZoom = 0;
+	maxZoom = 999;
+
+	wheelZoomMultiplier = 0.01;
+	keyZoomMultiplier = 0.1;
+
+	constructor() {
+		window.addEventListener("gesturestart", this.#preventDefaultEvent, {passive: false});
+		window.addEventListener("gesturechange", this.#preventDefaultEvent, {passive: false});
+		window.addEventListener("gestureend", this.#preventDefaultEvent, {passive: false});
+	}
 
 	moveBy(x=0, y=0) {
 		this.position.x += x;
@@ -16,6 +29,56 @@ export class Camera {
 		this.position.y = y;
 	}
 
+	/**
+	 * 
+	 * @param { WheelEvent | KeyboardEvent } e
+	 */
+	#customZoomEvent = (e) => {
+
+		if (e instanceof WheelEvent) {
+			if (e.ctrlKey) {
+				if (e.target != engine.canvas) return;
+				e.preventDefault();
+				this.zoom -= e.deltaY * this.wheelZoomMultiplier;
+				this.zoom = toRange(this.minZoom, this.zoom, this.maxZoom);
+			} else {
+				if (e.target != engine.canvas) return;
+				e.preventDefault();
+				this.moveBy(e.deltaX/this.zoom, e.deltaY/this.zoom);
+			}
+		} else if (e instanceof KeyboardEvent) {
+			if (!e.ctrlKey) return;
+			let scale = 0;
+			if (["+","="].includes(e.key)) scale += 1;
+			if (["-","_"].includes(e.key)) scale -= 1;
+			if (scale) e.preventDefault(); else return;
+			this.zoom += scale * this.keyZoomMultiplier;
+			this.zoom = toRange(this.minZoom, this.zoom, this.maxZoom);
+		}
+	
+	}
+	/**
+	 * 
+	 * @param { MouseEvent | WheelEvent | KeyboardEvent } e
+	 */
+	#preventDefaultEvent = (e) => {
+		if(e.ctrlKey && ["+","-","=","_"].includes(e.key)) e.preventDefault();
+		if(e.target == engine.canvas) e.preventDefault();
+	}
+
+	disableZoom() {
+		window.removeEventListener("wheel", this.#customZoomEvent);
+		window.addEventListener("wheel", this.#preventDefaultEvent, {passive: false});
+		window.removeEventListener("keydown", this.#customZoomEvent);
+		window.addEventListener("keydown", this.#preventDefaultEvent);
+	}
+	enableZoom() {
+		window.removeEventListener("wheel", this.#preventDefaultEvent, );
+		window.addEventListener("wheel", this.#customZoomEvent, {passive: false});
+		window.removeEventListener("keydown", this.#preventDefaultEvent);
+		window.addEventListener("keydown", this.#customZoomEvent);
+	}
+
 	script() {}
 
 	update() {
@@ -25,6 +88,17 @@ export class Camera {
 
 export class EngineClass {
 	camera = new Camera;
+
+	mouse = mouse.addHook({
+		toWorld: () => {
+			return {
+				x: (mouse.position.relative(this.canvas).x - this.canvas.width/2) / engine.camera.zoom + this.camera.position.x,
+				y: (mouse.position.relative(this.canvas).y - this.canvas.height/2) / engine.camera.zoom + this.camera.position.y
+			}
+		},
+		updateFunc: () => {
+		}
+	});
 
 	canvas = document.createElement("canvas");
 	setSize(width=this.canvas.width, height=this.canvas.height) {
@@ -85,6 +159,7 @@ export class EngineClass {
 		window.addEventListener("resize", () => {
 			if (this.fullscreen) this.#resizeCanvas();
 		});
+		this.camera.enableZoom();
 		if (this.fullscreen) this.#resizeCanvas();
 		this.tick();
 	}
@@ -120,22 +195,6 @@ export class EngineClass {
 		let indexOfComponent = this.componentHashes.indexOf(component.hash);
 		this.componentHashes.splice(indexOfComponent, 1);
 		delete this.components[component.hash];
-	}
-
-	#disableWheelZoomFunction = (e=new WheelEvent) => {
-		if(e.target == this.canvas) e.preventDefault();
-	}
-	#disableKeyboardZoomFunction = (e=new KeyboardEvent) => {
-		if(e.ctrlKey && ["+","-","=","_"].includes(e.key)) e.preventDefault();
-	}
-
-	disableZoom() {
-		window.addEventListener('wheel', this.#disableWheelZoomFunction, {passive: false});
-		window.addEventListener('keydown', this.#disableKeyboardZoomFunction, {passive: false});
-	}
-	enableZoom() {
-		window.removeEventListener("wheel", this.#disableWheelZoomFunction);
-		window.removeEventListener('keydown', this.#disableKeyboardZoomFunction);
 	}
 
 	setBackground(colour="") {
@@ -285,6 +344,8 @@ var animations = [];
 export class Animation {
 	playback = "loop";
 
+	onchange = () => {};
+
 	animations = [];
 	fps = 1;
 
@@ -335,6 +396,7 @@ export class Animation {
 				frameNumber = maxFrameNumber;
 				if (this.playState == "play") {
 					this.playState = "stop";
+					this.onchange();
 					this.onfinish();
 					return this.currentFrame();
 				}
@@ -349,6 +411,7 @@ export class Animation {
 		if (this.playState == "stop") this.#startingTimestamp = performance.now();
 		this.playState = "play";
 		if (this.currentFrameData.length == 1) this.playState = "pause";
+		this.onchange();
 		return this;
 	}
 
@@ -359,16 +422,19 @@ export class Animation {
 		this.#startingTimestamp = performance.now();
 		this.playState = "play";
 		if (this.currentFrameData.length == 1) this.playState = "pause";
+		this.onchange();
 		return this;
 	}
 
 	pause() {
 		this.playState = "pause";
+		this.onchange();
 		return this;
 	}
 
 	stop() {
 		this.playState = "stop";
+		this.onchange();
 		return this;
 	}
 

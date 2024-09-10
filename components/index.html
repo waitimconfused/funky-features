@@ -7,6 +7,10 @@
 </head>
 <body>
 	<template from="./dummy.html" id="dummy"></template>
-	<script src="./index.js"></script>
+	<!-- <script src="./index.js"></script> -->
+	<script type="module">
+		import { reloadTemplateElements } from "./index-async.js";
+		reloadTemplateElements();
+	</script>
 </body>
 </html>
