@@ -1,4 +1,5 @@
 import { Component, Point2, engine } from "../utils.js";
+import { Rect } from "./Rect.js";
 
 export class ComponentGroup extends Component {
 
@@ -67,31 +68,30 @@ export class ComponentGroup extends Component {
 		return this;
 	}
 
-	render(context=new CanvasRenderingContext2D, defaultOffset=new Point2) {
+	/**
+	 * 
+	 * @param {CanvasRenderingContext2D} context 
+	 * @param {Point2 | {x:number, y:number}} defaultOffset 
+	 * @returns 
+	 */
+	render(context, defaultOffset) {
 		
 		if (!this.visibility) return this;
 
 		let offset = { x: 0, y: 0 };
 
-		offset.x += defaultOffset.x;
-		offset.y += defaultOffset.y;
+		offset.x += defaultOffset?.x || 0;
+		offset.y += defaultOffset?.y || 0;
 
 		if(this.cameraTracking) {
 			engine.camera.moveTo(this.display.x, this.display.y);
 			this.fixedPosition = false;
 		}
 
-		if(!this.fixedPosition) {
-			offset.x -= engine.camera.position.x;
-			offset.y -= engine.camera.position.y;
-			offset.x += engine.canvas.width / 2;
-			offset.y += engine.canvas.height / 2;
-		}
-
 		this.displayOffset.x = this.display.x + offset.x;
 		this.displayOffset.y = this.display.y + offset.y;
 
-		if(engine.isPixelArt){
+		if(this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)){
 			this.displayOffset.x = Math.floor(this.displayOffset.x);
 			this.displayOffset.y = Math.floor(this.displayOffset.y);
 			this.displayOffset.x = Math.floor(this.displayOffset.x);
@@ -102,7 +102,7 @@ export class ComponentGroup extends Component {
 			let hash = this.componentHashes[i];
 			let component = this.components[hash];
 			component.script(component);
-			component.render(context, this.display);
+			component.render(context, this.displayOffset);
 		}
 	}
 }

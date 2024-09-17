@@ -5,7 +5,7 @@ import { Component, Animation, engine, Point2, Point4 } from "../utils.js";
 export class Image extends Component {
 	crop = new Point4(0, 0);
 	colour = "white";
-	isPixelArt = false;
+	opacity = 1;
 	/**
 	 * @type { String | Animation }
 	 */
@@ -86,9 +86,13 @@ export class Image extends Component {
 
 		context.save();
 		if (!this.fixedPosition) {
-			if (engine.isPixelArt || this.isPixelArt) {
-				context.translate(Math.round(engine.canvas.width / 2), Math.round(engine.canvas.height / 2));
-				context.scale(Math.round(engine.camera.zoom), Math.round(engine.camera.zoom));
+			if (this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)) {
+				context.translate(Math.floor(engine.canvas.width / 2), Math.floor(engine.canvas.height / 2));
+				context.scale(Math.floor(engine.camera.zoom), Math.floor(engine.camera.zoom));
+				destinationX = Math.floor(destinationX);
+				destinationY = Math.floor(destinationY);
+				destinationW = Math.floor(destinationW);
+				destinationH = Math.floor(destinationH);
 			} else {
 				context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
 				context.scale(engine.camera.zoom, engine.camera.zoom);
@@ -100,37 +104,26 @@ export class Image extends Component {
 			context.fillRect(destinationX, destinationY, destinationW, destinationH);
 		}
 
+		let filters = {
+			pixelated: (this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)),
+			alpha: this.opacity,
+		};
+
 		if (this.source != "Image-Animation") {
 			drawImage(
 				this.source,
-	
-				destinationX,
-				destinationY,
-				destinationW,
-				destinationH,
-	
-				this.crop.x,
-				this.crop.y,
-				this.crop.w,
-				this.crop.h,
-
-				{ pixelated: engine.isPixelArt || this.isPixelArt }, engine.canvas
+				destinationX, destinationY, destinationW, destinationH,
+				this.crop.x, this.crop.y, this.crop.w, this.crop.h,
+				filters,
+				engine.canvas
 			);
 		} else {
+			let currentFrame = this.animation.currentFrame()
 			drawImage(
-				this.animation.currentFrame().source,
-	
-				destinationX,
-				destinationY,
-				destinationW,
-				destinationH,
-	
-				this.animation.currentFrame().x,
-				this.animation.currentFrame().y,
-				this.animation.currentFrame().width,
-				this.animation.currentFrame().height,
-
-				{ pixelated: engine.isPixelArt || this.isPixelArt }, engine.canvas
+				currentFrame.source,
+				destinationX, destinationY, destinationW, destinationH,
+				currentFrame.x, currentFrame.y, currentFrame.width, currentFrame.height,
+				filters, engine.canvas
 			);
 		}
 

@@ -6,7 +6,6 @@ export class Path extends Component {
 	radius = 100;
 	colour = "purple";
 	outline = { colour: "black", size: 0, lineCap: "round" };
-	fixedPosition = false;
 	cameraTracking = false;
 	smooth = false;
 	rotation = 0;
@@ -86,7 +85,7 @@ export class Path extends Component {
 		this.displayOffset.x = this.display.x + offset.x;
 		this.displayOffset.y = this.display.y + offset.y;
 
-		if(engine.isPixelArt){
+		if(this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)){
 			this.displayOffset.x = Math.floor(this.displayOffset.x);
 			this.displayOffset.y = Math.floor(this.displayOffset.y);
 			this.displayOffset.x = Math.floor(this.displayOffset.x);

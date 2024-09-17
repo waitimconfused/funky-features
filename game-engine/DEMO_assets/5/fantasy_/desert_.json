@@ -3,6 +3,15 @@
 	"fps": 7,
 
 	"animations": {
+		"": [
+			{
+				"source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC",
+				"x": 0,
+				"y": 0,
+				"width": 16,
+				"height": 16
+			}
+		],
 		"error": [
 			{
 				"source": "",
@@ -55,9 +64,9 @@
 		"resources:cactus[size=medium]": [
 			{
 				"source": "./desert_/desert_[resources].png",
-				"x": 34,
+				"x": 50,
 				"y": 27,
-				"width": 11,
+				"width": 13,
 				"height": 17
 			}
 		],
@@ -118,7 +127,7 @@
 		"resources:gold": [
 			{
 				"source": "./desert_/desert_[resources].png",
-				"x": 96,
+				"x": 98,
 				"y": 48,
 				"width": 12,
 				"height": 13
@@ -136,7 +145,7 @@
 		"resources:diamond": [
 			{
 				"source": "./desert_/desert_[resources].png",
-				"x": 96,
+				"x": 98,
 				"y": 64,
 				"width": 12,
 				"height": 13
@@ -154,7 +163,7 @@
 		"resources:chest[size=1,open]": [
 			{
 				"source": "./desert_/desert_[resources].png",
-				"x": 17,
+				"x": 33,
 				"y": 88,
 				"width": 14,
 				"height": 21
@@ -163,10 +172,10 @@
 		"resources:chest[size=2]": [
 			{
 				"source": "./desert_/desert_[resources].png",
-				"x": 83,
-				"y": 85,
+				"x": 51,
+				"y": 92,
 				"width": 26,
-				"height": 24
+				"height": 17
 			}
 		],
 		"resources:chest[size=2,open]": [
@@ -263,7 +272,7 @@
 			}
 		],
 
-		":hill[top,left]": [
+		"resources:hill[top,left]": [
 			{
 				"source": "./desert_/desert_.png",
 				"x": 16,
@@ -272,7 +281,7 @@
 				"height": 16
 			}
 		],
-		":hill[top]": [
+		"resources:hill[top]": [
 			{
 				"source": "./desert_/desert_.png",
 				"x": 32,
@@ -281,7 +290,7 @@
 				"height": 16
 			}
 		],
-		":hill[top,path_part=left]": [
+		"resources:hill[top,path_part=left]": [
 			{
 				"source": "./desert_/desert_.png",
 				"x": 48,
@@ -290,7 +299,7 @@
 				"height": 16
 			}
 		],
-		":hill[top,path_part=right]": [
+		"resources:hill[top,path_part=right]": [
 			{
 				"source": "./desert_/desert_.png",
 				"x": 64,
@@ -299,7 +308,7 @@
 				"height": 16
 			}
 		],
-		":hill[top,right]": [
+		"resources:hill[top,right]": [
 			{
 				"source": "./desert_/desert_.png",
 				"x": 80,
@@ -308,7 +317,7 @@
 				"height": 16
 			}
 		],
-		":hill[center,left]": [
+		"resources:hill[center,left]": [
 			{
 				"source": "./desert_/desert_.png",
 				"x": 16,
@@ -317,7 +326,7 @@
 				"height": 16
 			}
 		],
-		":hill[center,center]": [
+		"resources:hill[center]": [
 			{
 				"source": "./desert_/desert_.png",
 				"x": 32,
@@ -326,7 +335,7 @@
 				"height": 16
 			}
 		],
-		":hill[center,right]": [
+		"resources:hill[center,right]": [
 			{
 				"source": "./desert_/desert_.png",
 				"x": 80,

@@ -6,7 +6,6 @@ export * as canvas from "./lib/canvas.js";
 
 export function toRange(min=0, value=0.5, max=1) {
 	return Math.max( Math.min(value, max), min );
-
 }
 export function isInRange(min=0, value=0.5, max=1) {
 	return value >= min && value <= max;
@@ -16,7 +15,19 @@ export function roundToNearest(number=3.14, nearest=1) {
 	return Math.round(number / nearest) * nearest;
 }
 
-class Vector {
+export function floorToNearest(number=3.14, nearest=1) {
+	return Math.floor(number / nearest) * nearest;
+}
+
+export function ceilToNearest(number=3.14, nearest=1) {
+	return Math.ceil(number / nearest) * nearest;
+}
+
+export function randomInRange(min, max) {
+	return Math.random() * (max - min + 1) + min;
+}
+
+export class Vector {
 	deg = 90;
 	rad = 90 * (Math.PI/180);
 	mag = 1;
@@ -45,8 +56,8 @@ class Vector {
 	 * @param { "deg" | "rad" } mode
 	 */
 	setAngle(angle, mode) {
-		if (!angle) angle = 0;
-		if (!mode) mode = "deg";
+		angle = angle ?? 0;
+		angle = angle ?? "deg";
 
 		if (mode == "deg") {
 			angle %= 360;
@@ -68,11 +79,11 @@ class Vector {
 	 * @param { number } y
 	 */
 	setPos(x, y) {
-		if (!x) x = 0;
-		if (!y) y = 1;
+		x = x ?? 0;
+		y = y ?? 0;
 
-		let radian = Math.atan(y / x);
-		this.setAngle(radian);
+		let radian = Math.atan(y / x) + Math.PI * (x < 0);
+		this.setAngle(radian, "rad");
 
 		this.mag = Math.hypot(x, y);
 

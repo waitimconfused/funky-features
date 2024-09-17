@@ -8,7 +8,6 @@ export class Rect extends Component {
 	outline = { colour: "black", size: 0 };
 	radius = 0;
 	setBorderRadius(radius=this.radius) { this.radius = radius; return this; }
-	fixedPosition = false;
 	cameraTracking = false;
 
 	getType(){ return "Rect"; }
@@ -18,6 +17,8 @@ export class Rect extends Component {
 		if (!this.visibility) return this;
 
 		let offset = { x: 0, y: 0 };
+
+		if(["", "none"].includes(this.colour)) this.colour = "transparent";
 
 		offset.x += defaultOffset.x;
 		offset.y += defaultOffset.y;
@@ -40,7 +41,7 @@ export class Rect extends Component {
 		this.displayOffset.w = this.display.w;
 		this.displayOffset.h = this.display.h;
 
-		if(engine.isPixelArt){
+		if(this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)){
 			this.displayOffset.x = Math.floor(this.displayOffset.x);
 			this.displayOffset.y = Math.floor(this.displayOffset.y);
 			this.displayOffset.x = Math.floor(this.displayOffset.x);
@@ -50,7 +51,7 @@ export class Rect extends Component {
 
 		context.save();
 		if (!this.fixedPosition) {
-			if (engine.isPixelArt || this.isPixelArt) {
+			if (this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)) {
 				context.translate(Math.round(engine.canvas.width / 2), Math.round(engine.canvas.height / 2));
 				context.scale(Math.round(engine.camera.zoom), Math.round(engine.camera.zoom));
 			} else {

@@ -15,28 +15,32 @@ export function loadAssets(){
 	return document.querySelector("div#assets");
 }
 
+/**
+ * 
+ * @param {string} imgSource 
+ * @param {number} destinationXPos 
+ * @param {number} destinationYPos 
+ * @param {number} destinationWidth 
+ * @param {number} destinationHeight 
+ * @param {number} cropXPos 
+ * @param {number} cropYPos 
+ * @param {number} cropWidth 
+ * @param {number} cropHeight 
+ * @param { { pixelated: boolean, alpha: number } } filters 
+ * @param {HTMLCanvasElement} canvas 
+ */
 export function draw(
 	imgSource="",
-
-	destinationXPos=0, destinationYPos=0,
-	destinationWidth=0, destinationHeight=0,
-
-	cropXPos=-1, cropYPos=-1,
-	cropWidth=-1, cropHeight=-1,
-	
-	filters={
-		alpha: 1,
-		brightness: 1,
-		pixelated: false
-	},
-	canvas=new HTMLCanvasElement
+	destinationXPos, destinationYPos, destinationWidth, destinationHeight,
+	cropXPos, cropYPos, cropWidth, cropHeight,
+	filters, canvas
 ){
 
 	let context = canvas.getContext("2d");
 	context.globalAlpha = 1;
-	context.globalAlpha = filters?.alpha;
+	context.globalAlpha = filters.alpha ?? 1;
 
-	if(filters.pixelated){
+	if(filters.pixelated ?? false){
 		context.msImageSmoothingEnabled = false;
 		context.mozImageSmoothingEnabled = false;
 		context.webkitImageSmoothingEnabled = false;

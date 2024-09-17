@@ -6,7 +6,6 @@ export class Circle extends Component {
 	radius = 100;
 	colour = "purple";
 	outline = { colour: "black", size: 0 };
-	fixedPosition = false;
 	cameraTracking = false;
 
 	getType(){ return "Circle"; }
@@ -43,7 +42,7 @@ export class Circle extends Component {
 		
 		context.save();
 		if (!this.fixedPosition) {
-			if (engine.isPixelArt || this.isPixelArt) {
+			if (this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)) {
 				context.translate(Math.round(engine.canvas.width / 2), Math.round(engine.canvas.height / 2));
 				context.scale(Math.round(engine.camera.zoom), Math.round(engine.camera.zoom));
 			} else {

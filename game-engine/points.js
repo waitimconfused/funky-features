@@ -136,13 +136,13 @@ export class Point4 {
 
 	/**
 	 * 
-	 * @param {number | Point2} x
+	 * @param {number | Point2 | {x:number, y:number}} x
 	 * @param {number | undefined} y
 	 * @param {number | undefined} z
 	 * @returns 
 	 */
 	contains(x=0, y=0) {
-		if (x instanceof Point4) { y = x.x; x = x.x; }
+		if (typeof x == "object" && x.x && x.y) { y = x.x; x = x.x; }
 		return isInRange(this.x, x, this.x+this.w) && isInRange(this.y, y, this.y+this.h);
 	}
 

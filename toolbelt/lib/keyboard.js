@@ -145,6 +145,8 @@ export var mouse = new class Mouse {
 		let hook = new MouseHook({
 			x: this.position.x,
 			y: this.position.y,
+			click_l: this.click_l,
+			click_r: this.click_r,
 			...options
 		});
 		this.#hooks.push(hook);
@@ -152,9 +154,14 @@ export var mouse = new class Mouse {
 	}
 	updateHooks() {
 		for (let i = 0; i < this.#hooks.length; i ++) {
+			/**
+			 * @type { MouseHook }
+			 */
 			let hook = this.#hooks[i];
 			hook.x = this.position.x;
 			hook.y = this.position.y;
+			hook.click_l = this.click_l;
+			hook.click_r = this.click_r;
 			hook.updateFunc();
 		}
 	}
@@ -186,6 +193,8 @@ export var mouse = new class Mouse {
 class MouseHook {
 	x = 0;
 	y = 0;
+	click_l = false;
+	click_r = false;
 
 	/**
 	 * 
@@ -228,6 +237,7 @@ window.onmousedown = (e) => {
 window.onmouseup = (e) => {
 	mouse.click_l = false;
 	mouse.click_r = false;
+	mouse.updateHooks();
 }
 window.oncontextmenu = (e) => {
 	e.preventDefault();
