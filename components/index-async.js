@@ -26,12 +26,12 @@ export async function reloadTemplateElements(){
 			html = cachedTemplates[absolutePath+"#"+id];
 			
 			let response = await fetch(importPath);
-			let html = await response.text();
+			let newhtml = await response.text();
 			let templateNode = document.querySelector(`[template-href="${importPath}"][template-id="${id}"]`);
-			loadTemplateElement(templateNode, html, importPath, id);
-			cachedPages[importPath] = html;
-			cachedTemplates[absolutePath+"#"+id] = html;
-			sessionStorage.setItem("template."+absolutePath+"#"+id, html);
+			loadTemplateElement(templateNode, newhtml, importPath, id);
+			cachedPages[importPath] = newhtml;
+			cachedTemplates[absolutePath+"#"+id] = newhtml;
+			sessionStorage.setItem("template."+absolutePath+"#"+id, newhtml);
 		} else if(importPath in cachedPages) {
 			html = cachedPages[importPath];
 		} else {
