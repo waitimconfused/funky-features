@@ -25,16 +25,13 @@ export async function reloadTemplateElements(){
 		if (absolutePath+"#"+id in cachedTemplates) {
 			html = cachedTemplates[absolutePath+"#"+id];
 			
-			fetch(importPath)
-			.then((response) => {
-				return response.text()
-			}).then((html) => {
-				let templateNode = document.querySelector(`[template-href="${importPath}"][template-id="${id}"]`);
-				loadTemplateElement(templateNode, html, importPath, id);
-				cachedPages[importPath] = html;
-				cachedTemplates[absolutePath+"#"+id] = html;
-				sessionStorage.setItem("template."+absolutePath+"#"+id, html);
-			})
+			let response = await fetch(importPath);
+			let html = response.text();
+			let templateNode = document.querySelector(`[template-href="${importPath}"][template-id="${id}"]`);
+			loadTemplateElement(templateNode, html, importPath, id);
+			cachedPages[importPath] = html;
+			cachedTemplates[absolutePath+"#"+id] = html;
+			sessionStorage.setItem("template."+absolutePath+"#"+id, html);
 		} else if(importPath in cachedPages) {
 			html = cachedPages[importPath];
 		} else {
