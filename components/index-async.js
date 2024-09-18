@@ -9,7 +9,7 @@ for (let key in sessionStorage) {
 	cachedTemplates[key.replace(/^template\./, "")] = value;
 }
 
-export async function reloadTemplateElements(){
+export async function reloadTemplateElements(doubleReload=true){
 	let templateElements = document.querySelectorAll("template[from]");
 
 	for(let index = 0; index < templateElements.length; index ++){
@@ -22,16 +22,19 @@ export async function reloadTemplateElements(){
 		let id = replaceMe.id;
 		let html = "";
 
-		if (absolutePath+"#"+id in cachedTemplates) {
+		if (absolutePath+"#"+id in cachedTemplates && doubleReload) {
 			html = cachedTemplates[absolutePath+"#"+id];
 			
-			let response = await fetch(importPath);
-			let newhtml = await response.text();
-			let templateNode = document.querySelector(`[template-href="${importPath}"][template-id="${id}"]`);
-			loadTemplateElement(templateNode, newhtml, importPath, id);
-			cachedPages[importPath] = newhtml;
-			cachedTemplates[absolutePath+"#"+id] = newhtml;
-			sessionStorage.setItem("template."+absolutePath+"#"+id, newhtml);
+			fetch(importPath)
+			.then((response) => {
+				return response.text()
+			}).then((html) => {
+				let templateNode = document.querySelector(`[template-href="${importPath}"][template-id="${id}"]`);
+				loadTemplateElement(templateNode, html, importPath, id);
+				cachedPages[importPath] = html;
+				cachedTemplates[absolutePath+"#"+id] = html;
+				sessionStorage.setItem("template."+absolutePath+"#"+id, html);
+			})
 		} else if(importPath in cachedPages) {
 			html = cachedPages[importPath];
 		} else {
