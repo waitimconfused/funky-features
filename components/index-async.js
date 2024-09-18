@@ -26,7 +26,7 @@ export async function reloadTemplateElements(){
 			html = cachedTemplates[absolutePath+"#"+id];
 			
 			let response = await fetch(importPath);
-			let html = response.text();
+			let html = await response.text();
 			let templateNode = document.querySelector(`[template-href="${importPath}"][template-id="${id}"]`);
 			loadTemplateElement(templateNode, html, importPath, id);
 			cachedPages[importPath] = html;
