@@ -248,7 +248,7 @@ export class EngineClass {
 	}
 	/**
 	 * 
-	 * @param {string} hash
+	 * @param {string|number} hash
 	 * @returns {Component}
 	 */
 	getObject(hash) {
