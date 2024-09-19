@@ -52,7 +52,7 @@ export class ComponentGroup extends Component {
 	 * @returns {Component}
 	 */
 	getObject(hash) {
-		if(["string", "number"].includes( typeof(hash) )) throw new Error("Cannot find object in engine if hash is not of type: String | Number");
+		if(["string", "number"].includes( typeof(hash) ) == false) throw new Error("Cannot find object in engine if hash is not of type: String | Number");
 		if (typeof hash == "number") hash = this.componentHashes.at(hash);
 		return this.components[hash];
 	}

@@ -17,6 +17,8 @@ dot.colour = "black";
 dot.outline.colour = "white";
 dot.outline.size = 5;
 
+console.log(engine.getObject(1));
+
 var mouseDown = false;
 var lastMousePos = engine.mouse.toWorld();
 
