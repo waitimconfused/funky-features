@@ -28,12 +28,13 @@ export function loadAssets(){
  * @param {number} cropHeight 
  * @param { { pixelated: boolean, alpha: number } } filters 
  * @param {HTMLCanvasElement} canvas 
+ * @param {boolean} saveAsset 
  */
 export function draw(
 	imgSource="",
 	destinationXPos, destinationYPos, destinationWidth, destinationHeight,
 	cropXPos, cropYPos, cropWidth, cropHeight,
-	filters, canvas
+	filters, canvas, saveAsset=true
 ){
 
 	let context = canvas.getContext("2d");
@@ -71,7 +72,7 @@ export function draw(
 	try {
 		if(cropWidth && cropHeight){
 			context.drawImage(
-				cacheImage(imgSource),
+				saveAsset?cacheImage(imgSource):imgSource,
 	
 				cropXPos || 0, cropYPos || 0,
 				cropWidth, cropHeight,
@@ -81,7 +82,7 @@ export function draw(
 			);
 		}else{
 			context.drawImage(
-				cacheImage(imgSource),
+				saveAsset?cacheImage(imgSource):imgSource,
 	
 				destinationXPos, destinationYPos,
 				destinationWidth, destinationHeight,

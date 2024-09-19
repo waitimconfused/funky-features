@@ -162,7 +162,7 @@ export var mouse = new class Mouse {
 			hook.y = this.position.y;
 			hook.click_l = this.click_l;
 			hook.click_r = this.click_r;
-			hook.updateFunc();
+			hook.updateFunc(this);
 		}
 	}
 

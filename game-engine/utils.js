@@ -16,7 +16,7 @@ export class Camera {
 	zoom = 1;
 	defaultZoom = 1;
 
-	minZoom = 0;
+	minZoom = 0.1;
 	maxZoom = 999;
 
 	wheelZoomMultiplier = 0.01;
@@ -119,6 +119,9 @@ export class EngineClass {
 	camera = new Camera;
 
 	mouse = mouse.addHook({
+		/**
+		 * @returns { x: number, y: number }
+		 */
 		toWorld: () => {
 			let mouseRelative = mouse.position.relative(this.canvas);
 			return {
@@ -126,8 +129,18 @@ export class EngineClass {
 				y: (mouseRelative.y - this.canvas.height/2) / this.camera.zoom + this.camera.position.y,
 			}
 		},
-		updateFunc: () => {
-		}
+		/**
+		 * @param { Component } object
+		 * @returns { x: number, y: number }
+		 */
+		toObject: (object) => {
+			let mouseRelative = mouse.position.relative(this.canvas);
+			return {
+				x: (mouseRelative.x - this.canvas.width/2) / this.camera.zoom + this.camera.position.x,
+				y: (mouseRelative.y - this.canvas.height/2) / this.camera.zoom + this.camera.position.y,
+			}
+		},
+		updateFunc: () => {}
 	});
 
 	canvas = document.createElement("canvas");
