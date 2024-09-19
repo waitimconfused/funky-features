@@ -1,16 +1,8 @@
-import { animation, engine } from "./utils.js";
-import { Path, Canvas, Circle } from "./components/index.js";
-import { ceilToNearest, keyboard, mouse, randomInRange, Vector } from "../toolbelt/toolbelt.js";
+import { engine } from "./utils.js";
+import { Canvas, Circle } from "./components/index.js";
+import { mouse } from "../toolbelt/toolbelt.js";
 
 engine.camera.zoom = 6;
-// engine.camera.disableZoom();
-
-// const canvas = new Path;
-// engine.addObject(canvas);
-// canvas.pen.moveTo(0, 0);
-// canvas.colour = "none";
-// canvas.outline.colour = "red";
-// canvas.outline.size = 10;
 
 const canvas = new Canvas;
 engine.addObject(canvas);

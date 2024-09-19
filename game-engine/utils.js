@@ -252,7 +252,8 @@ export class EngineClass {
 	 * @returns {Component}
 	 */
 	getObject(hash) {
-		if(typeof hash != "string") throw new Error("Cannot find object in engine if hash is not of type: String");
+		if(["string", "number"].includes( typeof(hash) )) throw new Error("Cannot find object in engine if hash is not of type: String | Number");
+		if (typeof hash == "number") hash = this.componentHashes.at(hash);
 		return this.components[hash];
 	}
 	removeObject(component=new Component) {
