@@ -148,11 +148,10 @@ export var keyboard = new class Keyboard {
 		if (clearKeys) this.list = [];
 	}
 };
-window.onfocus = (e) => {
+window.addEventListener("focus", (e) => {
 	keyboard.list = [];
-};
-
-window.onkeydown = (e) => {
+});
+window.addEventListener("keydown", (e) => {
 	let key = e.key.toLowerCase();
 	if (!keyboard.list.includes(key)) {
 		keyboard.setKey(key, true, e);
@@ -160,14 +159,14 @@ window.onkeydown = (e) => {
 	keyboard.setKey("control", e.ctrlKey, e);
 	keyboard.setKey("shift", e.shiftKey, e);
 	keyboard.setKey("alt", e.altKey, e);
-};
-window.onkeyup = (e) => {
+});
+window.addEventListener("keyup", (e) => {
 	let key = e.key.toLowerCase();
 	keyboard.setKey(key, false, e);
 	keyboard.setKey("control", e.ctrlKey, e);
 	keyboard.setKey("shift", e.shiftKey, e);
 	keyboard.setKey("alt", e.altKey, e);
-};
+});
 
 export var mouse = new class Mouse {
 	click_l = false;
@@ -246,6 +245,9 @@ export var mouse = new class Mouse {
 			return { x, y };
 		},
 	};
+	get pos() {
+		return this.position;
+	}
 };
 class MouseHook {
 	x = 0;
