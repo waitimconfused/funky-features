@@ -1,4 +1,9 @@
-function arrayIncludesArray(array=[], target=[]) {
+/**
+ * @param { array } array 
+ * @param { array } target 
+ * @returns 
+ */
+function arrayIncludesArray(array, target) {
 	return array.sort().join(',') === target.sort().join(',')
 }
 
@@ -19,20 +24,29 @@ export var keyboard = new class Keyboard {
 		keys = this.#fixKeys(keys);
 		return keys.some(r => this.list.includes(r));
 	}
-	setKey(key="", value=true, keyboardEvent=KeyboardEvent) {
+	/**
+	 * @param { string } key 
+	 * @param { boolean } value 
+	 * @param { KeyboardEvent } keyboardEvent 
+	 */
+	setKey(key, value, keyboardEvent) {
 		key = this.#fixKeys([key])[0];
 		if (value == true && !this.isPressed(key)) {
 			this.list.push(key);
 			this.#runevent_ON(keyboardEvent);
-		} else if(value == false && this.isPressed(key)) {
+		} else if (value == false && this.isPressed(key)) {
 			while (this.isPressed(key)) {
-				this.list.splice( this.list.indexOf(key), 1);
+				this.list.splice(this.list.indexOf(key), 1);
 			}
 			this.#runevent_OFF(keyboardEvent);
 		}
 	}
-	#fixKeys(keys=[""]) {
-		for (let i = 0; i < keys.length; i ++) {
+	/**
+	 * @param { string[] } keys 
+	 * @returns 
+	 */
+	#fixKeys(keys) {
+		for (let i = 0; i < keys.length; i++) {
 			let key = keys[i].toLowerCase();
 			if (key == "ctrl") key = "control";
 			if (key == "space") key = " ";
@@ -59,7 +73,7 @@ export var keyboard = new class Keyboard {
 	* 	passive: boolean
 	* }} options 
 	*/
-	on(keys, callback, options={}) {
+	on(keys, callback, options = {}) {
 		options.passive = options.passive || true;
 		if (typeof keys == "string") keys = [keys];
 		keys = this.#fixKeys(keys);
@@ -76,7 +90,7 @@ export var keyboard = new class Keyboard {
 	* 	passive: boolean
 	* }} options 
 	*/
-	off(keys, callback, options={}) {
+	off(keys, callback, options = {}) {
 		options.passive = options.passive || true;
 		if (typeof keys == "string") keys = [keys];
 		this.#eventListener_OFF.push({
@@ -85,9 +99,12 @@ export var keyboard = new class Keyboard {
 			options
 		});
 	}
-	#runevent_ON(keyboardEvent=new KeyboardEvent){
+	/**
+	 * @param { KeyboardEvent } keyboardEvent
+	 */
+	#runevent_ON(keyboardEvent) {
 		let clearKeys = false;
-		for (let index = 0; index < this.#eventListener_ON.length; index ++) {
+		for (let index = 0; index < this.#eventListener_ON.length; index++) {
 			/**
 			 * @type {{
 			* 	callback: function
@@ -104,11 +121,14 @@ export var keyboard = new class Keyboard {
 				clearKeys = clearKeys || !keybinding.options?.passive;
 			}
 		}
-		if(clearKeys) this.list = [];
+		if (clearKeys) this.list = [];
 	}
-	#runevent_OFF(keyboardEvent=new KeyboardEvent){
+	/**
+	 * @param { KeyboardEvent } keyboardEvent
+	 */
+	#runevent_OFF(keyboardEvent) {
 		let clearKeys = false;
-		for(let index = 0; index < this.#eventListener_OFF.length; index ++){
+		for (let index = 0; index < this.#eventListener_OFF.length; index++) {
 			/**
 			 * @type {{
 			 * 	callback: function
@@ -119,14 +139,34 @@ export var keyboard = new class Keyboard {
 			 */
 			let keybinding = this.#eventListener_OFF[index];
 			let hasMatch = arrayIncludesArray(this.list, keybinding.keys);
-			if(hasMatch) {
+			if (hasMatch) {
 				if (!keybinding.options?.passive) keyboardEvent.preventDefault();
 				keybinding.callback(keyboardEvent);
 				clearKeys = clearKeys || !keybinding.options?.passive;
 			}
 		}
-		if(clearKeys) this.list = [];
+		if (clearKeys) this.list = [];
 	}
+};
+window.onfocus = (e) => {
+	keyboard.list = [];
+};
+
+window.onkeydown = (e) => {
+	let key = e.key.toLowerCase();
+	if (!keyboard.list.includes(key)) {
+		keyboard.setKey(key, true, e);
+	}
+	keyboard.setKey("control", e.ctrlKey, e);
+	keyboard.setKey("shift", e.shiftKey, e);
+	keyboard.setKey("alt", e.altKey, e);
+};
+window.onkeyup = (e) => {
+	let key = e.key.toLowerCase();
+	keyboard.setKey(key, false, e);
+	keyboard.setKey("control", e.ctrlKey, e);
+	keyboard.setKey("shift", e.shiftKey, e);
+	keyboard.setKey("alt", e.altKey, e);
 };
 
 export var mouse = new class Mouse {
@@ -153,7 +193,7 @@ export var mouse = new class Mouse {
 		return hook;
 	}
 	updateHooks() {
-		for (let i = 0; i < this.#hooks.length; i ++) {
+		for (let i = 0; i < this.#hooks.length; i++) {
 			/**
 			 * @type { MouseHook }
 			 */
@@ -168,22 +208,39 @@ export var mouse = new class Mouse {
 
 	touchDisabled = false;
 
-	disableTouch(){
+	disableTouch() {
 		this.touchDisabled = true;
 	}
-	ensableTouch(){
+	ensableTouch() {
 		this.touchDisabled = false;
 	}
 
 	position = {
 		x: 0,
 		y: 0,
-		relative: function(element=new HTMLElement){
+		/**
+		 * @param { HTMLElement } element
+		*/
+		relative: function (element) {
 			let elementRect = element.getBoundingClientRect();
+
 			let x = this.x - elementRect.left;
 			let y = this.y - elementRect.top;
-			var scaleX = elementRect.width / element.offsetWidth;
-			var scaleY = elementRect.height / element.offsetHeight;
+
+			let renderedWidth = elementRect.width;
+			let renderedHeight = elementRect.height;
+
+			let actualWidth = element.offsetWidth;
+			let actualHeight = element.offsetHeight;
+			if (element.nodeName.toLowerCase() == "svg") {
+				let veiwbox = element.getAttribute("viewBox").split(" ");
+				actualWidth = veiwbox[2];
+				actualHeight = veiwbox[3];
+			}
+
+			var scaleX = renderedWidth / actualWidth;
+			var scaleY = renderedHeight / actualHeight;
+
 			x /= scaleX;
 			y /= scaleY;
 			return { x, y };
@@ -209,43 +266,22 @@ class MouseHook {
 	}
 }
 
-window.onfocus = (e) => {
-	keyboard.list = [];
-}
-
-window.onkeydown = (e) => {
-	let key = e.key.toLowerCase();
-	if(!keyboard.list.includes(key)) {
-		keyboard.setKey(key, true, e);
-	}
-	keyboard.setKey("control", e.ctrlKey, e);
-	keyboard.setKey("shift", e.shiftKey, e);
-	keyboard.setKey("alt", e.altKey, e);
-}
-window.onkeyup = (e) => {
-	let key = e.key.toLowerCase();
-	keyboard.setKey(key, false, e);
-	keyboard.setKey("control", e.ctrlKey, e);
-	keyboard.setKey("shift", e.shiftKey, e);
-	keyboard.setKey("alt", e.altKey, e);
-}
-
 window.onmousedown = (e) => {
 	mouse.click_l = true;
 	mouse.updateHooks();
-}
+};
 window.onmouseup = (e) => {
 	mouse.click_l = false;
 	mouse.click_r = false;
 	mouse.updateHooks();
-}
+};
 window.oncontextmenu = (e) => {
 	e.preventDefault();
 	mouse.click_r = true;
 	mouse.updateHooks();
-}
+};
 window.onmousemove = (e) => {
 	mouse.position.x = e.clientX;
 	mouse.position.y = e.clientY;
 	mouse.updateHooks();
-}
+};
