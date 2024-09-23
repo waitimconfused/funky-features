@@ -268,22 +268,22 @@ class MouseHook {
 	}
 }
 
-window.onmousedown = (e) => {
+window.addEventListener("mousedown", (e) => {
 	mouse.click_l = true;
 	mouse.updateHooks();
-};
-window.onmouseup = (e) => {
+});
+window.addEventListener("mouseup", (e) => {
 	mouse.click_l = false;
 	mouse.click_r = false;
 	mouse.updateHooks();
-};
-window.oncontextmenu = (e) => {
+});
+window.addEventListener("contextmenu", (e) => {
 	e.preventDefault();
 	mouse.click_r = true;
 	mouse.updateHooks();
-};
-window.onmousemove = (e) => {
+});
+window.addEventListener("mousemove", (e) => {
 	mouse.position.x = e.clientX;
 	mouse.position.y = e.clientY;
 	mouse.updateHooks();
-};
+});
