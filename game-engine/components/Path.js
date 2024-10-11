@@ -31,10 +31,12 @@ export class Path extends Component {
 		 * @param { number | undefined } y
 		 */
 		moveTo: (x, y) => {
-			if (typeof x == "object") {
-				if (typeof x?.x != "number" || typeof x?.x != "number") throw new Error;
+			if (x?.y && x?.x) {
 				y = x.y;
 				x = x.x;
+			} if (x instanceof Component) {
+				y = x.display.y;
+				x = x.display.x;
 			}
 			this.path += `M ${x},${y} `;
 			return this;
@@ -45,10 +47,12 @@ export class Path extends Component {
 		 * @param { number | undefined } y
 		 */
 		lineTo: (x, y) => {
-			if (typeof x == "object") {
-				if (typeof x?.x != "number" || typeof x?.x != "number") throw new Error;
+			if (x?.y && x?.x) {
 				y = x.y;
 				x = x.x;
+			} if (x instanceof Component) {
+				y = x.display.y;
+				x = x.display.x;
 			}
 			this.path += `L ${x},${y} `;
 			return this;
