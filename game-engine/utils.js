@@ -1,4 +1,4 @@
-import { image, mouse, toRange } from "../toolbelt/toolbelt.js";
+import { image, mouse, toRange, Vector } from "../toolbelt/toolbelt.js";
 import { Point2, Point3, Point4 } from "./points.js";
 export { Point2, Point3, Point4 };
 
@@ -28,26 +28,59 @@ export class Camera {
 		window.addEventListener("gestureend", this.#preventDefaultEvent, {passive: false});
 	}
 
-	moveBy(x=0, y=0) {
-		this.position.x += x;
-		this.position.y += y;
+	trackingDelay = 0;
+	/**
+	 * @type { null | Component }
+	 */
+	trackingObject = null;
+	/**
+	 * 
+	 * @param { Component | null } component
+	 */
+	trackObject(component) {
+		this.trackingObject = component;
 	}
 	
 	/**
 	 * 
-	 * @param {number | Point2 | {x: number, y: number}} x
+	 * @param {number | Point2 | Component | {x: number, y: number}} x
 	 * @param {number | undefined} y
 	 * @returns this
 	 */
 	moveTo(x, y) {
 		if (x == null) x = this.position.x;
 		if (y == null) y = this.position.y;
-		if(x instanceof Point2 || typeof x == "object") {
+		if(x instanceof Point2 || x?.x && x?.y) {
 			y = x.y;
 			x = x.x;
+		} else if ( x instanceof Component ) {
+			y = x.display.y;
+			x = x.display.x;
 		}
 		this.position.x = x;
 		this.position.y = y;
+		return this;
+	}
+
+	/**
+	 * 
+	 * @param {number | Point2 | {x: number, y: number}} x
+	 * @param {number | undefined} y
+	 * @returns this
+	 */
+	moveBy(x, y) {
+		if (x == null) x = 0;
+		if (y == null) y = 0;
+		if(x instanceof Point2 || x?.x && x?.y) {
+			y = x.y;
+			x = x.x;
+		}
+		this.position.x += x;
+		this.position.y += y;
+		if (engine.isPixelArt || this?.isPixelArt) {
+			this.position.x = Math.round(this.position.x);
+			this.position.y = Math.round(this.position.y);
+		}
 		return this;
 	}
 
@@ -111,6 +144,23 @@ export class Camera {
 	script() {}
 
 	update() {
+		if (this.trackingObject) {
+			this.trackingDelay = Math.max(this.trackingDelay, 1);
+			if (this.trackingDelay == 1) {
+				this.moveTo(this.trackingObject);
+			} else {
+				let vector = new Vector;
+				vector.setPos(
+					this.trackingObject.display.x - this.position.x,
+					this.trackingObject.display.y - this.position.y
+				);
+				if (vector.mag > 0) {
+					vector.mag /= this.trackingDelay;
+					let xy = vector.xy();
+					this.moveBy(xy);
+				}
+			}
+		}
 		this.script(this);
 	}
 }
@@ -165,7 +215,36 @@ export class EngineClass {
 		isPixelArt: true,
 	};
 
-	loadAsset = image.cacheImage;
+	/**
+	 * 
+	 * @param { string } source
+	 * @param {{
+	 * 	fontFamilyName?: string
+	 * }} options
+	 */
+	async loadAsset(source, options) {
+		let response = await fetch(source);
+		let type = response.headers.get("Content-Type");
+		type = type.split(";")[0];
+		let simpleType = "undefined";
+		if (type == "text/css") {
+			simpleType = "CSS";
+			let link = document.createElement("link");
+			link.rel = "stylesheet";
+			link.href = source;
+			link.type = "text/css";
+			document.head.appendChild(link);
+		} else if (type.startsWith("font/")) {
+			simpleType = "Font";
+			const font = new FontFace(options.fontFamilyName, `url(${source})`);
+			await font.load();
+			document.fonts.add(font);
+		} else if (type.startsWith("image/")) {
+			simpleType = "IMG";
+			image.cacheImage(source);
+		}
+		console.log(`Loaded ${simpleType} from url "${source}"`)
+	}
 
 	preRenderingScript = () => {};
 	postRenderingScript = () => {};
@@ -177,6 +256,13 @@ export class EngineClass {
 	}
 	showCursor() {
 		this.canvas.style.cursor = null;
+	}
+
+	get width() {
+		return this.canvas.width / this.camera.zoom;
+	}
+	get height() {
+		return this.canvas.height / this.camera.zoom;
 	}
 
 	#resizeCanvas() {
@@ -239,9 +325,14 @@ export class EngineClass {
 			let fakeContext = document.createElement("canvas").getContext("2d");
 			component.render(fakeContext);
 			component.script(component);
+			component.parent = this;
 		}
+		return this;
 	}
-	hasObject(component=new Component) {
+	/**
+	 * @param { Component } component
+	 */
+	hasObject(component) {
 		if(component instanceof Component == false) throw new Error("Cannot find object in engine if object is not of type: Component");
 		let indexOfComponent = this.componentHashes.indexOf(component.hash);
 		return indexOfComponent > -1;
@@ -256,7 +347,10 @@ export class EngineClass {
 		if (typeof hash == "number") hash = this.componentHashes.at(hash);
 		return this.components[hash];
 	}
-	removeObject(component=new Component) {
+	/**
+	 * @param { Component } component
+	 */
+	removeObject(component) {
 		if(component instanceof Component == false) throw new Error("Cannot remove object to engine if object is not of type: Component");
 		if(this.hasObject(component) == false) throw new Error("Cannot remove object from engine if object was never added");
 		let indexOfComponent = this.componentHashes.indexOf(component.hash);
@@ -264,13 +358,25 @@ export class EngineClass {
 		delete this.components[component.hash];
 	}
 
-	setBackground(background="") {
+	/**
+	 * @param { string } background
+	 */
+	setBackground(background) {
 		if (isValidUrl(background) || (/\.{1,2}\//gm).test(background)) {
 			this.canvas.style.backgroundImage = `url(${background})`;
 		} else {
 			this.canvas.style.backgroundColor = background;
 		}
 	}
+	/**
+	 * @param { string } background
+	 */
+	set background(background) {
+		this.setBackground(background);
+	}
+	/**
+	 * @param { string } href
+	 */
 	setIcon(href="") {
 		let favicon = document.querySelector("link[rel=icon]");
 		if (!favicon) {
@@ -280,8 +386,15 @@ export class EngineClass {
 		}
 		favicon.href = href;
 	}
+	/**
+	 * @param { string } href
+	 */
+	setFavicon(href) {
+		this.setIcon(href);
+	}
 
 	tick() {
+		this.preRenderingScript();
 		this.camera.update();
 		this.#updateStats();
 
@@ -299,8 +412,6 @@ export class EngineClass {
 		context.mozImageSmoothingEnabled = this.isPixelArt;
 		context.webkitImageSmoothingEnabled = this.isPixelArt;
 		context.imageSmoothingEnabled = this.isPixelArt;
-
-		this.preRenderingScript();
 
 		context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		let numberOfComponents = this.componentHashes.length;
@@ -321,6 +432,10 @@ export const engine = new EngineClass;
 
 export class Component {
 	hash = "";
+	/**
+	 * @type { null | EngineClass | ComponentGroup }
+	 */
+	parent = null;
 	display = new Point4(0, 0, 100, 100);
 	visibility = true;
 	show() { this.visibility = true; return this; }
@@ -337,8 +452,7 @@ export class Component {
 	isPixelArt = "unset";
 
 	/**
-	 * 
-	 * @param {number} layer Layer 0 is back, layer n is front
+	 * @param {number} layer Layer `0` is back, layer `n | -1` is front
 	 */
 	setLayer(layer) {
 		if (layer < 0) layer += engine.componentHashes.length;
@@ -348,8 +462,24 @@ export class Component {
 		// engine.componentHashes.push(this.hash);
 	}
 
+	/**
+	 * @param {number} layer Layer `0` is back, layer `n | -1` is front
+	 */
+	set zIndex(layer) {
+		this.setLayer(layer);
+	}
+	get zIndex() {
+		let parentIndex = this.parent.componentHashes.indexOf(this.hash);
+		return parentIndex;
+	}
 
-	cameraTracking = false;
+	/**
+	 * @param {boolean} boolean
+	 */
+	set cameraTracking(boolean) {
+		if (boolean == true) engine.camera.trackObject(this);
+		if (boolean == false && engine.camera.trackingObject.hash == this.hash) engine.camera.trackObject(null);
+	};
 
 	fixedPosition = false;
 	setFixedPosition(fixedPosition=this.fixedPosition) {
@@ -359,32 +489,51 @@ export class Component {
 
 	#attributes = {};
 
-	getType() { return "Default Component"; }
+	get type() { return "Default Component"; }
 
 	/**
 	 * 
-	 * @param {number | Point2 | {x: number, y: number}} x
+	 * @param {number | Point2 | Component | {x: number, y: number}} x
 	 * @param {number | undefined} y
 	 * @returns this
 	 */
 	moveTo(x, y) {
 		if (x == null) x = this.display.x;
 		if (y == null) y = this.display.y;
-		if(x instanceof Point2 || typeof x == "object") {
+		if(x instanceof Point2 || x?.x && x?.y) {
 			y = x.y;
 			x = x.x;
+		} else if ( x instanceof Component ) {
+			y = x.display.y;
+			x = x.display.x;
 		}
 		this.display.x = x;
 		this.display.y = y;
-		if (engine.isPixelArt || this?.isPixelArt) {
+		if (engine.isPixelArt == true || this?.isPixelArt == true) {
 			this.display.x = Math.round(this.display.x);
 			this.display.y = Math.round(this.display.y);
 		}
 		return this;
 	}
-	moveBy(x=0, y=0) {
+	/**
+	 * 
+	 * @param {number | Point2 | {x: number, y: number}} x
+	 * @param {number | undefined} y
+	 * @returns this
+	 */
+	moveBy(x, y) {
+		if (x == null) x = 0;
+		if (y == null) y = 0;
+		if(x instanceof Point2 || x?.x && x?.y) {
+			y = x.y;
+			x = x.x;
+		}
 		this.display.x += x;
 		this.display.y += y;
+		if (engine.isPixelArt || this?.isPixelArt) {
+			this.display.x = Math.round(this.display.x);
+			this.display.y = Math.round(this.display.y);
+		}
 		return this;
 	}
 
@@ -433,6 +582,111 @@ export class Component {
 	}
 }
 
+export class ComponentGroup extends Component {
+	#cameraTracking = false;
+
+	display = new Point2(0, 0);
+	displayOffset = new Point2(0, 0);
+
+	componentHashes = [];
+	components = {};
+
+	getType() {
+		return "Component Group";
+	}
+
+	setSize() {
+		throw new Error("The setSize() function is not supported with type ComponentGroup")
+	}
+
+	constructor() {
+		super();
+		delete this.setSize
+	}
+	
+	/**
+	 * @param {Component} components
+	 */
+	addObject(...components) {
+		for (let i = 0; i < components.length; i ++) {
+			let component = components[i];
+			if(engine.hasObject(component)) engine.removeObject(component);
+			if(component instanceof Component == false) throw new Error("Cannot add object to group if object is not of type: Component");
+			if(this.hasObject(component)) throw new Error("Cannot add object to group if object was already added.");
+			let randomToken = "";
+			while(this.componentHashes.includes(randomToken) || randomToken.length < 14) {
+				randomToken = `${Math.floor(Math.random() * 9999)}`;
+				while(randomToken.length < 10) randomToken += Math.floor(Math.random() * 10);
+				randomToken = btoa(randomToken).replace(/==$/, "");
+			}
+			component.hash = randomToken;
+			this.componentHashes.push(randomToken);
+			this.components[randomToken] = component;
+			let fakeContext = document.createElement("canvas").getContext("2d");
+			component.render(fakeContext);
+			component.script(component);
+			component.parent = this;
+		}
+		return this;
+	}
+	/**
+	 * 
+	 * @param {string|number} hash
+	 * @returns {Component}
+	 */
+	getObject(hash) {
+		if(["string", "number"].includes( typeof(hash) ) == false) throw new Error("Cannot find object in engine if hash is not of type: String | Number");
+		if (typeof hash == "number") hash = this.componentHashes.at(hash);
+		return this.components[hash];
+	}
+	hasObject(component=new Component) {
+		if(component instanceof Component == false) throw new Error("Cannot find object in group if object is not of type: Component");
+		let indexOfComponent = this.componentHashes.indexOf(component.hash);
+		return indexOfComponent > -1;
+	}
+	removeObject(component=new Component) {
+		if(component instanceof Component == false) throw new Error("Cannot remove object to group if object is not of type: Component");
+		if(this.hasObject(component) == false) throw new Error("Cannot remove object from group if object was never added");
+		let indexOfComponent = this.componentHashes.indexOf(component.hash);
+		this.componentHashes.splice(indexOfComponent, 1);
+		this.components.splice(indexOfComponent, 1);
+		return this;
+	}
+
+	/**
+	 * 
+	 * @param {CanvasRenderingContext2D} context 
+	 * @param {Point2 | {x:number, y:number}} defaultOffset 
+	 * @returns 
+	 */
+	render(context, defaultOffset) {
+		
+		if (!this.visibility) return this;
+
+		let offset = { x: 0, y: 0 };
+
+		offset.x += defaultOffset?.x || 0;
+		offset.y += defaultOffset?.y || 0;
+
+		this.displayOffset.x = this.display.x + offset.x;
+		this.displayOffset.y = this.display.y + offset.y;
+
+		if(this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)){
+			this.displayOffset.x = Math.floor(this.displayOffset.x);
+			this.displayOffset.y = Math.floor(this.displayOffset.y);
+			this.displayOffset.x = Math.floor(this.displayOffset.x);
+		}
+
+		let numberOfComponents = this.componentHashes.length;
+		for(let i = 0; i < numberOfComponents; i ++) {
+			let hash = this.componentHashes[i];
+			let component = this.components[hash];
+			component.script(component);
+			component.render(context, this.displayOffset);
+		}
+	}
+}
+
 var animations = [];
 export class Animation {
 	playback = "loop";
@@ -441,6 +695,15 @@ export class Animation {
 
 	animations = [];
 	fps = 1;
+
+	options = {
+		/**
+		 * `false`: Enables cloning. `this.clone()` returns new instance of class `Animation`
+		 * 
+		 * `true`: Disable cloning. `this.clone()` returns reference to `this`
+		 */
+		singleRef: false
+	}
 
 	currentAnimation = "";
 	currentFrameData = {};
@@ -454,16 +717,18 @@ export class Animation {
 	/**
 	 * 
 	 * @param { "loop" | "playonce" | "pingpong" } playbackType
-	 * @param { { string: [ { source: string, x: number, y: number, width: number, height: number } ] } } animations 
+	 * @param { { string: [ { source: string, x: number, y: number, width: number, height: number } ] } } animations
+	 * @param { { singleRef: boolean } } options
 	 * @param { number } fps
 	 */
-	constructor(playbackType, animations, fps) {
+	constructor(playbackType, animations, fps, options) {
 		if (playbackType && animations && fps) this.#locked = true;
 		this.playback = playbackType ?? "loop";
 		this.animations = animations;
 		this.fps = fps ?? 1;
 		this.currentAnimation = Object.keys(animations)[0] || "";
 		this.currentFrameData = this.animations[this.currentAnimation][0] || {};
+		this.options = options;
 	}
 	/**
 	 * 
@@ -538,7 +803,7 @@ export class Animation {
 	}
 
 	clone() {
-		return new Animation(this.playback, this.animations, this.fps);
+		return new Animation(this.playback, this.animations, this.fps, this.options);
 	}
 
 	toJSON() {
@@ -560,9 +825,14 @@ export class Animation {
 	}
 }
 
-export const animation = new class AnimationConstructor {
+export const animationConstructor = new class AnimationConstructor {
 
-	async fromFile(url="") {
+	/**
+	 * 
+	 * @param { string } url 
+	 * @returns 
+	 */
+	async fromFile(url) {
 		url = (new URL(url, location.href)).href
 		let response = await fetch(url);
 		let json = await response.json();
@@ -574,7 +844,6 @@ export const animation = new class AnimationConstructor {
 
 			for (let frame = 0; frame < timeline.length; frame ++) {
 				let frameData = timeline[frame];
-				console.log(frameData.source);
 				let source = new URL(frameData.source, url);
 				source = source.href;
 				json.animations[timelineNames[i]][frame].source = source;

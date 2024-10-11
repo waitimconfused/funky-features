@@ -8,9 +8,9 @@ export class Text extends Component {
 		return this;
 	}
 
-	textColour = "purple";
-	setColour(colour=this.textColour) {
-		this.textColour = colour;
+	colour = "purple";
+	setColour(colour=this.colour) {
+		this.colour = colour;
 		return this;
 	}
 
@@ -36,6 +36,10 @@ export class Text extends Component {
 	 * @type {"left" | "right" | "center" | "start" | "end"}
 	 */
 	textAlign = "center";
+	setTextAlign(string="") {
+		this.textAlign = string;
+		return this;
+	}
 
 	/**
 	 * @type {"top" | "hanging" | "middle" | "alphabetic" | "ideographic" | "bottom"}
@@ -53,39 +57,36 @@ export class Text extends Component {
 	 */
 	direction = "inherit";
 
+	/**
+	 * @type {"normal", "bold", "italic"}
+	 */
 	styling = "normal";
-	
+
 	outline = { colour: "black", size: 0 };
 
 	getType(){ return "Text"; }
 
 	render(context=new CanvasRenderingContext2D, defaultOffset=new Point2){
-		
+
+		this.content = `${this.content}`;
+
 		if (!this.visibility) return this;
 
 		if (typeof this.textSize == "number") this.textSize += "px";
 		if (typeof this.letterSpacing == "number") this.letterSpacing += "px";
 
 		context.font = `${this.styling} ${this.textSize} ${this.fontFamily}, Arial`;
-		context.fillStyle = this.textColour;
+		context.fillStyle = this.colour;
 		context.textAlign = this.textAlign;
 		context.textBaseline = this.textBaseLine;
 		context.direction = this.direction;
 		context.letterSpacing = this.letterSpacing;
-
-		let metrics = context.measureText(this.content);
-		this.display.w = metrics.width;
-		this.display.h = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
 
 		let offset = { x: 0, y: 0 };
 
 		offset.x += defaultOffset.x;
 		offset.y += defaultOffset.y;
 
-		if(this.cameraTracking == true) {
-			engine.camera.moveTo(this.display.x, this.display.y);
-			this.fixedPosition = false;
-		}
 		if(this.fixedPosition == false) {
 			offset.x -= engine.camera.position.x;
 			offset.y -= engine.camera.position.y;
@@ -93,6 +94,7 @@ export class Text extends Component {
 
 		let destinationX = this.display.x + offset.x;
 		let destinationY = this.display.y + offset.y;
+		
 
 		context.save();
 		if (!this.fixedPosition) {
@@ -101,18 +103,32 @@ export class Text extends Component {
 		}
 		context.beginPath();
 
+
 		context.strokeStyle = this.outline.colour;
 		context.lineWidth = this.outline.size;
 
 		context.translate(this.display.x + offset.x, this.display.y + offset.y);
+
+		// context.fillStyle = "gray";
+		// context.fillRect(0, 0, this.display.w, this.display.h);
+		// context.fillStyle = this.textColour;
+
 		// context.rotate(angle);
 		// context.translate(-this.displayOffset.x, -this.displayOffset.y);
 
 		var lines = this.content.split('\n');
 
+		this.display.w = 0;
+		this.display.h = 0;
 		for (var i = 0; i < lines.length; i++) {
-			if (this.outline.size > 0) context.strokeText(lines[i], destinationX, destinationY + (i * this.display.h * 1.25) );
-			context.fillText(lines[i], 0, (i * this.display.h * 1.25) );
+			let metrics = context.measureText(lines[i]);
+			if (metrics.width > this.display.w) this.display.w = metrics.width;
+			let lineHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+			lineHeight *= 1.25;
+			this.display.h += lineHeight;
+
+			if (this.outline.size > 0) context.strokeText(lines[i], destinationX, destinationY + (i * lineHeight) );
+			context.fillText(lines[i], 0, (i * lineHeight) );
 		}
 
 		context.closePath();

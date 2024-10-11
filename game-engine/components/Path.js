@@ -1,13 +1,21 @@
 import { Component, Point2, engine } from "../utils.js";
 
 export class Path extends Component {
+	#cameraTracking = false;
 	display = new Point2(0, 0, 100, 100);
 	displayOffset = new Point2(0, 0, 100, 100);
 	radius = 100;
 	colour = "purple";
+	/**
+	 * 
+	 * @param { string } colour
+	 */
+	setColour(colour) {
+		this.colour = colour;
+		return this;
+	}
 	outline = { colour: "black", size: 0, lineCap: "round" };
 	cameraTracking = false;
-	smooth = false;
 	rotation = 0;
 
 	path = "";
@@ -29,7 +37,7 @@ export class Path extends Component {
 				x = x.x;
 			}
 			this.path += `M ${x},${y} `;
-			return this.pen;
+			return this;
 		},
 		/**
 		 * 
@@ -43,15 +51,19 @@ export class Path extends Component {
 				x = x.x;
 			}
 			this.path += `L ${x},${y} `;
-			return this.pen;
+			return this;
 		},
 		quadraticCurveTo: (midPointX=0, midPointY=0, endPointX=0, endPointY=0) => {
 			this.path += `Q ${midPointX},${midPointY} ${endPointX},${endPointY} `;
-			return this.pen;
+			return this;
 		},
 		cubicCurveTo: (handle1X=0, handle1Y=0, handle2X=0, handle2Y=0, endPointX=0, endPointY=0) => {
 			this.path += `C ${handle1X},${handle1Y} ${handle2X},${handle2Y} ${endPointX},${endPointY} `;
-			return this.pen;
+			return this;
+		},
+		setPath: (path) => {
+			this.path = path;
+			return this;
 		}
 	}
 
@@ -71,11 +83,6 @@ export class Path extends Component {
 
 		// offset.x -= this.display.w * this.transform.x;
 		// offset.y -= this.display.h * this.transform.y;
-
-		if(this.cameraTracking) {
-			engine.camera.moveTo(this.display.x, this.display.y);
-			this.fixedPosition = false;
-		}
 
 		if(!this.fixedPosition) {
 			offset.x -= engine.camera.position.x;

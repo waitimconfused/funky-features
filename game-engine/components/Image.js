@@ -3,6 +3,8 @@ import { toRange } from "../../toolbelt/toolbelt.js";
 import { Component, Animation, engine, Point2, Point4 } from "../utils.js";
 
 export class Image extends Component {
+	#cameraTracking = false;
+	#type = "Image";
 	crop = new Point4(0, 0);
 	colour = "white";
 	opacity = 1;
@@ -15,7 +17,7 @@ export class Image extends Component {
 	 */
 	animation = undefined;
 
-	getType(){ return "Image"; }
+	getType(){ return this.#type }
 
 	/**
 	 * @param {String|Animation|undefined} hook
@@ -27,7 +29,7 @@ export class Image extends Component {
 		if (hook instanceof Animation) {
 			this.source = "Image-Animation";
 			this.animation = hook.clone();
-			this.getType = function() { return "Image-Animation"; }
+			this.#type = "Image-Animation";
 			this.setSize(1, 1);
 		}
 
@@ -73,10 +75,6 @@ export class Image extends Component {
 		offset.x -= destinationW * this.transform.x;
 		offset.y -= destinationH * this.transform.y;
 
-		if(this.cameraTracking) {
-			engine.camera.moveTo(this.display.x, this.display.y);
-			this.fixedPosition = false;
-		}
 		if(this.fixedPosition == false) {
 			offset.x -= engine.camera.position.x;
 			offset.y -= engine.camera.position.y;
@@ -118,7 +116,7 @@ export class Image extends Component {
 				engine.canvas
 			);
 		} else {
-			let currentFrame = this.animation.currentFrame()
+			let currentFrame = this.animation.currentFrame();
 			drawImage(
 				currentFrame.source,
 				destinationX, destinationY, destinationW, destinationH,

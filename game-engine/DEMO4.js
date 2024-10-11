@@ -1,4 +1,4 @@
-import { animation, engine } from "./utils.js";
+import { animationConstructor as animation, engine } from "./utils.js";
 import { ComponentGroup, Image, Rect } from "./components/index.js";
 import { ceilToNearest, keyboard, randomInRange, Vector } from "../toolbelt/toolbelt.js";
 

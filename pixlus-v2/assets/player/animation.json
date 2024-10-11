@@ -1,0 +1,66 @@
+{
+	"playback": "loop",
+	"fps": 5,
+	"animations": {
+		"idle": [
+			{
+				"source": "./player.png",
+				"x": 0,
+				"y": 0,
+				"width": 16,
+				"height": 16
+			},
+			{
+				"source": "./player.png",
+				"x": 16,
+				"y": 0,
+				"width": 16,
+				"height": 16
+			},
+			{
+				"source": "./player.png",
+				"x": 32,
+				"y": 0,
+				"width": 16,
+				"height": 16
+			},
+			{
+				"source": "./player.png",
+				"x": 48,
+				"y": 0,
+				"width": 16,
+				"height": 16
+			}
+		],
+		"run": [
+			{
+				"source": "./player.png",
+				"x": 0,
+				"y": 16,
+				"width": 16,
+				"height": 16
+			},
+			{
+				"source": "./player.png",
+				"x": 16,
+				"y": 16,
+				"width": 16,
+				"height": 16
+			},
+			{
+				"source": "./player.png",
+				"x": 32,
+				"y": 16,
+				"width": 16,
+				"height": 16
+			},
+			{
+				"source": "./player.png",
+				"x": 48,
+				"y": 16,
+				"width": 16,
+				"height": 16
+			}
+		]
+	}
+}

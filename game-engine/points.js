@@ -142,7 +142,7 @@ export class Point4 {
 	 * @returns 
 	 */
 	contains(x=0, y=0) {
-		if (typeof x == "object" && x.x && x.y) { y = x.x; x = x.x; }
+		if (typeof x == "object" && x.x && x.y) { y = x.y; x = x.x; }
 		return isInRange(this.x, x, this.x+this.w) && isInRange(this.y, y, this.y+this.h);
 	}
 

@@ -2,6 +2,7 @@ import { toRange } from "../../toolbelt/toolbelt.js";
 import { Component, Animation, engine, Point2 } from "../utils.js";
 
 export class Canvas extends Component {
+	#cameraTracking = false;
 
 	colour = "purple";
 
@@ -47,10 +48,6 @@ export class Canvas extends Component {
 		offset.x -= destinationW * this.transform.x;
 		offset.y -= destinationH * this.transform.y;
 
-		if(this.cameraTracking) {
-			engine.camera.moveTo(this.display.x, this.display.y);
-			this.fixedPosition = false;
-		}
 		if(this.fixedPosition == false) {
 			offset.x -= engine.camera.position.x;
 			offset.y -= engine.camera.position.y;

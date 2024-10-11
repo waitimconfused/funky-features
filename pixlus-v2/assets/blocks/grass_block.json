@@ -1,0 +1,107 @@
+{
+	"playback": "loop",
+	"fps": 5,
+	"animations": {
+		"top-left": [
+			{
+				"source": "./grass_block.png",
+				"x": 0,
+				"y": 0,
+				"width": 16,
+				"height": 16
+			}
+		],
+		"top": [
+			{
+				"source": "./grass_block.png",
+				"x": 16,
+				"y": 0,
+				"width": 16,
+				"height": 16
+			}
+		],
+		"top-path": [
+			{
+				"source": "./grass_block.png",
+				"x": 32,
+				"y": 0,
+				"width": 16,
+				"height": 16
+			}
+		],
+		"top-right": [
+			{
+				"source": "./grass_block.png",
+				"x": 48,
+				"y": 0,
+				"width": 16,
+				"height": 16
+			}
+		],
+
+		"center-left": [
+			{
+				"source": "./grass_block.png",
+				"x": 0,
+				"y": 16,
+				"width": 16,
+				"height": 16
+			}
+		],
+		"center": [
+			{
+				"source": "./grass_block.png",
+				"x": 16,
+				"y": 16,
+				"width": 16,
+				"height": 16
+			}
+		],
+		"center-right": [
+			{
+				"source": "./grass_block.png",
+				"x": 48,
+				"y": 16,
+				"width": 16,
+				"height": 16
+			}
+		],
+
+		"bottom-left": [
+			{
+				"source": "./grass_block.png",
+				"x": 0,
+				"y": 32,
+				"width": 16,
+				"height": 16
+			}
+		],
+		"bottom": [
+			{
+				"source": "./grass_block.png",
+				"x": 16,
+				"y": 32,
+				"width": 16,
+				"height": 16
+			}
+		],
+		"bottom-path": [
+			{
+				"source": "./grass_block.png",
+				"x": 32,
+				"y": 32,
+				"width": 16,
+				"height": 16
+			}
+		],
+		"bottom-right": [
+			{
+				"source": "./grass_block.png",
+				"x": 48,
+				"y": 32,
+				"width": 16,
+				"height": 16
+			}
+		]
+	}
+}

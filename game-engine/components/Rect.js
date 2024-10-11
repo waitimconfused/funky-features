@@ -1,6 +1,8 @@
+import { isInRange } from "../../toolbelt/toolbelt.js";
 import { Component, Point2, Point4, engine } from "../utils.js";
 
 export class Rect extends Component {
+	#cameraTracking = false;
 	display = new Point4(0, 0, 100, 100);
 	displayOffset = new Point4(0, 0, 100, 100);
 	colour = "purple";
@@ -9,6 +11,24 @@ export class Rect extends Component {
 	radius = 0;
 	setBorderRadius(radius=this.radius) { this.radius = radius; return this; }
 	cameraTracking = false;
+
+	constructor() {
+		super();
+		this.display.contains = (x=0, y=0) => {
+			if (typeof x == "object" && x.x && x.y) { y = x.y; x = x.x; }
+			let myPosX = this.display.x - this.display.w * this.transform.x;
+			let myPosY = this.display.y - this.display.h * this.transform.y;
+			return isInRange(
+				myPosX,
+				x, myPosX + this.display.w
+			) &&
+			isInRange(
+				myPosY,
+				y,
+				myPosY + this.display.h
+			);
+		}
+	}
 
 	getType(){ return "Rect"; }
 
@@ -25,11 +45,6 @@ export class Rect extends Component {
 
 		offset.x -= this.display.w * this.transform.x;
 		offset.y -= this.display.h * this.transform.y;
-
-		if(this.cameraTracking) {
-			engine.camera.moveTo(this.display.x, this.display.y);
-			this.fixedPosition = false;
-		}
 
 		if(!this.fixedPosition) {
 			offset.x -= engine.camera.position.x;
@@ -52,8 +67,8 @@ export class Rect extends Component {
 		context.save();
 		if (!this.fixedPosition) {
 			if (this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)) {
-				context.translate(Math.round(engine.canvas.width / 2), Math.round(engine.canvas.height / 2));
-				context.scale(Math.round(engine.camera.zoom), Math.round(engine.camera.zoom));
+				context.translate(Math.floor(engine.canvas.width / 2), Math.floor(engine.canvas.height / 2));
+				context.scale(Math.floor(engine.camera.zoom), Math.floor(engine.camera.zoom));
 			} else {
 				context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
 				context.scale(engine.camera.zoom, engine.camera.zoom);

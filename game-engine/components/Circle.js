@@ -1,6 +1,7 @@
 import { Component, Point2, engine } from "../utils.js";
 
 export class Circle extends Component {
+	#cameraTracking = false;
 	display = new Point2(0, 0, 100, 100);
 	displayOffset = new Point2(0, 0, 100, 100);
 	radius = 100;
@@ -20,11 +21,6 @@ export class Circle extends Component {
 
 		offset.x += defaultOffset.x;
 		offset.y += defaultOffset.y;
-
-		if(this.cameraTracking) {
-			engine.camera.moveTo(this.display.x, this.display.y);
-			this.fixedPosition = false;
-		}
 
 		if(!this.fixedPosition) {
 			offset.x -= engine.camera.position.x;
