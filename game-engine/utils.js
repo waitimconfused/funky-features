@@ -501,8 +501,6 @@ export class Component {
 	 * @returns this
 	 */
 	moveTo(x, y) {
-		if (x == null) x = this.display.x;
-		if (y == null) y = this.display.y;
 		if( x?.x && x?.y) {
 			y = x.y;
 			x = x.x;
@@ -510,6 +508,8 @@ export class Component {
 			y = x.display.y;
 			x = x.display.x;
 		}
+		if (x == null) x = this.display.x;
+		if (y == null) y = this.display.y;
 		this.display.x = x;
 		this.display.y = y;
 		if (engine.isPixelArt == true || this?.isPixelArt == true) {

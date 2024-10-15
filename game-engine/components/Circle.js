@@ -2,8 +2,8 @@ import { Component, Point2, engine } from "../utils.js";
 
 export class Circle extends Component {
 	#cameraTracking = false;
-	display = new Point2(0, 0, 100, 100);
-	displayOffset = new Point2(0, 0, 100, 100);
+	display = new Point2(0, 0);
+	displayOffset = new Point2(0, 0);
 	radius = 100;
 	colour = "purple";
 	outline = { colour: "black", size: 0 };
