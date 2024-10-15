@@ -251,11 +251,14 @@ export class EngineClass {
 
 	fullscreen = true;
 
-	hideCursor() {
-		this.canvas.style.cursor = "none";
+	/**
+	 * @param { string } cursor
+	 */
+	set cursor(cursor) {
+		this.canvas.style.cursor = cursor;
 	}
-	showCursor() {
-		this.canvas.style.cursor = null;
+	get cursor() {
+		return this.canvas.style.cursor;
 	}
 
 	get width() {
@@ -500,7 +503,7 @@ export class Component {
 	moveTo(x, y) {
 		if (x == null) x = this.display.x;
 		if (y == null) y = this.display.y;
-		if(x instanceof Point2 || x?.x && x?.y) {
+		if( x?.x && x?.y) {
 			y = x.y;
 			x = x.x;
 		} else if ( x instanceof Component ) {
