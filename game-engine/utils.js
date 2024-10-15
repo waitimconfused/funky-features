@@ -501,7 +501,7 @@ export class Component {
 	 * @returns this
 	 */
 	moveTo(x, y) {
-		if( x?.x && x?.y) {
+		if (typeof x?.y == "number" && typeof x?.x == "number") {
 			y = x.y;
 			x = x.x;
 		} else if ( x instanceof Component ) {

@@ -47,7 +47,7 @@ export class Path extends Component {
 		 * @param { number | undefined } y
 		 */
 		lineTo: (x, y) => {
-			if (x?.y && x?.x) {
+			if (typeof x?.y == "number" && typeof x?.x == "number") {
 				y = x.y;
 				x = x.x;
 			} if (x instanceof Component) {
