@@ -68,6 +68,10 @@ export class Path extends Component {
 		setPath: (path) => {
 			this.path = path;
 			return this;
+		},
+		clearPath: () => {
+			this.path = "";
+			return this;
 		}
 	}
 
