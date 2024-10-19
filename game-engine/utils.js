@@ -350,6 +350,7 @@ export class EngineClass {
 	setCanvas(canvas) {
 		this.canvas.remove();
 		this.canvas = canvas;
+		this.fullscreen = false;
 	}
 
 	/**
