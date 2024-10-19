@@ -1,6 +1,10 @@
-import { animationConstructor as animation, engine } from "./utils.js";
-import { ComponentGroup, Image, Rect } from "./components/index.js";
-import { ceilToNearest, keyboard, randomInRange, Vector } from "../toolbelt/toolbelt.js";
+import { animationConstructor as animation, engine, ComponentGroup } from "./utils.js";
+import { Image, Rect } from "./components/index.js";
+import { ceilToNearest, keyboard, randomInRange, Vector, controller } from "../toolbelt/toolbelt.js";
+
+controller.initialize();
+
+const xbox = new controller.Xbox(0);
 
 engine.isPixelArt = true;
 engine.camera.zoom = 6;
@@ -59,7 +63,6 @@ engine.addObject(worldBox);
 
 let tileCountY = Math.floor(engine.canvas.height/zoom/16) + 2;
 let tileCountX = Math.floor(engine.canvas.width/zoom/16) + 2;
-let l = 0;
 for (let y = 0; y < tileCountY; y++) {
 	for (let x = 0; x < tileCountX; x++) {
 		const tile = new Image(fantasy_);
@@ -119,17 +122,25 @@ engine.addObject(player);
 player.moveTo(0, 0);
 player.transform.set(0.5, 1);
 player.animation.playAnimation("idle");
+player.cameraTracking = true;
 
 var keys = ["w", "a", "s", "d", "arrowUp", "arrowDown", "arrowLeft", "arrowRight"];
 player.animation.onfinish = () => {
-	if (keyboard.isPressed(...keys) != (player.animation.currentAnimation != "idle")) {
+	let moving = false;
+	if (Math.abs(xbox.values.joystick.left.x) > 0.5) moving = true;
+	if (Math.abs(xbox.values.joystick.left.y) > 0.5) moving = true;
+	if (keyboard.isPressed(...keys)) moving = true;
+
+	if (moving != (player.animation.currentAnimation != "idle")) {
+
 		let animation = "idle";
-		if (keyboard.isPressed(...keys)) animation = "walk";
-		if (animation == "walk" && keyboard.isPressed("w") && keyboard.isPressed("s")) animation = "idle";
-		if (animation == "walk" && keyboard.isPressed("a") && keyboard.isPressed("d")) animation = "idle";
+
+		if (animation == "walk" && !moving) animation = "idle";
+		if (moving) animation = "walk";
 		player.animation.playAnimation(animation);
 	}
 }
+
 engine.preRenderingScript = () => {
 
 	// engine.componentHashes.sort((hashA, hashB) => {
@@ -145,6 +156,11 @@ engine.preRenderingScript = () => {
 	if (keyboard.isPressed("s", "arrowDown")) speedY += 1;
 	if (keyboard.isPressed("a", "arrowLeft")) speedX -= 1;
 	if (keyboard.isPressed("d", "arrowRight")) speedX += 1;
+
+	if (xbox.values.joystick.left.x < -0.5) speedX -= 1;
+	if (xbox.values.joystick.left.x > 0.5) speedX += 1;
+	if (xbox.values.joystick.left.y < -0.5) speedY -= 1;
+	if (xbox.values.joystick.left.y > 0.5) speedY += 1;
 
 	if (keyboard.isPressed("space")) {
 		player.animation.playAnimation("hurt");

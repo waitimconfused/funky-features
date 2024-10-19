@@ -17,6 +17,9 @@ export class Image extends Component {
 	 */
 	animation = undefined;
 
+	/** @type { number } In Degrees */
+	rotation = 0;
+
 	getType(){ return this.#type }
 
 	/**
@@ -74,14 +77,9 @@ export class Image extends Component {
 
 		offset.x -= destinationW * this.transform.x;
 		offset.y -= destinationH * this.transform.y;
-
-		if(this.fixedPosition == false) {
-			offset.x -= engine.camera.position.x;
-			offset.y -= engine.camera.position.y;
-		}
 		let destinationX = this.display.x + offset.x;
 		let destinationY = this.display.y + offset.y;
-
+		
 		context.save();
 		if (!this.fixedPosition) {
 			if (this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)) {
@@ -95,7 +93,11 @@ export class Image extends Component {
 				context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
 				context.scale(engine.camera.zoom, engine.camera.zoom);
 			}
+			context.translate(-engine.camera.position.x, -engine.camera.position.y);
 		}
+		context.translate(destinationX + destinationW * this.transform.x, destinationY + destinationH * this.transform.y);
+		context.rotate(this.rotation * Math.PI / 180);
+		context.translate(-destinationX - destinationW * this.transform.x, - destinationY - destinationH * this.transform.y);
 
 		if (this.colour) {
 			context.fillStyle = this.colour;

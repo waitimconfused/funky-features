@@ -1,5 +1,4 @@
-import * as Xbox from "./controllers/xbox.js";
-export var XboxController = new Xbox.XboxConstructor;
+export { XboxController as Xbox, XboxController } from "./controllers/xbox.js";
 
 export var controllers = [];
 
@@ -28,7 +27,7 @@ export class Controller {
 	}
 }
 
-function initialize() {
+export function initialize() {
 
 	console.log("To connect any controller, press any button");
 	window.addEventListener("gamepadconnected", (e) => {

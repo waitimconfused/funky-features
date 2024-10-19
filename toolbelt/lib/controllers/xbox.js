@@ -236,14 +236,3 @@ export class XboxController {
 		if( Math.max(Math.abs(this.values.joystick.right.x), Math.abs(this.values.joystick.right.y)) > 0.1 )  this.triggerEvent("while:joystickR", this.values.joystick.right);
 	}
 }
-export class XboxConstructor {
-	/**
-	 * Method for "linking" an Xbox controller 
-	 * 
-	 * @param {number} index Index of controller (see console after first button input) 
-	 * @returns Xbox
-	 */
-	fromIndex(index=0){
-		return new XboxController(index);
-	}
-}

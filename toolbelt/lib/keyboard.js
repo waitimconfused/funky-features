@@ -254,8 +254,10 @@ export var mouse = new class Mouse {
 			let renderedWidth = elementRect.width;
 			let renderedHeight = elementRect.height;
 
-			let actualWidth = element.offsetWidth;
-			let actualHeight = element.offsetHeight;
+			renderedWidth = element.offsetWidth;
+
+			let actualWidth = element.getAttribute("width") || element.clientWidth;
+			let actualHeight = element.getAttribute("height") || element.clientWidth;
 			if (element.nodeName.toLowerCase() == "svg") {
 				let veiwbox = element.getAttribute("viewBox").split(" ");
 				actualWidth = veiwbox[2];

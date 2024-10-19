@@ -12,14 +12,26 @@ export class Point2 {
 	set(x=this.x, y=this.y) {
 		this.x = x;
 		this.y = y;
+		return this;
 	}
-	translate(x=0, y=0) {
+	/**
+	 * 
+	 * @param {number | Point2} x
+	 * @param {number | undefined} y 
+	 */
+	translate(x, y) {
+		if (typeof x == "object" && typeof x?.x == "number" && typeof x?.y == "number") {
+			y = x.y;
+			x = x.x;
+		}
 		this.x += x;
 		this.y += y;
+		return this;
 	}
 	scale(x=1, y=1) {
 		this.x *= x;
 		this.y *= y;
+		return this;
 	}
 
 	/**
@@ -38,6 +50,9 @@ export class Point2 {
 			x: this.x,
 			y: this.y
 		}
+	}
+	clone() {
+		return new Point2(this.x, this.y);
 	}
 }
 
@@ -139,11 +154,42 @@ export class Point4 {
 	 * @param {number | Point2 | {x:number, y:number}} x
 	 * @param {number | undefined} y
 	 * @param {number | undefined} z
-	 * @returns 
+	 * @returns {boolean}
 	 */
 	contains(x=0, y=0) {
 		if (typeof x == "object" && x.x && x.y) { y = x.y; x = x.x; }
 		return isInRange(this.x, x, this.x+this.w) && isInRange(this.y, y, this.y+this.h);
+	}
+
+	/**
+	 * @param {Point4} point4
+	 * @returns {boolean}
+	 */
+	intersectingWith(point4) {
+		let r1_left = this.x - this.w / 2;
+		let r1_right = this.x + this.w / 2;
+		let r1_up = this.y - this.h / 2;
+		let r1_down = this.y + this.h / 2;
+		
+		let r2_left = point4.x - point4.w / 2;
+		let r2_right = point4.x + point4.w / 2;
+		let r2_up = point4.y - point4.h / 2;
+		let r2_down = point4.y + point4.h / 2;
+
+		let r1IntersectingX = isInRange(r2_left, r1_left, r2_right) || isInRange(r2_left, r1_left, r2_right);
+		let r1IntersectingY = isInRange(r2_up, r1_up, r2_down) || isInRange(r2_up, r1_down, r2_down);
+
+		let r2IntersectingX = isInRange(r1_left, r2_left, r1_right) || isInRange(r1_left, r2_left, r1_right);
+		let r2IntersectingY = isInRange(r1_up, r2_up, r1_down) || isInRange(r2_up, r1_down, r2_down);
+
+		let intersecting = (
+			(r1IntersectingX && r1IntersectingY) ||
+			(r2IntersectingX && r2IntersectingY) ||
+			(r1IntersectingX && r2IntersectingY) ||
+			(r1IntersectingY && r2IntersectingX)
+		);
+		
+		return intersecting;
 	}
 
 	toObject() {

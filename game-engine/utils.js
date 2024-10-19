@@ -1,4 +1,4 @@
-import { image, mouse, toRange, Vector } from "../toolbelt/toolbelt.js";
+import { ceilToNearest, image, mouse, toRange, Vector } from "../toolbelt/toolbelt.js";
 import { Point2, Point3, Point4 } from "./points.js";
 export { Point2, Point3, Point4 };
 
@@ -130,14 +130,14 @@ export class Camera {
 
 	disableZoom() {
 		window.removeEventListener("wheel", this.#customZoomEvent);
-		window.addEventListener("wheel", this.#preventDefaultEvent, {passive: false});
+		// window.addEventListener("wheel", this.#preventDefaultEvent, {passive: false});
 		window.removeEventListener("keydown", this.#customZoomEvent);
-		window.addEventListener("keydown", this.#preventDefaultEvent);
+		// window.addEventListener("keydown", this.#preventDefaultEvent);
 	}
 	enableZoom() {
-		window.removeEventListener("wheel", this.#preventDefaultEvent, );
+		// window.removeEventListener("wheel", this.#preventDefaultEvent, );
 		window.addEventListener("wheel", this.#customZoomEvent, {passive: false});
-		window.removeEventListener("keydown", this.#preventDefaultEvent);
+		// window.removeEventListener("keydown", this.#preventDefaultEvent);
 		window.addEventListener("keydown", this.#customZoomEvent);
 	}
 
@@ -215,6 +215,8 @@ export class EngineClass {
 		isPixelArt: true,
 	};
 
+	#show_loadAsset_logs = true;
+	#assetsLoaded = 0;
 	/**
 	 * 
 	 * @param { string } source
@@ -223,19 +225,28 @@ export class EngineClass {
 	 * }} options
 	 */
 	async loadAsset(source, options) {
+		if (!options) options = {};
 		let response = await fetch(source);
 		let type = response.headers.get("Content-Type");
 		type = type.split(";")[0];
 		let simpleType = "undefined";
+		let consoleLogComment = "";
 		if (type == "text/css") {
 			simpleType = "CSS";
+			if (document.head.querySelector(`link[rel="stylesheet"][href="${source}"]`)) {
+				if (this.#show_loadAsset_logs) console.warn(`The loading of CSS from url "${source}" was cancled due to already being loaded.`);
+				return;
+			}
 			let link = document.createElement("link");
 			link.rel = "stylesheet";
 			link.href = source;
 			link.type = "text/css";
 			document.head.appendChild(link);
 		} else if (type.startsWith("font/")) {
-			simpleType = "Font";
+			simpleType = "font";
+			if (options.fontFamilyName == undefined) {
+				options.fontFamilyName = `font_asset${this.#assetsLoaded}`;
+			}
 			const font = new FontFace(options.fontFamilyName, `url(${source})`);
 			await font.load();
 			document.fonts.add(font);
@@ -243,7 +254,27 @@ export class EngineClass {
 			simpleType = "IMG";
 			image.cacheImage(source);
 		}
-		console.log(`Loaded ${simpleType} from url "${source}"`)
+		if (this.#show_loadAsset_logs) {
+			if (simpleType == "font") consoleLogComment += `named "${options.fontFamilyName}"`;
+			if (this.#assetsLoaded >= 5) consoleLogComment += "\nYou can disable this message by using `engine.disableLoadAssetLogs()`";
+			console.log(`Loaded ${simpleType} from url "${source}"${consoleLogComment}`);
+		}
+		this.#assetsLoaded += 1;
+	}
+	/**
+	 * Disable all console messages when calling `engine.loadAsset()`
+	 * 
+	 * !WARNING! Suppresses all asset loading errors
+	 */
+	disableLoadAssetLogs() {
+		this.#show_loadAsset_logs = false;
+	}
+	
+	/**
+	 * Enable all console messages when calling `engine.loadAsset()`
+	 */
+	enableLoadAssetLogs() {
+		this.#show_loadAsset_logs = false;
 	}
 
 	preRenderingScript = () => {};
@@ -262,9 +293,15 @@ export class EngineClass {
 	}
 
 	get width() {
-		return this.canvas.width / this.camera.zoom;
+		return this.canvas.width;
 	}
 	get height() {
+		return this.canvas.height;
+	}
+	get veiwportWidth() {
+		return this.canvas.width / this.camera.zoom;
+	}
+	get veiwportHeight() {
 		return this.canvas.height / this.camera.zoom;
 	}
 
@@ -305,6 +342,14 @@ export class EngineClass {
 		this.camera.enableZoom();
 		if (this.fullscreen) this.#resizeCanvas();
 		this.tick();
+	}
+
+	/**
+	 * @param {HTMLCanvasElement} canvas
+	 */
+	setCanvas(canvas) {
+		this.canvas.remove();
+		this.canvas = canvas;
 	}
 
 	/**
@@ -423,7 +468,13 @@ export class EngineClass {
 			let component = this.components[hash];
 			if (!component) continue;
 			component.script(component);
-			component.render(context);
+		}
+		let defaultOffset = new Point2(0, 0);
+		for(let i = 0; i < numberOfComponents; i ++) {
+			let hash = this.componentHashes[i];
+			let component = this.components[hash];
+			if (!component) continue;
+			component.render(context, defaultOffset);
 		}
 		this.postRenderingScript();
 		window.requestAnimationFrame(() => {
@@ -458,6 +509,10 @@ export class Component {
 	 * @param {number} layer Layer `0` is back, layer `n | -1` is front
 	 */
 	setLayer(layer) {
+		if (engine.componentHashes.includes(this.hash) == false) {
+			console.error("Cannot set layer index if object does not have parent.");
+			return;
+		}
 		if (layer < 0) layer += engine.componentHashes.length;
 		let index = engine.componentHashes.indexOf(this.hash);
 		engine.componentHashes.splice(index, 1);

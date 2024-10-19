@@ -1,8 +1,10 @@
-import { Component, Point2, engine } from "../utils.js";
+import { toRange } from "../../toolbelt/toolbelt.js";
+import { Component, Point2, Point4, engine } from "../utils.js";
 
 export class Path extends Component {
 	#cameraTracking = false;
-	display = new Point2(0, 0, 100, 100);
+	display = new Point4(0, 0, 100, 100);
+	transform = new Point2(0, 0);
 	displayOffset = new Point2(0, 0, 100, 100);
 	radius = 100;
 	colour = "purple";
@@ -14,11 +16,48 @@ export class Path extends Component {
 		this.colour = colour;
 		return this;
 	}
+	/**
+	 * @type {{
+	 * colour: string,
+	 * size: number,
+	 * lineCap: "butt" | "round" | "square"
+	 * }}
+	 */
 	outline = { colour: "black", size: 0, lineCap: "round" };
 	cameraTracking = false;
+	/** @type { number } In Degrees */
 	rotation = 0;
 
-	path = "";
+	#path = "";
+
+	/** @param {string} path */
+	set path(path) {
+		this.#path = path;
+		let instructions = path.split(/([a-zA-Z](?:[\d\.-]+(?:,| ){0,1})+)/gm);
+		instructions = instructions.filter((item) => !!item);
+		let topLeft = new Point2;
+		let bottomRight = new Point2;
+		for (let i = 0; i < instructions.length; i ++) {
+			let instruction = instructions[i];
+			let coords = instruction.split(/([\d\.-]+)(?:,| )([\d\.-]+)/gm);
+			coords = coords.filter((item) => (!(/[a-zA-Z]| /).test(item)) && item.length > 0);
+			for (let idx = 0; idx < coords.length / 2; idx += 2) {
+				let x = coords[idx];
+				let y = coords[idx+1];
+				topLeft.x = Math.min(topLeft.x, x);
+				topLeft.y = Math.min(topLeft.y, y);
+				bottomRight.x = Math.max(bottomRight.x, x);
+				bottomRight.y = Math.max(bottomRight.y, y);
+			}
+		}
+		topLeft.translate(bottomRight); // `topLeft` is now == `{ x: width, y: height }`
+		this.display.w = topLeft.x;
+		this.display.h = topLeft.y;
+	}
+	get path() {
+		return this.#path;
+	}
+	
 	clearPath() {
 		this.path = "";
 		return this;
@@ -77,28 +116,46 @@ export class Path extends Component {
 
 	getType(){ return "Path"; }
 
-	render(context=new CanvasRenderingContext2D, defaultOffset=new Point2){
+	/**
+	 * 
+	 * @param { CanvasRenderingContext2D } context
+	 * @param { Point2 } defaultOffset
+	 */
+	render(context, defaultOffset){
 
-		if (this.colour == "none") this.colour = "transparent";
-		if (this.colour == null) this.colour = "transparent";
+		let colour = "";
+		let outlineColour = "";
+		if(["", "none"].includes(this.colour)) colour = "transparent";
+		if(["", "none"].includes(this.outline.colour)) outlineColour = "transparent";
+		if (this.colour == null) colour = "transparent";
+		if (this.outline.colour == null) outlineColour = "transparent";
+		if (/^var\(.*\)$/gm.test(this.colour)) {
+			let cssVar = this.colour.replace(/^var\(|\)$/g, "")
+			colour = getComputedStyle(engine.canvas).getPropertyValue(cssVar);
+		}
+		if (/^var\(.*\)$/gm.test(this.outline.colour)) {
+			let cssVar = this.outline.colour.replace(/^var\(|\)$/g, "")
+			outlineColour = getComputedStyle(engine.canvas).getPropertyValue(cssVar);
+		}
 		
 		if (!this.visibility) return this;
 
+		this.transform.x = toRange(0, this.transform.x, 1);
+		this.transform.y = toRange(0, this.transform.y, 1);
+
+		let destinationW = this.display.w;
+		let destinationH = this.display.h;
+
 		let offset = { x: 0, y: 0 };
 
-		offset.x += defaultOffset.x;
-		offset.y += defaultOffset.y;
+		offset.x += defaultOffset?.x;
+		offset.y += defaultOffset?.y;
 
-		// offset.x -= this.display.w * this.transform.x;
-		// offset.y -= this.display.h * this.transform.y;
+		offset.x -= destinationW * this.transform.x;
+		offset.y -= destinationH * this.transform.y;
 
-		if(!this.fixedPosition) {
-			offset.x -= engine.camera.position.x;
-			offset.y -= engine.camera.position.y;
-		}
-
-		this.displayOffset.x = this.display.x + offset.x;
-		this.displayOffset.y = this.display.y + offset.y;
+		let destinationX = this.display.x + offset.x;
+		let destinationY = this.display.y + offset.y;
 
 		if(this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)){
 			this.displayOffset.x = Math.floor(this.displayOffset.x);
@@ -111,23 +168,21 @@ export class Path extends Component {
 		if (!this.fixedPosition) {
 			context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
 			context.scale(engine.camera.zoom, engine.camera.zoom);
+			context.translate(-engine.camera.position.x, -engine.camera.position.y);
 		}
-		context.beginPath();
-		
-		context.fillStyle = this.colour;
-		context.strokeStyle = this.outline.colour;
-		context.lineWidth = this.outline.size;
-		context.lineCap = this.outline.lineCap;
-		context.lineJoin = "round";
+		context.translate(destinationX + destinationW * this.transform.x, destinationY + destinationH * this.transform.y);
+		context.rotate(this.rotation * Math.PI / 180);
+		context.translate(-destinationX - destinationW * this.transform.x, - destinationY - destinationH * this.transform.y);
 
+		context.beginPath();
+
+		context.fillStyle = colour;
+		context.strokeStyle = outlineColour;
+		context.lineWidth = this.outline.size;
+		context.lineCap = this.outline.lineCap || "round";
 		var path = new Path2D(this.path);
 
-		let angle = (this.rotation * Math.PI) / 180;
-
-		context.translate(this.displayOffset.x, this.displayOffset.y);
-		context.rotate(angle);
-		// context.translate(-this.displayOffset.x, -this.displayOffset.y);
-
+		context.translate(destinationX, destinationY);
 		context.fill(path);
 		if(this.outline.size > 0) context.stroke(path);
 

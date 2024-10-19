@@ -87,19 +87,20 @@ export class Text extends Component {
 		offset.x += defaultOffset.x;
 		offset.y += defaultOffset.y;
 
-		if(this.fixedPosition == false) {
-			offset.x -= engine.camera.position.x;
-			offset.y -= engine.camera.position.y;
-		}
-
 		let destinationX = this.display.x + offset.x;
 		let destinationY = this.display.y + offset.y;
 		
 
 		context.save();
-		if (!this.fixedPosition) {
-			context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
-			context.scale(engine.camera.zoom, engine.camera.zoom);
+		if (this.fixedPosition == false) {
+			if (this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)) {
+				context.translate(Math.floor(engine.canvas.width / 2), Math.floor(engine.canvas.height / 2));
+				context.scale(Math.floor(engine.camera.zoom), Math.floor(engine.camera.zoom));
+			} else {
+				context.translate(engine.canvas.width / 2 - engine.camera.position.x, engine.canvas.height / 2);
+				context.scale(engine.camera.zoom, engine.camera.zoom);
+			}
+			context.translate(-engine.camera.position.x, -engine.camera.position.y);
 		}
 		context.beginPath();
 
@@ -128,6 +129,7 @@ export class Text extends Component {
 			this.display.h += lineHeight;
 
 			if (this.outline.size > 0) context.strokeText(lines[i], destinationX, destinationY + (i * lineHeight) );
+			context.strokeText(lines[i], 0, (i * lineHeight) );
 			context.fillText(lines[i], 0, (i * lineHeight) );
 		}
 

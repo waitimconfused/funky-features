@@ -1,0 +1,313 @@
+@import url("./defaults.css");
+
+html:has(body nav) {
+	scroll-padding-top: 7rem;
+}
+
+body {
+	font-family: "Inter";
+	font-weight: 400;
+	padding: 1rem 12%;
+	background-color: var(--background);
+	color: var(--text);
+
+	&:has(nav) {
+		padding-top: 3rem;
+	}
+}
+
+h1, h2, h3, h4, h5 {
+	font-family: "Inter";
+	font-weight: 700;
+}
+
+html {
+	scroll-behavior: smooth;
+	font-size: 100%; /* 16px */
+}
+
+h1 { font-size: 4.210rem; /* 67.36px */ }
+h2 { font-size: 3.158rem; /* 50.56px */ }
+h3 { font-size: 2.369rem; /* 37.92px */ }
+h4 { font-size: 1.777rem; /* 28.48px */ }
+h5 { font-size: 1.333rem; /* 21.28px */ }
+small { font-size: 0.750rem; /* 12px */ }
+
+nav {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100vw;
+	padding: 0.25rem 12%;
+	display: flex;
+	flex-direction: row;
+	background-color: var(--background);
+	z-index: 2147483647;
+	box-sizing: border-box;
+	border-bottom: 1px solid var(--secondary);
+	justify-content: space-between;
+	align-items: center;
+}
+
+code {
+	display: block;
+	font-family: "JetBrains Mono";
+	background-color: var(--secondary);
+	white-space: pre-wrap;
+	margin: 0.5rem;
+	padding: 0.5rem;
+	border-radius: 1rem;
+	text-wrap: pretty;
+
+	&[lang] {
+		position: relative;
+		padding-top: 3rem;
+
+		&::before {
+			position: absolute;
+			display: block;
+			top: 0.5rem;
+			left: 0.5rem;
+			border-radius: 1rem;
+			box-sizing: border-box;
+			padding: 1rem;
+			padding-left: 3rem;
+			width: calc(100% - 1rem);
+			content: "language: " attr(lang);
+			text-transform: uppercase;
+			background-color: var(--primary);
+		}
+	}
+}
+
+.select-options:not(.chip) {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+	background-color: var(--background);
+	border: 1px solid var(--secondary);
+	width: max-content;
+	padding: 0.25rem;
+	border-radius: 1rem;
+	font-family: "Inter";
+
+	& .option {
+		cursor: pointer;
+		background-color: var(--secondary);
+		padding: 1rem;
+		border-radius: calc(1rem - 0.25rem);
+		font-family: "Inter";
+		font-size: 16px;
+		border: none;
+		outline: none;
+		transition: transform, filter, background-color;
+		transition-duration: 400ms;
+
+		&:hover {
+			filter: brightness(90%);
+		}
+	}
+}
+
+.select-option:not(.chip) {
+	display: inline-flex;
+	flex-direction: column;
+	position: relative;
+	gap: 0.25rem;
+	background-color: var(--background);
+	border: 1px solid var(--secondary);
+	width: max-content;
+	padding: 0.25rem;
+	border-radius: 1rem;
+	font-family: "Inter";
+
+	& .option.fixed {
+		cursor: pointer;
+		background-color: var(--primary);
+		padding: 1rem 2rem;
+		border-radius: calc(1rem - 0.25rem);
+		font-family: "Inter";
+		font-size: 16px;
+		border: none;
+		outline: none;
+		height: 1rem;
+		transition: transform, filter, background-color;
+		transition-duration: 400ms;
+	}
+
+	& .option:not(.fixed) {
+		cursor: pointer;
+		background-color: var(--secondary);
+		padding: 1rem 2rem;
+		border-radius: calc(1rem - 0.25rem);
+		font-family: "Inter";
+		font-size: 16px;
+		border: none;
+		outline: none;
+		height: 1rem;
+		transition: transform, filter, background-color;
+		transition-duration: 400ms;
+
+		&:hover {
+			filter: brightness(90%);
+		}
+
+		&:not(.chip .option)[selected] {
+			display: none;
+			background-color: color-mix(in srgb, var(--primary), var(--background) 50%);
+		}
+	}
+
+	& .option.fixed::before {
+		content: "";
+		display: inline-block;
+		width: 0.5rem;
+		height: 0.5rem;
+		transition: scale, margin-right, border-right-color, border-bottom-color, rotate;
+		transition-duration: 200ms;
+		border-right: 3px solid var(--text);
+		border-bottom: 3px solid var(--text);
+		rotate: 45deg;
+		margin-right: 0.5rem;
+	}
+
+	&.open .option.fixed::before {
+		content: "";
+		display: inline-block;
+		width: 0.5rem;
+		height: 0.5rem;
+		transition: scale, margin-right, border-right-color, border-bottom-color, rotate;
+		transition-duration: 200ms;
+		border-right: 3px solid var(--text);
+		border-bottom: 3px solid var(--text);
+		rotate: 225deg;
+		margin-right: 0.5rem;
+	}
+
+	& .unselected {
+		position: absolute;
+		top: 100%;
+		left: -1px;
+		width: calc( 100% - 0.5rem );
+		padding: 0.25rem;
+		padding-top: 0;
+		display: none;
+		flex-direction: column;
+		gap: 0.25rem;
+		background-color: var(--background);
+		border: 1px solid var(--secondary);
+		border-radius: 0 0 1rem 1rem;
+		border-top: none;
+	}
+	&.open {
+		z-index: 2147483646;
+		user-select: none;
+		border-bottom-color: transparent;
+		border-radius: 1rem 1rem 0 0;
+		& .unselected {
+			display: flex;
+			background-color: var(--background);
+			border: 1px solid var(--secondary);
+			border-radius: 0 0 1rem 1rem;
+			border-top: none;
+		}
+	}
+}
+
+.select-option.chip,
+.select-options.chip {
+	display: inline-flex;
+	flex-direction: row;
+	gap: 0.25rem;
+	& .option {
+		padding: 0.25rem 1rem;
+		border-radius: 0.5rem;
+		border: 1px solid var(--secondary);
+		cursor: pointer;
+		
+		&[selected] {
+			background-color: var(--primary);
+			&::before {
+				border-right-color: var(--text);
+				border-bottom-color: var(--text);
+				rotate: 45deg;
+				scale: 1;
+				margin-right: 0.5rem;
+			}
+		}
+	}
+}
+
+.select-options .option,
+.select-option.chip .option {
+	&::before {
+		content: "";
+		display: inline-block;
+		width: 0.5rem;
+		height: 1rem;
+		transition: scale, margin-right, border-right-color, border-bottom-color, rotate;
+		transition-duration: 200ms;
+		border-right: 3px solid transparent;
+		border-bottom: 3px solid transparent;
+		rotate: 45deg;
+		margin-right: -0.5rem;
+		scale: 0;
+	}
+
+	&[selected] {
+		background-color: var(--primary);
+
+		&::before {
+			border-right-color: var(--text);
+			border-bottom-color: var(--text);
+			rotate: 45deg;
+			scale: 1;
+			margin-right: 0.5rem;
+		}
+	}
+}
+
+.keyboard-key {
+	background: var(--secondary);
+	display: inline-block;
+	padding: 0.25rem;
+	border-radius: 0.25rem;
+	box-shadow: 0 0.25rem 0 0 color-mix(in srgb, var(--secondary), var(--primary) 25%);
+	transition: translate, box-shadow;
+	transition-duration: 100ms;
+	cursor: pointer;
+
+	&:active {
+		translate: 0 0.25rem;
+		box-shadow: 0 0px 0 0 color-mix(in srgb, var(--secondary), var(--primary) 25%);
+	}
+}
+
+a:is([href], [onclick]) {
+	cursor: pointer;
+	text-decoration: underline;
+	padding: 1rem 1rem;
+	background-color: transparent;
+	color: var(--text);
+	border-radius: 0.5rem;
+	transition: background-color;
+	transition-duration: 300ms;
+
+	:hover {
+		background-color: var(--secondary);
+	}
+}
+
+
+button,
+.button {
+	padding: 0.5rem 1rem;
+	border-radius: 1rem;
+	outline: none;
+	border: none;
+	background-color: color-mix(in srgb, var(--primary), var(--background) 50%);
+}
+
+button.elevated,
+.button-elevated {}

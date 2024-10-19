@@ -3,6 +3,66 @@ export * as image from "./lib/image.js";
 export * as controller from "./lib/controller.js";
 export * as device from "./lib/device.js";
 
+export class Range {
+	#min = 0;
+	#max = 1;
+	
+	/** @param {number} number */
+	set min(number) {
+		this.#min = number;
+		if (this.#min > this.#max) {
+			this.#min = [this.#max, this.#max = this.#min][0];
+		}
+	}
+
+	/** @returns {number} */
+	get min() {
+		return this.#min;
+	}
+	
+	/** @param {number} number */
+	set max(number) {
+		this.#max = number;
+		if (this.#max < this.#min) {
+			this.#max = [this.#min, this.#min = this.#max][0];
+		}
+	}
+
+	/** @returns {number} */
+	get max() {
+		return this.#max;
+	}
+
+	constructor(min, max) {
+		this.#min = Math.min(min, max);
+		this.#max = Math.max(min, max);
+	}
+	/**
+	 * @param {number} number
+	 * @returns  {boolean}
+	 */
+	contains(number) {
+		return number >= this.min && number <= this.max;
+	}
+
+	/**
+	 * @param { function | undefined } func 
+	 * @returns {number[]}
+	 */
+	select(func) {
+		if (!func) func = ( (x) => x );
+		let array = [];
+		for (let i = this.#min; i <= this.#max; i ++) {
+			let item = func(i);
+			if (typeof item == "number") array.push(item);
+			if (typeof item == "boolean" && item) array.push(i);
+		}
+		return array;
+	}
+}
+/** @param {number} min @param {number} max @returns {Range} */
+export function range(min, max) { return new Range(min, max); }
+
 export function toRange(min=0, value=0.5, max=1) {
 	return Math.max( Math.min(value, max), min );
 }
@@ -24,6 +84,10 @@ export function ceilToNearest(number=3.14, nearest=1) {
 
 export function randomInRange(min, max) {
 	return Math.random() * (max - min + 1) + min;
+}
+
+export function lerp(a, b, t) {
+	return a + (b - a) * t;
 }
 
 export class Vector {

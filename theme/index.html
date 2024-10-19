@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Document</title>
+		<link rel="stylesheet" href="./style.css">
+	</head>
+
+	<body>
+		<nav>
+
+			<div class="sitename">
+				<p>Ctrl <span class="keyboard-key">C</span> + <span class="keyboard-key">V</span> Theme</p>
+			</div>
+
+			<div>
+				<a href="#actions">Actions</a>
+				<div id="theme-toggle">
+					<div class="icon-dark_mode" data-theme="dark"></div>
+					<div class="icon-light_mode" data-theme="light"></div>
+				</div>
+			</div>
+
+		</nav>
+
+
+		<h1>
+			Ctrl <span class="keyboard-key">C</span> + <span class="keyboard-key">V</span>
+			<br>Theme
+		</h1>
+
+		<p>
+			Building a theme is hard.
+			<br>
+			I know that I don't like it, and it's not something I want to do.
+			<br>
+			So, here's a theme that you can copy and paste, no problem.
+		</p>
+
+		<h2 id="actions">Actions</h2>
+
+		<h3>Common Buttons</h3>
+
+		<button class="elevated">Elevated</button>
+		<button class="filled">Filled</button>
+		<button class="outlined">Filled</button>
+		<button class="text">Filled</button>
+
+		<h3>Selectors</h3>
+
+		<div style="display: flex; flex-direction: row; gap: 5rem;">
+			<div style="display: flex; flex-direction: column;">
+				<p>Single Select</p>
+				<select id="sel-singl">
+					<option value="sel" selected>Select</option>
+					<option value="one">One</option>
+					<option value="opt">Option</option>
+					<option value="onl">Only</option>
+				</select>
+			</div>
+
+			<div style="display: flex; flex-direction: column;">
+				<p>Single Select (Chip)</p>
+				<select id="sel-singl" class="chip">
+					<option value="sel">Select</option>
+					<option value="one">One</option>
+					<option value="opt">Option</option>
+					<option value="onl">Only</option>
+				</select>
+			</div>
+		</div>
+
+		<div style="display: flex; flex-direction: row; gap: 5rem;">
+			<div style="display: flex; flex-direction: column;">
+				<p>Multi Select</p>
+				<select id="sel-singl" multiple>
+					<option value="sel">Select</option>
+					<option value="one">One</option>
+					<option value="opt">Option</option>
+					<option value="onl">Only</option>
+				</select>
+			</div>
+
+			<div style="display: flex; flex-direction: column;">
+				<p>Multi Select (Chip)</p>
+				<select id="sel-singl" class="chip" multiple>
+					<option value="sel" selected>Select</option>
+					<option value="one">One</option>
+					<option value="opt">Option</option>
+					<option value="onl">Only</option>
+				</select>
+			</div>
+		</div>
+
+		<h1>ASD</h1>
+		<h1>ASD</h1>
+		<h1>ASD</h1>
+		<h1>ASD</h1>
+		<h1>ASD</h1>
+		<h1>ASD</h1>
+		<h1>ASD</h1>
+
+		<script src="./index.js"></script>
+	</body>
+
+</html>

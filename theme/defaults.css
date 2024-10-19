@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css?family=Inter:700|Inter:400');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+:root[data-theme="light"],
+:root:not([data-theme]) {
+	--text: #050315;
+	--background: #fbfbfe;
+	--primary: #2aa8fc;
+	--secondary: #dedcff;
+	--accent: #9cec94;
+}
+
+:root[data-theme="dark"] {
+	--text: #eae9fc;
+	--background: #010104;
+	--primary: #259ded;
+	--secondary: #271ea4;
+	--accent: #2cb21f;
+}
+
+html {
+	scroll-behavior: smooth;
+	scroll-padding-top: 3rem;
+}
+
+body {
+	font-family: "Inter";
+	font-weight: 400;
+	padding: 1rem 12%;
+	background-color: var(--background);
+	color: var(--text);
+}
+
+h1, h2, h3, h4, h5 {
+	font-family: "Inter";
+	font-weight: 700;
+}
+
+html {
+	scroll-behavior: smooth;
+	font-size: 100%; /* 16px */
+}
+
+h1 { font-size: 4.210rem; /* 67.36px */ }
+h2 { font-size: 3.158rem; /* 50.56px */ }
+h3 { font-size: 2.369rem; /* 37.92px */ }
+h4 { font-size: 1.777rem; /* 28.48px */ }
+h5 { font-size: 1.333rem; /* 21.28px */ }
+small { font-size: 0.750rem; /* 12px */ }
