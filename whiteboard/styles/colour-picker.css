@@ -1,0 +1,193 @@
+#colour-picker .sat-light {
+	position: relative;
+	width: 200px;
+	height: 200px;
+	background-color: hsl(0deg, 100%, 50%);
+	border-radius: 6px;
+	user-select: none;
+}
+
+#colour-picker .sat-light .white-overlay,
+#colour-picker .sat-light .black-overlay {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	border-radius: 6px;
+	outline: 1px solid rgba(0, 0, 0, 0.1);
+	outline-offset: -1px;
+}
+
+#colour-picker .sat-light .white-overlay {
+	background: linear-gradient(to right, #fff 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+#colour-picker .sat-light .black-overlay {
+	background: linear-gradient(to bottom, transparent 0%, #000 100%);
+}
+
+#colour-picker .sat-light .handle {
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	margin-left: -5px;
+	margin-top: -5px;
+	top: 0px;
+	left: 200px;
+	background-color: hsl(0 100 50);
+	cursor: pointer;
+	box-shadow: 0 0 0 5px #0000001A, inset 0 0 0 1px #0000001A;
+	outline: 4px solid white;
+	box-sizing: content-box;
+	/* z-index: 4; */
+	border-radius: 50%;
+	user-select: none;
+}
+
+#colour-picker .hue {
+	width: 100%;
+	height: 12px;
+	background: linear-gradient(90deg,
+			hsl(calc(36deg * 0) 100% 50%) 0%,
+			hsl(calc(36deg * 1) 100% 50%) 10%,
+			hsl(calc(36deg * 2) 100% 50%) 20%,
+			hsl(calc(36deg * 3) 100% 50%) 30%,
+			hsl(calc(36deg * 4) 100% 50%) 40%,
+			hsl(calc(36deg * 5) 100% 50%) 50%,
+			hsl(calc(36deg * 6) 100% 50%) 60%,
+			hsl(calc(36deg * 7) 100% 50%) 70%,
+			hsl(calc(36deg * 8) 100% 50%) 80%,
+			hsl(calc(36deg * 9) 100% 50%) 90%,
+			hsl(calc(36deg * 10) 100% 50%) 100%);
+	border-radius: 6px;
+}
+
+#colour-picker .hue input {
+	appearance: none;
+	width: 100%;
+	margin: 0px;
+	background: transparent;
+	outline: none;
+	height: 16px;
+}
+
+#colour-picker .hue input:focus {
+	outline: none;
+}
+
+#colour-picker .hue input::-webkit-slider-runnable-track {
+	background: transparent;
+	border: none;
+	outline: none;
+}
+
+#colour-picker .hue input::-webkit-slider-thumb {
+	appearance: none;
+	width: 12px;
+	height: 12px;
+	margin-bottom: 4px;
+	outline: 4px solid white;
+	background-color: var(--colour-input-hue-selector-fill);
+	border-radius: 50%;
+	box-shadow: 0 0 0 5px #0000001f;
+	position: relative;
+}
+
+#colour-picker .hue input:active::-webkit-slider-thumb {
+	outline: 6px solid white;
+	box-shadow: 0 0 0 7px #0000001f;
+	cursor: pointer;
+}
+
+#colour-picker .hue input:hover::-webkit-slider-thumb {
+	cursor: pointer;
+}
+
+#colour-picker .colour-code-holder {
+	width: 100%;
+	display: grid;
+	grid-template-columns: 1fr 2fr;
+	gap: 0.5rem;
+	height: 40px;
+}
+
+#colour-picker .colour-code-selector {
+	padding: 0.5rem;
+	width: 100%;
+	height: 100%;
+	color: #0F0F0F;
+	border-radius: 6px;
+	outline: 1px solid #0000000D;
+	outline-offset: -1px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: .2rem;
+	user-select: none;
+	transition: background;
+	transition-duration: 100ms;
+}
+
+#colour-picker .colour-code-selector:hover,
+#colour-picker .colour-code-selector:active,
+#colour-picker .colour-code-selector:focus {
+	background: rgba(0, 0, 0, 0.05);
+}
+
+#colour-picker .colour-code-selector small {
+	font-family: "Inter", sans-serif;
+}
+
+#colour-picker .colour-code {
+	border: none;
+	width: 100%;
+	height: 100%;
+	font-family: "Fira Code", monospace !important;
+	padding: 0.5rem;
+	outline: 1px solid #0000000D;
+	outline-offset: -1px;
+	border-radius: 6px;
+	text-align: center;
+	transition: background;
+	transition-duration: 100ms;
+}
+
+#colour-picker .colour-code:hover,
+#colour-picker .colour-code:active,
+#colour-picker .colour-code:focus {
+	background: rgba(0, 0, 0, 0.05);
+}
+
+#colour-picker .actions {
+	width: 100%;
+	display: grid;
+	grid-template-columns: 1fr 1fr 2fr;
+	gap: 0.5rem;
+	height: 40px;
+}
+
+#colour-picker .actions div {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	border: 1px solid color-mix(in srgb, #0F0F0F, transparent 80%);
+	border-radius: 6px;
+	transition: opacity;
+	transition-duration: 100ms;
+
+	&:not(.preview) {
+		cursor: pointer;
+		opacity: 0.6;
+
+		&:hover,
+		&:active,
+		&:focus {
+			opacity: 1;
+		}
+	}
+}
+
+#colour-picker .actions .preview {
+	background-color: rgb(255, 0, 0);
+}

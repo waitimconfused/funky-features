@@ -1,8 +1,8 @@
-import { engine, Point2 } from "./utils.js";
-import * as components from "./components/index.js";
-import { mouse, toRange } from "../toolbelt/toolbelt.js";
+import { engine, ComponentGroup } from "../utils.js";
+import * as components from "../index.js";
+import { mouse, toRange } from "../../toolbelt/toolbelt.js";
 
-engine.setIcon("./DEMO_assets/4/favicon.svg");
+engine.setIcon("./demos/4/favicon.svg");
 
 var gamePaused = false;
 
@@ -12,7 +12,7 @@ var userSelectedComponentHash = "";
 
 const colours = {
 
-	background: "#000000",
+	background: "#FFF",
 
 	outline: "#343434",
 	fill: "#232323",
@@ -27,44 +27,44 @@ const colours = {
 };
 
 engine.setBackground(colours.background);
-// engine.camera.disableZoom();
+engine.camera.disableZoom();
 
 var mapBackgroundPadding = 40;
-var mapBackground = new components.Rect();
+var mapBackground = new components.Rect;
 engine.addObject(mapBackground);
 mapBackground.colour = "transparent";
 mapBackground.outline.colour = colours.outline;
 mapBackground.outline.size = 20;
 mapBackground.radius = 10 + mapBackgroundPadding;
 
-var lightRay = new components.Path();
+var lightRay = new components.Path;
 engine.addObject(lightRay);
 lightRay.colour = "transparent";
-lightRay.outline.colour = colours.lightRay1;
+lightRay.outline.colour = colours;
 lightRay.outline.size = 50;
 
-var lightRayEffect = new components.Path();
+var lightRayEffect = new components.Path;
 engine.addObject(lightRayEffect);
 lightRayEffect.colour = "transparent";
 lightRayEffect.outline.colour = colours.lightRay2;
 lightRayEffect.outline.size = 25;
 
-var levelTitle = new components.Text();
-levelTitle.fixedPosition = false;
+var levelTitle = new components.Text;
+levelTitle.fixedPosition = true;
 engine.addObject(levelTitle);
 levelTitle.content = "";
 levelTitle.textColour = "yellow";
-levelTitle.textBaseLine = "middle";
+levelTitle.textBaseLine = "top";
 levelTitle.font = "Inter";
 levelTitle.styling = "bold";
 levelTitle.outline.colour = colours.background;
 levelTitle.outline.size = 10;
 levelTitle.letterSpacing = 10;
 levelTitle.textAlign = "center";
-levelTitle.textSize = 50;
+levelTitle.fontSize = 50;
 levelTitle.moveTo(0, 0);
 levelTitle.script = () => {
-	levelTitle.moveTo(map.width*tileSize/2, -tileSize/3);
+	levelTitle.moveTo(engine.width/2, 25);
 }
 
 var map = new class Map {
@@ -188,7 +188,7 @@ var map = new class Map {
 			makeButton("Light Source", "start");
 
 			function makeButton(title="", type="") {
-				let button = new components.ComponentGroup;
+				let button = new ComponentGroup;
 				let background = new components.Rect;
 				let text = new components.Text;
 
@@ -262,11 +262,11 @@ function makeTile(type="", direction=90, x=0, y=0, tileOptions={ dragLock: false
 	direction %= 360;
 	if(direction < 0) direction = 360 + direction;
 
-	let tile = new components.ComponentGroup();
-	let tileBackground = new components.Rect();
-	let tileSymbol = new components.Path();
-	var tileDragHandle = new components.Circle();
-	var tileRotateHandle = new components.Circle();
+	let tile = new ComponentGroup;
+	let tileBackground = new components.Rect;
+	let tileSymbol = new components.Path;
+	var tileDragHandle = new components.Circle;
+	var tileRotateHandle = new components.Circle;
 
 	tile.moveTo( x * 100, y * 100 );
 
@@ -322,7 +322,7 @@ function makeTile(type="", direction=90, x=0, y=0, tileOptions={ dragLock: false
 }
 
 
-function moveUntilIntersection(lightRay=new components.Path(), radian=0, posX=0, posY=0) {
+function moveUntilIntersection(lightRay=new components.Path, radian=0, posX=0, posY=0) {
 	let intersection = null;
 	let stepSize = tileSize / 10;
 	while (!intersection) {
@@ -356,7 +356,7 @@ function moveUntilIntersection(lightRay=new components.Path(), radian=0, posX=0,
 	return intersection;
 }
 
-function marchRay(startingTile=new components.ComponentGroup, degree=0) {
+function marchRay(startingTile=new ComponentGroup, degree=0) {
 	let posX = Math.round(startingTile.display.x / tileSize) * tileSize + tileSize/2;
 	let posY = Math.round(startingTile.display.y / tileSize) * tileSize + tileSize/2;
 	lightRay.pen.moveTo(posX, posY);
@@ -577,7 +577,7 @@ function updateSymbol(tile) {
 	tileRotateHandle.display.set( Math.cos(radian) * tileSize/2 + 50, Math.sin(radian) * tileSize/2 + 50);
 }
 
-function dragTile(tile=new components.ComponentGroup) {
+function dragTile(tile=new ComponentGroup) {
 
 	let tileType = tile.getAttribute("type");
 	let tileOptions = tile.getAttribute("options") || { dragLock: false, rotateLock: false };

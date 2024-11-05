@@ -1,6 +1,6 @@
-import { animationConstructor as animation, engine, ComponentGroup } from "./utils.js";
-import { Image, Rect } from "./components/index.js";
-import { ceilToNearest, keyboard, randomInRange, Vector, controller } from "../toolbelt/toolbelt.js";
+import { animationConstructor as animation, engine, ComponentGroup } from "../utils.js";
+import { Image, Rect } from "../index.js";
+import { ceilToNearest, keyboard, Vector, controller } from "../../toolbelt/toolbelt.js";
 
 controller.initialize();
 
@@ -23,8 +23,8 @@ worldBoundingBox.script = () => {
 	worldBoundingBox.setLayer(-1);
 }
 
-const fantasy_ = await animation.fromFile("./DEMO_assets/5/fantasy_/desert_.json");
-const dinoSprite_doux = await animation.fromFile("./DEMO_assets/5/dinoCharacters/DinoSprites - doux.json");
+const fantasy_ = await animation.fromFile("./demos/5/fantasy_/desert_.json");
+const dinoSprite_doux = await animation.fromFile("./demos/5/dinoCharacters/DinoSprites - doux.json");
 
 var worldTiles = [
 	[

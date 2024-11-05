@@ -1,4 +1,4 @@
-import { isInRange } from "../toolbelt/toolbelt.js";
+import { isInRange } from "../toolbelt.js";
 
 export class Point2 {
 	x = 0;

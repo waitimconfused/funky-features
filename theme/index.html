@@ -5,6 +5,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Document</title>
+		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 		<link rel="stylesheet" href="./style.css">
 	</head>
 
@@ -53,7 +54,7 @@
 		<div style="display: flex; flex-direction: row; gap: 5rem;">
 			<div style="display: flex; flex-direction: column;">
 				<p>Single Select</p>
-				<select id="sel-singl">
+				<select id="sel-single">
 					<option value="sel" selected>Select</option>
 					<option value="one">One</option>
 					<option value="opt">Option</option>
@@ -63,7 +64,7 @@
 
 			<div style="display: flex; flex-direction: column;">
 				<p>Single Select (Chip)</p>
-				<select id="sel-singl" class="chip">
+				<select id="sel-single" class="chip">
 					<option value="sel">Select</option>
 					<option value="one">One</option>
 					<option value="opt">Option</option>
@@ -75,7 +76,7 @@
 		<div style="display: flex; flex-direction: row; gap: 5rem;">
 			<div style="display: flex; flex-direction: column;">
 				<p>Multi Select</p>
-				<select id="sel-singl" multiple>
+				<select id="sel-single" multiple>
 					<option value="sel">Select</option>
 					<option value="one">One</option>
 					<option value="opt">Option</option>
@@ -85,7 +86,7 @@
 
 			<div style="display: flex; flex-direction: column;">
 				<p>Multi Select (Chip)</p>
-				<select id="sel-singl" class="chip" multiple>
+				<select id="sel-single" class="chip" multiple>
 					<option value="sel" selected>Select</option>
 					<option value="one">One</option>
 					<option value="opt">Option</option>
@@ -93,6 +94,18 @@
 				</select>
 			</div>
 		</div>
+
+		<button class="filled" onclick="document.getElementById('export-dialog').showModal()">HTML Dialog</button>
+
+		<dialog id="export-dialog">
+			<h2>Export Image</h2>
+			<form action="">
+				<select id="export-as-type" value="png">
+					<option value="png">PNG</option>
+					<option value="JPEG">JPEG</option>
+				</select>
+			</form>
+		</dialog>
 
 		<h1>ASD</h1>
 		<h1>ASD</h1>

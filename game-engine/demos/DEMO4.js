@@ -1,6 +1,6 @@
-import { mouse } from "../toolbelt/toolbelt.js";
-import { engine, ComponentGroup } from "./utils.js";
-import { Path, Rect, Text } from "./components/index.js";
+import { mouse } from "../../toolbelt/toolbelt.js";
+import { engine, ComponentGroup } from "../utils.js";
+import { Path, Rect, Text } from "../index.js";
 
 engine.setFavicon("https://confusion.inputoverload.com/assets/favicon.png");
 engine.background = "#e0e0e0";

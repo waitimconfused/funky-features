@@ -17,13 +17,13 @@ export class Text extends Component {
 	/**
 	 * @type {number | string}
 	 */
-	textSize = 48 | "48px";
+	fontSize = 48 | "48px";
 	/**
 	 * 
 	 * @param {number | string} size
 	 */
 	setTextSize(size) {
-		this.textSize = size;
+		this.fontSize = size;
 		return this;
 	}
 
@@ -72,10 +72,10 @@ export class Text extends Component {
 
 		if (!this.visibility) return this;
 
-		if (typeof this.textSize == "number") this.textSize += "px";
+		if (typeof this.fontSize == "number") this.fontSize += "px";
 		if (typeof this.letterSpacing == "number") this.letterSpacing += "px";
 
-		context.font = `${this.styling} ${this.textSize} ${this.fontFamily}, Arial`;
+		context.font = `${this.styling} ${this.fontSize} ${this.fontFamily}, Arial`;
 		context.fillStyle = this.colour;
 		context.textAlign = this.textAlign;
 		context.textBaseline = this.textBaseLine;

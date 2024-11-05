@@ -1,7 +1,7 @@
-import { engine } from "./utils.js";
-import { Path, Circle, Image, Text, Rect } from "./components/index.js";
-import { Point2 } from "./points.js";
-import { Vector } from "../toolbelt/toolbelt.js";
+import { engine } from "../utils.js";
+import { Path, Circle, Image, Text, Rect } from "../index.js";
+import { Point2 } from "../points.js";
+import { Vector } from "../../toolbelt/toolbelt.js";
 
 engine.camera.zoom = 100;
 engine.camera.defaultZoom = engine.camera.zoom;
@@ -162,14 +162,14 @@ path.pen.moveTo(p2);
 path.pen.lineTo(p4.x, p4.y);
 
 const gear1 = new Image;
-gear1.source = "./DEMO_assets/gear.svg";
+gear1.source = "./demos/gear.svg";
 gear1.display.set(0, 0, 1.25, 1.25);
 engine.addObject(gear1);
 gear1.zIndex = 0;
 gear1.script = () => { gear1.rotation = ( performance.now() / 10 ) % 360; }
 
 const gear2 = new Image;
-gear2.source = "./DEMO_assets/gear.svg";
+gear2.source = "./demos/gear.svg";
 gear2.display.w = 1.25;
 gear2.display.h = 1.25;
 gear2.moveTo(1, 0);
@@ -178,7 +178,7 @@ gear2.zIndex = 0;
 gear2.script = () => { gear2.rotation = ( performance.now() / -10 + 30 ) % 360; }
 
 const gear3 = new Image;
-gear3.source = "./DEMO_assets/gear.svg";
+gear3.source = "./demos/gear.svg";
 gear3.display.w = 1.25;
 gear3.display.h = 1.25;
 gear3.moveTo(1, -1);
@@ -208,7 +208,7 @@ demoLable.textAlign = "left";
 demoLable.textBaseLine = "bottom";
 demoLable.fontFamily = "JetBrains Mono";
 demoLable.content = "// Rotation\ncomponent.rotation = <deg>";
-demoLable.textSize = 30;
+demoLable.fontSize = 30;
 demoLable.colour = "black";
 demoLable.outline.colour = "white";
 demoLable.outline.size = 10;

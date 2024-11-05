@@ -89,7 +89,7 @@ export var keyboard = new class Keyboard {
 
 	/**
 	 * @param {string | string[]} keys 
-	 * @param {function} callback 
+	 * @param { (e:KeyboardEvent) => {} } callback 
 	 * @param {{
 	* 	passive: boolean
 	* }} options 
@@ -137,7 +137,6 @@ export var keyboard = new class Keyboard {
 			let keybinding = this.#eventListener_ON[index];
 			let hasMatch = arrayIncludesArray(this.list, keybinding.keys);
 			if (hasMatch) {
-				console.log(keybinding.options);
 				if (keybinding.options?.passive == false) keyboardEvent.preventDefault();
 				keybinding.callback(keyboardEvent);
 				clearKeys = clearKeys || !keybinding.options?.passive;
@@ -180,29 +179,29 @@ export var mouse = new class Mouse {
 	constructor() {
 		window.addEventListener("mousedown", (e) => {
 			mouse.click_l = true;
-			mouse.updateHooks();
+			mouse.updateHooks(e);
 		});
 		window.addEventListener("mouseup", (e) => {
 			mouse.click_l = false;
 			mouse.click_r = false;
-			mouse.updateHooks();
+			mouse.updateHooks(e);
 		});
 		window.addEventListener("contextmenu", (e) => {
 			e.preventDefault();
 			mouse.click_r = true;
-			mouse.updateHooks();
+			mouse.updateHooks(e);
 		});
 		window.addEventListener("mousemove", (e) => {
 			mouse.position.x = e.clientX;
 			mouse.position.y = e.clientY;
-			mouse.updateHooks();
+			mouse.updateHooks(e);
 		});
 	}
 
 	/**
 	 * 
 	 * @param { object } options 
-	 * @param { function } options.updateFunc
+	 * @param { (e: MouseEvent, mouse: Mouse) => {} } options.updateFunc
 	 */
 	addHook(options) {
 		if (typeof options?.updateFunc != "function") options.updateFunc = new Function;
@@ -216,7 +215,11 @@ export var mouse = new class Mouse {
 		this.#hooks.push(hook);
 		return hook;
 	}
-	updateHooks() {
+	/**
+	 * 
+	 * @param {MouseEvent} e
+	 */
+	updateHooks(e) {
 		for (let i = 0; i < this.#hooks.length; i++) {
 			/**
 			 * @type { MouseHook }
@@ -226,7 +229,7 @@ export var mouse = new class Mouse {
 			hook.y = this.position.y;
 			hook.click_l = this.click_l;
 			hook.click_r = this.click_r;
-			hook.updateFunc(this);
+			hook.updateFunc(e, this);
 		}
 	}
 

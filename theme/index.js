@@ -4,6 +4,7 @@ for (let x = 0; x < selects.length; x ++) {
 	let select = selects[x];
 
 	if (select.hasAttribute("no-convert")) continue;
+	let value = select.getAttribute("value") || "";
 
 	let options = select.getElementsByTagName("option");
 	options = Array.prototype.slice.call(options);
@@ -44,6 +45,8 @@ for (let x = 0; x < selects.length; x ++) {
 
 		if (isMultiple) span.addEventListener("click", () => { selectOptions(span) });
 		else span.addEventListener("click", () => { selectOption(span) });
+
+		if (value.split(",").includes(option.value)) span.setAttribute("selected", "");
 
 		for (let attribute of option.attributes) {
 			span.setAttribute(attribute.name, attribute.value);

@@ -1,5 +1,5 @@
 import { animation, engine, Point2 } from "../utils.js";
-import * as components from "../components/index.js";
+import * as components from "../index.js";
 import { keyboard, mouse, toRange } from "../../toolbelt/toolbelt.js";
 
 const output = document.getElementById("output");

@@ -1,6 +1,6 @@
-import { engine } from "./utils.js";
-import * as components from "./components/index.js";
-import { isInRange, keyboard, mouse } from "../toolbelt/toolbelt.js";
+import { ComponentGroup, engine } from "../utils.js";
+import * as components from "../index.js";
+import { isInRange, keyboard, mouse } from "../../toolbelt/toolbelt.js";
 
 let worldData = [
 	["red", "green", "blue"],
@@ -11,8 +11,8 @@ let worldData = [
 engine.camera.disableZoom();
 engine.isPixelArt = true;
 engine.setBackground("white");
-engine.setIcon("./DEMO_assets/sit.png");
-engine.loadAsset("./DEMO_assets/sit.png")
+engine.setIcon("./demos/sit.png");
+engine.loadAsset("./demos/sit.png")
 
 let scale = 16 * 5;
 
@@ -28,7 +28,7 @@ let blockCountY = () => Math.floor(window.innerHeight / scale) + 1;
 // };
 // engine.addObject(background);
 
-let world = new components.ComponentGroup;
+let world = new ComponentGroup;
 world.moveBy(0, 0);
 engine.addObject(world);
 
@@ -43,7 +43,7 @@ engine.addObject(player);
 player.cameraTracking = true;
 player.setSize(scale, scale);
 player.setCrop(0, 0, 16, 16);
-player.source = "./DEMO_assets/sit.png";
+player.source = "./demos/sit.png";
 player.colour = "cyan";
 player.moveTo(blockCountX() / 2, 0);
 

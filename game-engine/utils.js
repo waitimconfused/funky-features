@@ -1,5 +1,5 @@
 import { ceilToNearest, image, mouse, toRange, Vector } from "../toolbelt/toolbelt.js";
-import { Point2, Point3, Point4 } from "./points.js";
+import { Point2, Point3, Point4 } from "../toolbelt/lib/points.js";
 export { Point2, Point3, Point4 };
 
 function isValidUrl(urlString) {
@@ -21,6 +21,8 @@ export class Camera {
 
 	wheelZoomMultiplier = 0.01;
 	keyZoomMultiplier = 0.1;
+
+	resetZoomResetsPosition = false;
 
 	constructor() {
 		window.addEventListener("gesturestart", this.#preventDefaultEvent, {passive: false});
@@ -114,7 +116,10 @@ export class Camera {
 			if (e.repeat) return;
 
 			this.zoom += scale * this.keyZoomMultiplier;
-			if (["0"].includes(e.key)) this.zoom = this.defaultZoom;
+			if (["0"].includes(e.key)) {
+				if (this.resetZoomResetsPosition) this.moveTo(0, 0);
+				this.zoom = this.defaultZoom;
+			}
 			this.zoom = toRange(this.minZoom, this.zoom, this.maxZoom);
 		}
 	
@@ -168,6 +173,16 @@ export class Camera {
 export class EngineClass {
 	camera = new Camera;
 
+	/**
+	 * @type {{
+	 *	x: number,
+	 *	y: number,
+	 *	click_l: boolean,
+	 *	click_r: boolean,
+	 * 	toWorld: () => { x: number, y: number }
+	 * 	toObject: (object: Component, x:undefined|number, y:undefined|number) => { x: number, y: number }
+	 * }}
+	 */
 	mouse = mouse.addHook({
 		/**
 		 * @returns { x: number, y: number }
@@ -181,16 +196,24 @@ export class EngineClass {
 		},
 		/**
 		 * @param { Component } object
+		 * @param {undefined|number} x Mouse X position (In worldspace)
+		 * @param {undefined|number} y Mouse Y position (In worldspace)
 		 * @returns { x: number, y: number }
 		 */
-		toObject: (object) => {
-			let mouseRelative = mouse.position.relative(this.canvas);
+		toObject: (object, x, y) => {
+			let mousePos = mouse.position.relative(this.canvas);
+			if (typeof x == "number" && typeof y == "number") mousePos = { x, y };
 			return {
-				x: (mouseRelative.x - this.canvas.width/2) / this.camera.zoom + this.camera.position.x,
-				y: (mouseRelative.y - this.canvas.height/2) / this.camera.zoom + this.camera.position.y,
+				x: (mousePos.x - this.canvas.width/2) / this.camera.zoom + this.camera.position.x - object.display.x + object.display.w * object.transform.x,
+				y: (mousePos.y - this.canvas.height/2) / this.camera.zoom + this.camera.position.y - object.display.y + object.display.h * object.transform.y,
 			}
 		},
-		updateFunc: () => {}
+		updateFunc: (e, beans) => {
+			if (e.click_l && this.canvas.matches(":active")) {
+				e.stopPropagation();
+				e.preventDefault();
+			};
+		}
 	});
 
 	canvas = document.createElement("canvas");
@@ -204,6 +227,16 @@ export class EngineClass {
 	components = {};
 	componentHashes = [];
 	isPixelArt = false;
+	
+	#fullscreen = true;
+	get fullscreen () {
+		return this.#fullscreen;
+	}
+	/** @param {boolean} value */
+	set fullscreen (value) {
+		if (this.#fullscreen == false && value == true) {this.#resizeCanvas()}
+		this.#fullscreen = value;
+	}
 
 	stats = {
 		fps: 0,
@@ -280,8 +313,6 @@ export class EngineClass {
 	preRenderingScript = () => {};
 	postRenderingScript = () => {};
 
-	fullscreen = true;
-
 	/**
 	 * @param { string } cursor
 	 */
@@ -320,6 +351,10 @@ export class EngineClass {
 		this.canvas.style.setProperty('--width', `${width}px`);
 		this.canvas.style.setProperty('--height', `${height}px`);
 
+		this.canvas.style.position = "fixed";
+		this.canvas.style.top = "0px";
+		this.canvas.style.left = "0px";
+
 		if(this.canvas.onresize) {
 			if(width != prevCanvasWidth || height != prevCanvasHeight) this.canvas.onresize();
 		}
@@ -340,8 +375,8 @@ export class EngineClass {
 			if (this.fullscreen) this.#resizeCanvas();
 		});
 		this.camera.enableZoom();
-		if (this.fullscreen) this.#resizeCanvas();
-		this.tick();
+		this.#resizeCanvas();
+		this.#tick();
 	}
 
 	/**
@@ -442,9 +477,8 @@ export class EngineClass {
 		this.setIcon(href);
 	}
 
-	tick() {
+	#tick() {
 		this.preRenderingScript();
-		this.camera.update();
 		this.#updateStats();
 
 		let context = this.canvas.getContext("2d");
@@ -470,6 +504,7 @@ export class EngineClass {
 			if (!component) continue;
 			component.script(component);
 		}
+		this.camera.update();
 		let defaultOffset = new Point2(0, 0);
 		for(let i = 0; i < numberOfComponents; i ++) {
 			let hash = this.componentHashes[i];
@@ -479,7 +514,7 @@ export class EngineClass {
 		}
 		this.postRenderingScript();
 		window.requestAnimationFrame(() => {
-			this.tick();
+			this.#tick();
 		});
 	}
 }

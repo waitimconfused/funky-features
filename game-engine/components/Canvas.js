@@ -5,6 +5,8 @@ export class Canvas extends Component {
 	#cameraTracking = false;
 
 	colour = "purple";
+	outline = { colour: "black", size: 0 };
+	shadow = { colour: "black", blur: 0, offset: { x: 0, y: 0 } };
 
 	documentElement = document.createElement("canvas");
 
@@ -70,10 +72,20 @@ export class Canvas extends Component {
 			}
 		}
 
-		if (this.colour) {
-			context.fillStyle = this.colour;
-			context.fillRect(destinationX, destinationY, destinationW, destinationH);
-		}
+		context.fillStyle = this.colour;
+		context.strokeStyle = this.outline.colour;
+		context.lineWidth = this.outline.size;
+
+		context.shadowColor = this.shadow.colour;
+		context.shadowOffsetX = this.shadow.offset.x;
+		context.shadowOffsetY = this.shadow.offset.y;
+		context.shadowBlur = this.shadow.blur;
+
+		context.beginPath();
+		context.rect(destinationX, destinationY, destinationW, destinationH);
+		context.closePath();
+		context.fill();
+		context.shadowBlur = 0;
 
 		context.drawImage(
 			this.documentElement,
@@ -81,6 +93,13 @@ export class Canvas extends Component {
 			destinationX, destinationY,
 			destinationW, destinationH,
 		);
+
+		if (this.outline.size > 0) {
+			context.beginPath();
+			context.rect(destinationX, destinationY, destinationW, destinationH);
+			context.closePath();
+			context.stroke();
+		}
 
 		context.restore();
 
