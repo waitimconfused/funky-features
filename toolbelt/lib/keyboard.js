@@ -9,12 +9,7 @@ function arrayIncludesArray(array, target) {
 
 export var keyboard = new class Keyboard {
 
-	#keybinds = [];
-	#stopEvent = [];
-
-	/**
-	 * @type {string[]}
-	 */
+	/** @type {string[]} */
 	list = [];
 	/**
 	 * @param  {...string} key 
@@ -54,12 +49,12 @@ export var keyboard = new class Keyboard {
 		key = this.#fixKeys([key])[0];
 		if (value == true && !this.isPressed(key)) {
 			this.list.push(key);
-			this.#runevent_ON(keyboardEvent);
+			this.#triggerEventListeners(this.#eventListener_ON, keyboardEvent);
 		} else if (value == false && this.isPressed(key)) {
+			this.#triggerEventListeners(this.#eventListener_OFF, keyboardEvent);
 			while (this.isPressed(key)) {
 				this.list.splice(this.list.indexOf(key), 1);
 			}
-			this.#runevent_OFF(keyboardEvent);
 		}
 	}
 	/**
@@ -88,12 +83,12 @@ export var keyboard = new class Keyboard {
 	#eventListener_OFF = [];
 
 	/**
-	 * @param {string | string[]} keys 
+	 * @param {string | string[] | "*" | ["*"]} keys 
 	 * @param { (e:KeyboardEvent) => {} } callback 
 	 * @param {{
-	* 	passive: boolean
-	* }} options 
-	*/
+	 * 	passive: boolean
+	 * }} options 
+	 */
 	on(keys, callback, options = {}) {
 		if (options.passive == undefined) options.passive = true;
 		if (typeof keys == "string") keys = [keys];
@@ -105,63 +100,41 @@ export var keyboard = new class Keyboard {
 		});
 	}
 	/**
-	 * @param {string | string[]} keys 
-	 * @param {function} callback 
+	 * @param {string | string[] | "*" | ["*"]} keys 
+	 * @param { (e:KeyboardEvent) => {} } callback 
 	 * @param {{
-	* 	passive: boolean
-	* }} options 
-	*/
+	 * 	passive: boolean
+	 * }} options 
+	 */
 	off(keys, callback, options = {}) {
 		if (options.passive == undefined) options.passive = true;
 		if (typeof keys == "string") keys = [keys];
+		keys = this.#fixKeys(keys);
 		this.#eventListener_OFF.push({
 			keys,
 			callback,
 			options
 		});
 	}
+
 	/**
-	 * @param { KeyboardEvent } keyboardEvent
-	 */
-	#runevent_ON(keyboardEvent) {
+	 * @param {{
+	 * keys: string[],
+	 * 	callback: (e:KeyboardEvent) => {},
+	 * options: {
+	 * 	passive: boolean
+	 * }
+	 * }[]} eventListners
+	 * @param {KeyboardEvent} keyboardEvent
+	**/
+	#triggerEventListeners(eventListners, keyboardEvent) {
 		let clearKeys = false;
-		for (let index = 0; index < this.#eventListener_ON.length; index++) {
-			/**
-			 * @type {{
-			* 	callback: function
-			* options: {
-			* 	passive: boolean
-			* }
-			* }}
-			*/
-			let keybinding = this.#eventListener_ON[index];
-			let hasMatch = arrayIncludesArray(this.list, keybinding.keys) || this.list == ["*"];
+		for (let index = 0; index < eventListners.length; index++) {
+			let keybinding = eventListners[index];
+			let hasWildCard = (keybinding.keys.length == 1 && keybinding.keys[0] == "*");
+			let hasMatch = arrayIncludesArray(this.list, keybinding.keys) || hasWildCard;
 			if (hasMatch) {
 				if (keybinding.options?.passive == false) keyboardEvent.preventDefault();
-				keybinding.callback(keyboardEvent);
-				clearKeys = clearKeys || !keybinding.options?.passive;
-			}
-		}
-		if (clearKeys) this.list = [];
-	}
-	/**
-	 * @param { KeyboardEvent } keyboardEvent
-	 */
-	#runevent_OFF(keyboardEvent) {
-		let clearKeys = false;
-		for (let index = 0; index < this.#eventListener_OFF.length; index++) {
-			/**
-			 * @type {{
-			 * 	callback: function
-			 * options: {
-			 * 	passive: boolean
-			 * }
-			 * }}
-			 */
-			let keybinding = this.#eventListener_OFF[index];
-			let hasMatch = arrayIncludesArray(this.list, keybinding.keys);
-			if (hasMatch) {
-				if (!keybinding.options?.passive) keyboardEvent.preventDefault();
 				keybinding.callback(keyboardEvent);
 				clearKeys = clearKeys || !keybinding.options?.passive;
 			}

@@ -1,12 +1,16 @@
 import { keyboard } from "../toolbelt.js";
 
 keyboard.on("b", () => {
-	console.log("You pressed (b)");
+	console.log("Pressing (b)");
 }, { passive: true });
+
 keyboard.off("b", () => {
-	console.log("You unpressed (b)");
-});
+	console.log("Not Pressing (b)");
+}, { passive: true });
 
 keyboard.on(["control", "b"], () => {
-	console.log("You pressed (ctrl + b)");
+	console.log("Pressing (ctrl + b)");
+});
+keyboard.off(["control", "b"], () => {
+	console.log("Not Pressing (ctrl + b)");
 });
