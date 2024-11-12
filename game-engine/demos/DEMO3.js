@@ -1,10 +1,9 @@
 import { animationConstructor as animation, engine, ComponentGroup } from "../utils.js";
-import { Image, Rect } from "../index.js";
-import { ceilToNearest, keyboard, Vector, controller } from "../../toolbelt/toolbelt.js";
+import { Image, Rect } from "../components.js";
+import { ceilToNearest, keyboard, Vector, Controller } from "../../toolbelt/toolbelt.js";
 
-controller.initialize();
-
-const xbox = new controller.Xbox(0);
+const xbox = new Controller(0);
+xbox.applyLayout("Xbox");
 
 engine.isPixelArt = true;
 engine.camera.zoom = 6;

@@ -1,68 +1,70 @@
 import * as toolbelt from "../toolbelt.js";
-toolbelt.controller.initialize();
 
-var xboxController = toolbelt.controller.XBOX.fromIndex(0);
+var controller = new toolbelt.Controller;
+controller.applyLayout("Xbox");
 
-xboxController.while("buttonA", (value) => {
+controller.on("XYZ", () => {});
+
+controller.while("buttonA", (value) => {
 	document.getElementById("buttonA").style.fill = `rgba(0, 0, 0, ${value})`;
 });
-xboxController.while("buttonB", (value) => {
+controller.while("buttonB", (value) => {
 	document.getElementById("buttonB").style.fill = `rgba(0, 0, 0, ${value})`;
 });
-xboxController.while("buttonX", (value) => {
+controller.while("buttonX", (value) => {
 	document.getElementById("buttonX").style.fill = `rgba(0, 0, 0, ${value})`;
 });
-xboxController.while("buttonY", (value) => {
+controller.while("buttonY", (value) => {
 	document.getElementById("buttonY").style.fill = `rgba(0, 0, 0, ${value})`;
 });
 
-xboxController.while("buttonView", (value) => {
+controller.while("buttonView", (value) => {
 	document.getElementById("buttonView").style.fill = `rgba(0, 0, 0, ${value})`;
 	if(!value) document.getElementById("buttonView").style.fill = "";
 });
-xboxController.while("buttonMenu", (value) => {
+controller.while("buttonMenu", (value) => {
 	document.getElementById("buttonMenu").style.fill = `rgba(0, 0, 0, ${value})`;
 });
 
-xboxController.while("bumperL", (value) => {
+controller.while("bumperL", (value) => {
 	document.getElementById("bumperL").style.fill = `rgba(0, 0, 0, ${value})`;
 });
-xboxController.while("bumperR", (value) => {
+controller.while("bumperR", (value) => {
 	document.getElementById("bumperR").style.fill = `rgba(0, 0, 0, ${value})`;
 });
 
-xboxController.while("dpadUp", (value) => {
+controller.while("dpadUp", (value) => {
 	document.getElementById("dpadUp").style.fill = `rgba(0, 0, 0, ${value})`;
 });
-xboxController.while("dpadDown", (value) => {
+controller.while("dpadDown", (value) => {
 	document.getElementById("dpadDown").style.fill = `rgba(0, 0, 0, ${value})`;
 });
-xboxController.while("dpadLeft", (value) => {
+controller.while("dpadLeft", (value) => {
 	document.getElementById("dpadLeft").style.fill = `rgba(0, 0, 0, ${value})`;
 });
-xboxController.while("dpadRight", (value) => {
+controller.while("dpadRight", (value) => {
 	document.getElementById("dpadRight").style.fill = `rgba(0, 0, 0, ${value})`;
 });
 
-xboxController.while("joystickClickL", (value) => {
+controller.while("joystickClickL", (value) => {
 	document.getElementById("joystickL").style.fill = `rgba(0, 0, 0, ${value})`;
 });
-xboxController.while("joystickClickR", (value) => {
+controller.while("joystickClickR", (value) => {
 	document.getElementById("joystickR").style.fill = `rgba(0, 0, 0, ${value})`;
 });
 
 
 
-xboxController.while("triggerL", (value) => {
+controller.while("triggerL", (value) => {
 	document.getElementById("triggerL").style.fill = `rgb(0, 0, 0, ${value})`;
 });
-xboxController.while("triggerR", (value) => {
+controller.while("triggerR", (value) => {
 	document.getElementById("triggerR").style.fill = `rgb(0, 0, 0, ${value})`;
 });
 
-xboxController.while("joystickL", (joystick={x:0,y:0}) => {
+controller.while("joystickL", (joystick={x:0,y:0}) => {
 	document.getElementById("joystickL").style.translate = `${joystick.x * 20}px ${joystick.y * 20}px`;
 });
-xboxController.while("joystickR", (joystick={x:0,y:0}) => {
+controller.while("joystickR", (joystick={x:0,y:0}) => {
 	document.getElementById("joystickR").style.translate = `${joystick.x * 20}px ${joystick.y * 20}px`;
 });

@@ -135,7 +135,7 @@ export var keyboard = new class Keyboard {
 			* }}
 			*/
 			let keybinding = this.#eventListener_ON[index];
-			let hasMatch = arrayIncludesArray(this.list, keybinding.keys);
+			let hasMatch = arrayIncludesArray(this.list, keybinding.keys) || this.list == ["*"];
 			if (hasMatch) {
 				if (keybinding.options?.passive == false) keyboardEvent.preventDefault();
 				keybinding.callback(keyboardEvent);

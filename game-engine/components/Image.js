@@ -19,6 +19,8 @@ export class Image extends Component {
 
 	/** @type { number } In Degrees */
 	rotation = 0;
+	outline = { colour: "black", size: 0 };
+	shadow = { colour: "black", blur: 0, offset: { x: 0, y: 0 } };
 
 	getType(){ return this.#type }
 

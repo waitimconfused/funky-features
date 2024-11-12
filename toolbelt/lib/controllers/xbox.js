@@ -1,9 +1,6 @@
-import { controllers } from "../controller.js";
+import { Controller, controllers } from "../controller.js";
 
-export class XboxController {
-
-	index = null;
-	gamepad = null;
+export class XboxController extends Controller {
 
 	values = {
 		joystick: {
@@ -34,38 +31,10 @@ export class XboxController {
 		}
 	}
 
-	#eventListenersOn = {}
-	#eventListenersWhile = {}
-	#eventListenersOff = {}
-
 	constructor(index=0) {
 		this.index = index;
 		controllers.push(this);
-	}
-
-	on(eventName="", callback=function(){}) {
-		this.#eventListenersOn[eventName] = callback;
-	}
-
-	while(eventName="", callback=function(){}) {
-		this.#eventListenersWhile[eventName] = callback;
-	}
-
-	off(eventName="", callback=function(){}) {
-		this.#eventListenersOff[eventName] = callback;
-	}
-
-	triggerEvent(eventName="", params) {
-		let eventType = eventName.split(":")[0];
-		eventName = eventName.split(":")[1] || null;
-		if(!eventName) {
-			eventName = eventType;
-			eventType = "on";
-		}
-		eventType = eventType.toLowerCase();
-		if(eventType == "on" && this.#eventListenersOn[eventName]) this.#eventListenersOn[eventName](params);
-		if(eventType == "while" && this.#eventListenersWhile[eventName]) this.#eventListenersWhile[eventName](params);
-		if(eventType == "off" && this.#eventListenersOff[eventName]) this.#eventListenersOff[eventName](params);
+		Controller.initialize();
 	}
 
 	reload(gamepad=new Gamepad) {

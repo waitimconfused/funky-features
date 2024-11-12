@@ -1,5 +1,5 @@
 import { engine, ComponentGroup } from "../utils.js";
-import * as components from "../index.js";
+import * as components from "../components.js";
 import { mouse, toRange } from "../../toolbelt/toolbelt.js";
 
 engine.setIcon("./demos/4/favicon.svg");

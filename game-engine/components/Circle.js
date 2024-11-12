@@ -7,6 +7,7 @@ export class Circle extends Component {
 	radius = 100;
 	colour = "purple";
 	outline = { colour: "black", size: 0 };
+	shadow = { colour: "black", blur: 0, offset: { x: 0, y: 0 } };
 	cameraTracking = false;
 
 	getType(){ return "Circle"; }

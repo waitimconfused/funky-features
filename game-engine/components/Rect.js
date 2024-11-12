@@ -204,6 +204,7 @@ export class Rect extends Component {
 	colour = "purple";
 	setColour(colour="") { this.colour = colour; return this; }
 	outline = { colour: "black", size: 0 };
+	shadow = { colour: "black", blur: 0, offset: { x: 0, y: 0 } };
 	radius = 0;
 	/** @type { number } In Degrees */
 	rotation = 0;

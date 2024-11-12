@@ -1,5 +1,5 @@
 import { ComponentGroup, engine } from "../utils.js";
-import * as components from "../index.js";
+import * as components from "../components.js";
 import { isInRange, keyboard, mouse } from "../../toolbelt/toolbelt.js";
 
 let worldData = [

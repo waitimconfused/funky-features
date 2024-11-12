@@ -1,13 +1,11 @@
 import { engine } from "../utils.js";
-import { Path, Circle, Image, Text, Rect } from "../index.js";
+import { Path, Circle, Image, Text, Rect } from "../components.js";
 import { Point2 } from "../points.js";
 import { Vector } from "../../toolbelt/toolbelt.js";
 
 engine.camera.zoom = 100;
 engine.camera.defaultZoom = engine.camera.zoom;
-// engine.isPixelArt = true;
 engine.camera.maxZoom = Infinity;
-
 
 engine.loadAsset("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
 const pi = Math.PI;

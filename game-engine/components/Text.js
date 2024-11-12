@@ -63,6 +63,7 @@ export class Text extends Component {
 	styling = "normal";
 
 	outline = { colour: "black", size: 0 };
+	shadow = { colour: "black", blur: 0, offset: { x: 0, y: 0 } };
 
 	getType(){ return "Text"; }
 

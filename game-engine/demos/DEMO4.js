@@ -1,6 +1,6 @@
-import { mouse } from "../../toolbelt/toolbelt.js";
+import { mouse, parseColour } from "../../toolbelt/toolbelt.js";
 import { engine, ComponentGroup } from "../utils.js";
-import { Path, Rect, Text } from "../index.js";
+import { Path, Rect, Text } from "../components.js";
 
 engine.setFavicon("https://confusion.inputoverload.com/assets/favicon.png");
 engine.background = "#e0e0e0";
@@ -10,6 +10,8 @@ engine.addObject(path);
 path.outline.colour = "black";
 path.outline.size = 25;
 path.colour = "none";
+
+console.log( parseColour("color-mix(in srgb, red, black 50%)") );
 
 const graph = new ComponentGroup;
 engine.addObject(graph);
@@ -46,7 +48,7 @@ var graphHasDraggingRect = false;
 var offsetX = null;
 var offsetY = null;
 
-path.script = () => {
+engine.preRenderingScript = () => {
 	path.outline.size = Math.min(25 / engine.camera.zoom, 25);
 	path.clearPath();
 
@@ -57,12 +59,14 @@ path.script = () => {
 		let rect1 = graph.getObject(hash);
 		let rectConnections = rect1.getAttribute("connections") || [];
 
-		// rect1.outline.size = 5 / engine.camera.zoom;
+		let hovering = rect1.display.contains(engineMouse.x, engineMouse.y);
+		if (hovering) engine.cursor = "move";
 
 		if (
 			rect1.getAttribute("isDragging") ||
-			mouse.click_l && rect1.display.contains(engineMouse.x, engineMouse.y) && !graphHasDraggingRect
+			mouse.click_l && hovering && !graphHasDraggingRect
 		) {
+			engine.cursor = "move";
 			if (!rect1.getAttribute("isDragging")) {
 				offsetX = rect1.display.x - engineMouse.x;
 				offsetY = rect1.display.y - engineMouse.y;

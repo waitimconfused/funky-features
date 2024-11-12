@@ -1,17 +1,8 @@
 import { engine } from "../utils.js";
-import { Path, Circle, Image, Text, Rect } from "../index.js";
-import { Point2, Point4 } from "../../toolbelt/points.js";
-import { isInRange, keyboard, roundToNearest, Vector } from "../../toolbelt/toolbelt.js";
+import { Text, Rect } from "../components.js";
 
-// engine.camera.zoom = 100;
-// engine.camera.defaultZoom = engine.camera.zoom;
-// engine.isPixelArt = true;
 engine.camera.maxZoom = Infinity;
 
-engine.loadAsset("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
-engine.loadAsset("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
-engine.loadAsset("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
-engine.loadAsset("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
 engine.loadAsset("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
 engine.loadAsset("https://fonts.gstatic.com/s/jetbrainsmono/v20/tDbX2o-flEEny0FZhsfKu5WU4xD-Cw6nSHrV.woff2");
 
@@ -34,7 +25,7 @@ demoLable.fixedPosition = true;
 demoLable.textAlign = "left";
 demoLable.textBaseLine = "bottom";
 demoLable.fontFamily = "JetBrains Mono";
-demoLable.content = "// Rotation\ncomponent.rotation = <deg>";
+demoLable.content = "var intersecting;";
 demoLable.fontSize = 30;
 demoLable.colour = "black";
 demoLable.outline.colour = "white";
@@ -42,6 +33,6 @@ demoLable.outline.size = 10;
 engine.addObject(demoLable);
 demoLable.script = () => {
 	let isIntersecting = player.display.intersectingWith(immovableBlock.display);
-	demoLable.content = "var intersecting = " + isIntersecting + ";";
+	demoLable.content = "// rect.display.intersectingWith\nvar intersecting = " + isIntersecting + ";";
 	demoLable.moveTo(10, engine.height - demoLable.display.h);
 }

@@ -1,6 +1,6 @@
 export * from "./lib/keyboard.js";
 export * as image from "./lib/image.js";
-export * as controller from "./lib/controller.js";
+export { Controller } from "./lib/controller.js";
 export * as device from "./lib/device.js";
 export * as point from "./lib/points.js";
 
@@ -87,7 +87,7 @@ export class Range {
 	 * @returns {boolean}
 	 */
 	static isInRange(min, number, max) {
-		return value >= min && number <= max;
+		return number >= min && number <= max;
 	}
 }
 
@@ -197,3 +197,72 @@ export class Vector {
 		};
 	}
 }
+
+/**
+ * @param {string|null|undefined} colour 
+ */
+export function parseColour(colour) {
+	let output = colour;
+	if(["", "none", null, undefined].includes(output)) {
+		output = "transparent";
+	}
+	if (/^var\(.*\)$/gm.test(output)) {
+		let cssVar = output.replace(/^var\(|\)$/g, "")
+		output = getComputedStyle(engine.canvas).getPropertyValue(cssVar);
+	}
+	if (/^color-mix\(.*\)$/gm.test(output)) {
+		let parameters = output.replace(/^color-mix\(|\)$/g, "").replace(/\s*,\s/g,",").split(",");
+		console.log(parameters);
+	}
+
+	return output;
+}
+
+
+export class HEXcolour {
+	value = "white";
+
+	/** @param {string} colour */
+	constructor(colour) {
+		this.colour = `${colour}`;
+	}
+
+	toRGB() {
+		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+		if (!result) return null;
+		let r = parseInt(result[1], 16);
+		let g = parseInt(result[2], 16);
+		let b = parseInt(result[3], 16);
+		return new RGBcolour(r, g, b);
+	}
+	/** @param {string} hex */
+	static toRGB(hex) { return (new HEXcolour(hex)).toRGB() }
+}
+
+export class RGBcolour {
+	value = { r: 255, g: 255, b: 255 };
+
+	/**
+	 * @param {number} r
+	 * @param {number} g
+	 * @param {number} b
+	*/
+	constructor(r, g, b) {
+		this.value = { r, g, b };
+	}
+
+	toHEX() {
+		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+		if (!result) return null;
+		let r = parseInt(result[1], 16);
+		let g = parseInt(result[2], 16);
+		let b = parseInt(result[3], 16);
+		return ""
+	}
+	/** @param {string} hex */
+	static toRGB(hex) { return (new HEXcolour(hex)).toRGB() }
+}
+
+
+var hex = new HEXcolour("#008800");
+console.log( hex.toRGB() )

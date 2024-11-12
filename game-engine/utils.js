@@ -314,10 +314,10 @@ export class EngineClass {
 	postRenderingScript = () => {};
 
 	/**
-	 * @param { string } cursor
+	 * @param { ""|"auto"|"default"|"none"|"context-menu"|"help"|"pointer"|"progress"|"wait"|"cell"|"crosshair"|"text"|"vertical-text"|"alias"|"copy"|"move"|"no-drop"|"not-allowed"|"grab"|"grabbing"|"all-scroll"|"col-resize"|"row-resize"|"n-resize"|"e-resize"|"s-resize"|"w-resize"|"ne-resize"|"nw-resize"|"se-resize"|"sw-resize"|"ew-resize"|"ns-resize"|"nesw-resize"|"nwse-resize"| "zoom-in"|"zoom-out" } cursor
 	 */
 	set cursor(cursor) {
-		this.canvas.style.cursor = cursor;
+		this.canvas.style.cursor = cursor || "default";
 	}
 	get cursor() {
 		return this.canvas.style.cursor;
@@ -461,7 +461,7 @@ export class EngineClass {
 	/**
 	 * @param { string } href
 	 */
-	setIcon(href="") {
+	setFavicon(href="") {
 		let favicon = document.querySelector("link[rel=icon]");
 		if (!favicon) {
 			favicon = document.createElement("link");
@@ -469,12 +469,6 @@ export class EngineClass {
 			document.head.appendChild(favicon);
 		}
 		favicon.href = href;
-	}
-	/**
-	 * @param { string } href
-	 */
-	setFavicon(href) {
-		this.setIcon(href);
 	}
 
 	#tick() {
@@ -545,14 +539,14 @@ export class Component {
 	 * @param {number} layer Layer `0` is back, layer `n | -1` is front
 	 */
 	setLayer(layer) {
-		if (engine.componentHashes.includes(this.hash) == false) {
+		if (this.parent == null || this.parent.hasObject(this) == false) {
 			console.error("Cannot set layer index if object does not have parent.");
 			return;
 		}
-		if (layer < 0) layer += engine.componentHashes.length;
-		let index = engine.componentHashes.indexOf(this.hash);
-		engine.componentHashes.splice(index, 1);
-		engine.componentHashes.splice(layer, 0, this.hash);
+		if (layer < 0) layer += this.parent.componentHashes.length;
+		let index = this.parent.componentHashes.indexOf(this.hash);
+		this.parent.componentHashes.splice(index, 1);
+		this.parent.componentHashes.splice(layer, 0, this.hash);
 		// engine.componentHashes.push(this.hash);
 	}
 
@@ -652,7 +646,6 @@ export class Component {
 		return this;
 	}
 	render() {
-		if (!this.visibility) return this;
 		return this;
 	}
 
@@ -671,7 +664,7 @@ export class Component {
 	}
 
 	remove() {
-		engine.removeObject(this);
+		this.parent.removeObject(this);
 		return undefined;
 	}
 }
@@ -743,7 +736,7 @@ export class ComponentGroup extends Component {
 		if(this.hasObject(component) == false) throw new Error("Cannot remove object from group if object was never added");
 		let indexOfComponent = this.componentHashes.indexOf(component.hash);
 		this.componentHashes.splice(indexOfComponent, 1);
-		this.components.splice(indexOfComponent, 1);
+		delete this.components[component.hash];
 		return this;
 	}
 

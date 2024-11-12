@@ -1,4 +1,4 @@
-import { toRange } from "../../toolbelt/toolbelt.js";
+import { parseColour, toRange } from "../../toolbelt/toolbelt.js";
 import { Component, Point2, Point4, engine } from "../utils.js";
 
 export class Path extends Component {
@@ -123,20 +123,8 @@ export class Path extends Component {
 	 */
 	render(context, defaultOffset){
 
-		let colour = "";
-		let outlineColour = "";
-		if(["", "none"].includes(this.colour)) colour = "transparent";
-		if(["", "none"].includes(this.outline.colour)) outlineColour = "transparent";
-		if (this.colour == null) colour = "transparent";
-		if (this.outline.colour == null) outlineColour = "transparent";
-		if (/^var\(.*\)$/gm.test(this.colour)) {
-			let cssVar = this.colour.replace(/^var\(|\)$/g, "")
-			colour = getComputedStyle(engine.canvas).getPropertyValue(cssVar);
-		}
-		if (/^var\(.*\)$/gm.test(this.outline.colour)) {
-			let cssVar = this.outline.colour.replace(/^var\(|\)$/g, "")
-			outlineColour = getComputedStyle(engine.canvas).getPropertyValue(cssVar);
-		}
+		let colour = parseColour(this.colour);
+		let outlineColour = parseColour(this.outline.colour);
 		
 		if (!this.visibility) return this;
 
