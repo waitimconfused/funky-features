@@ -3,11 +3,13 @@ export * as image from "./lib/image.js";
 export { Controller } from "./lib/controller.js";
 export * as device from "./lib/device.js";
 export * as point from "./lib/points.js";
+export * from "./lib/colours.js";
+export * as units from "./lib/units.js";
 
 export class Range {
 	#min = 0;
 	#max = 1;
-	
+
 	/** @param {number} number */
 	set min(number) {
 		this.#min = number;
@@ -20,7 +22,7 @@ export class Range {
 	get min() {
 		return this.#min;
 	}
-	
+
 	/** @param {number} number */
 	set max(number) {
 		this.#max = number;
@@ -44,9 +46,9 @@ export class Range {
 	 * @returns {number[]}
 	 */
 	select(func) {
-		if (!func) func = ( (x) => x );
+		if (!func) func = ((x) => x);
 		let array = [];
-		for (let i = this.#min; i <= this.#max; i ++) {
+		for (let i = this.#min; i <= this.#max; i++) {
 			let item = func(i);
 			if (typeof item == "number") array.push(item);
 			if (typeof item == "boolean" && item) array.push(i);
@@ -59,7 +61,7 @@ export class Range {
 	 * @returns {boolean}
 	 */
 	clamp(number) {
-		return Math.max( Math.min(number, this.max), this.min );
+		return Math.max(Math.min(number, this.max), this.min);
 	}
 	/**
 	 * 
@@ -69,7 +71,7 @@ export class Range {
 	 * @returns {number}
 	 */
 	static clamp(min, number, max) {
-		return Math.max( Math.min(number, max), min );
+		return Math.max(Math.min(number, max), min);
 	}
 
 	/**
@@ -96,15 +98,15 @@ export function range(min, max) { return new Range(min, max); }
 export const toRange = Range.clamp
 export const isInRange = Range.isInRange
 
-export function roundToNearest(number=3.14, nearest=1) {
+export function roundToNearest(number = 3.14, nearest = 1) {
 	return Math.round(number / nearest) * nearest;
 }
 
-export function floorToNearest(number=3.14, nearest=1) {
+export function floorToNearest(number = 3.14, nearest = 1) {
 	return Math.floor(number / nearest) * nearest;
 }
 
-export function ceilToNearest(number=3.14, nearest=1) {
+export function ceilToNearest(number = 3.14, nearest = 1) {
 	return Math.ceil(number / nearest) * nearest;
 }
 
@@ -118,16 +120,16 @@ export function lerp(a, b, t) {
 
 export class Vector {
 	#deg = 90;
-	#rad = 90 * (Math.PI/180);
+	#rad = 90 * (Math.PI / 180);
 
 	/** @param {number} number */
 	set deg(number) {
 		this.#deg = number;
-		this.#rad = number * (Math.PI/180);
+		this.#rad = number * (Math.PI / 180);
 	}
 	/** @param {number} number */
 	set rad(number) {
-		this.#deg = number * (180/Math.PI);
+		this.#deg = number * (180 / Math.PI);
 		this.#rad = number;
 	}
 	get deg() { return this.#deg; }
@@ -203,7 +205,7 @@ export class Vector {
  */
 export function parseColour(colour) {
 	let output = colour;
-	if(["", "none", null, undefined].includes(output)) {
+	if (["", "none", null, undefined].includes(output)) {
 		output = "transparent";
 	}
 	if (/^var\(.*\)$/gm.test(output)) {
@@ -211,58 +213,9 @@ export function parseColour(colour) {
 		output = getComputedStyle(engine.canvas).getPropertyValue(cssVar);
 	}
 	if (/^color-mix\(.*\)$/gm.test(output)) {
-		let parameters = output.replace(/^color-mix\(|\)$/g, "").replace(/\s*,\s/g,",").split(",");
+		let parameters = output.replace(/^color-mix\(|\)$/g, "").replace(/\s*,\s/g, ",").split(",");
 		console.log(parameters);
 	}
 
 	return output;
 }
-
-
-export class HEXcolour {
-	value = "white";
-
-	/** @param {string} colour */
-	constructor(colour) {
-		this.colour = `${colour}`;
-	}
-
-	toRGB() {
-		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-		if (!result) return null;
-		let r = parseInt(result[1], 16);
-		let g = parseInt(result[2], 16);
-		let b = parseInt(result[3], 16);
-		return new RGBcolour(r, g, b);
-	}
-	/** @param {string} hex */
-	static toRGB(hex) { return (new HEXcolour(hex)).toRGB() }
-}
-
-export class RGBcolour {
-	value = { r: 255, g: 255, b: 255 };
-
-	/**
-	 * @param {number} r
-	 * @param {number} g
-	 * @param {number} b
-	*/
-	constructor(r, g, b) {
-		this.value = { r, g, b };
-	}
-
-	toHEX() {
-		var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-		if (!result) return null;
-		let r = parseInt(result[1], 16);
-		let g = parseInt(result[2], 16);
-		let b = parseInt(result[3], 16);
-		return ""
-	}
-	/** @param {string} hex */
-	static toRGB(hex) { return (new HEXcolour(hex)).toRGB() }
-}
-
-
-var hex = new HEXcolour("#008800");
-console.log( hex.toRGB() )

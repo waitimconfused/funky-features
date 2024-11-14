@@ -1,3 +1,4 @@
+import { getValue } from "../../toolbelt/lib/units.js";
 import { isInRange, lerp, toRange } from "../../toolbelt/toolbelt.js";
 import { Component, Point2, Point4, engine } from "../utils.js";
 
@@ -263,18 +264,15 @@ export class Rect extends Component {
 		this.transform.x = toRange(0, this.transform.x, 1);
 		this.transform.y = toRange(0, this.transform.y, 1);
 
-		let destinationW = this.display.w;
-		let destinationH = this.display.h;
+		let destinationW = getValue( this.display.w );
+		let destinationH = getValue( this.display.h );
+		let destinationX = getValue( this.display.x );
+		let destinationY = getValue( this.display.y );
 
-		let offset = { x: 0, y: 0 };
-		
-		offset.x += defaultOffset.x;
-		offset.y += defaultOffset.y;
-
-		offset.x -= destinationW * this.transform.x;
-		offset.y -= destinationH * this.transform.y;
-		let destinationX = this.display.x + offset.x;
-		let destinationY = this.display.y + offset.y;
+		destinationX += defaultOffset.x;
+		destinationX -= destinationW * this.transform.x;
+		destinationY += defaultOffset.y;
+		destinationY -= destinationH * this.transform.y;
 		
 		context.save();
 		if (!this.fixedPosition) {
@@ -298,7 +296,7 @@ export class Rect extends Component {
 		context.beginPath();
 		context.fillStyle = this.colour || "purple";
 		context.strokeStyle = this.outline.colour;
-		context.lineWidth = this.outline.size;
+		context.lineWidth = getValue(this.outline.size);
 		context.roundRect(
 			destinationX,
 			destinationY,
@@ -307,7 +305,7 @@ export class Rect extends Component {
 			this.radius
 		);
 		context.fill();
-		if(this.outline.size > 0) context.stroke();
+		if(context.lineWidth > 0) context.stroke();
 		context.closePath();
 
 		context.restore();

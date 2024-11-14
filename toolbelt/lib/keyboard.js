@@ -12,6 +12,7 @@ export var keyboard = new class Keyboard {
 	/** @type {string[]} */
 	list = [];
 	/**
+	 * If `key:string[]` it returns if **any** key is active
 	 * @param  {...string} key 
 	 * @returns {boolean}
 	 */

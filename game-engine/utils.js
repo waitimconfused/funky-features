@@ -1,5 +1,6 @@
 import { ceilToNearest, image, mouse, toRange, Vector } from "../toolbelt/toolbelt.js";
 import { Point2, Point3, Point4 } from "../toolbelt/lib/points.js";
+import { getValue, unitConverter } from "../toolbelt/lib/units.js";
 export { Point2, Point3, Point4 };
 
 function isValidUrl(urlString) {
@@ -86,6 +87,23 @@ export class Camera {
 		return this;
 	}
 
+	reset(resetDefaults) {
+		if (resetDefaults) {
+			this.defaultZoom = 1;
+
+			this.minZoom = 0.1;
+			this.maxZoom = 999;
+
+			this.wheelZoomMultiplier = 0.01;
+			this.keyZoomMultiplier = 0.1;
+
+			this.resetZoomResetsPosition = false;
+		}
+		this.position.x = 0;
+		this.position.y = 0;
+		this.zoom = this.defaultZoom;
+	}
+
 	/**
 	 * 
 	 * @param { WheelEvent | KeyboardEvent } e
@@ -135,14 +153,14 @@ export class Camera {
 
 	disableZoom() {
 		window.removeEventListener("wheel", this.#customZoomEvent);
-		// window.addEventListener("wheel", this.#preventDefaultEvent, {passive: false});
+		window.addEventListener("wheel", this.#preventDefaultEvent, {passive: false});
 		window.removeEventListener("keydown", this.#customZoomEvent);
-		// window.addEventListener("keydown", this.#preventDefaultEvent);
+		window.addEventListener("keydown", this.#preventDefaultEvent);
 	}
 	enableZoom() {
-		// window.removeEventListener("wheel", this.#preventDefaultEvent, );
+		window.removeEventListener("wheel", this.#preventDefaultEvent, );
 		window.addEventListener("wheel", this.#customZoomEvent, {passive: false});
-		// window.removeEventListener("keydown", this.#preventDefaultEvent);
+		window.removeEventListener("keydown", this.#preventDefaultEvent);
 		window.addEventListener("keydown", this.#customZoomEvent);
 	}
 
@@ -945,3 +963,29 @@ export const animationConstructor = new class AnimationConstructor {
 		return new Animation;
 	}
 }
+
+unitConverter.defineUnit("vw", (number) => {
+	return number / 100 * engine.veiwportWidth;
+});
+unitConverter.defineUnit("w", (number) => {
+	return number / 100 * engine.width;
+});
+
+unitConverter.defineUnit("vh", (number) => {
+	return number / 100 * engine.veiwportHeight;
+});
+unitConverter.defineUnit("h", (number) => {
+	return number / 100 * engine.height;
+});
+
+unitConverter.defineUnit("cx", (number) => {
+	return number / 100 * engine.camera.position.x;
+});
+unitConverter.defineUnit("cy", (number) => {
+	return number / 100 * engine.camera.position.y;
+});
+unitConverter.defineUnit("cz", (number) => {
+	return number / 100 * engine.camera.zoom;
+});
+
+console.log(getValue("100vw"));

@@ -1,3 +1,4 @@
+import { getValue } from "../../toolbelt/lib/units.js";
 import { parseColour, toRange } from "../../toolbelt/toolbelt.js";
 import { Component, Point2, Point4, engine } from "../utils.js";
 
@@ -20,10 +21,11 @@ export class Path extends Component {
 	 * @type {{
 	 * colour: string,
 	 * size: number,
-	 * lineCap: "butt" | "round" | "square"
+	 * lineCap: "butt" | "round" | "square",
+	 * lineJoin: "miter" | "round" | "bevel" | "miter-clip" | "arcs",
 	 * }}
 	 */
-	outline = { colour: "black", size: 0, lineCap: "round" };
+	outline = { colour: "black", size: 0, lineCap: "round", lineJoin: "round" };
 	cameraTracking = false;
 	/** @type { number } In Degrees */
 	rotation = 0;
@@ -131,19 +133,15 @@ export class Path extends Component {
 		this.transform.x = toRange(0, this.transform.x, 1);
 		this.transform.y = toRange(0, this.transform.y, 1);
 
-		let destinationW = this.display.w;
-		let destinationH = this.display.h;
+		let destinationW = getValue(this.display.w);
+		let destinationH = getValue(this.display.h);
+		let destinationX = getValue(this.display.x);
+		let destinationY = getValue(this.display.y);
 
-		let offset = { x: 0, y: 0 };
-
-		offset.x += defaultOffset?.x;
-		offset.y += defaultOffset?.y;
-
-		offset.x -= destinationW * this.transform.x;
-		offset.y -= destinationH * this.transform.y;
-
-		let destinationX = this.display.x + offset.x;
-		let destinationY = this.display.y + offset.y;
+		destinationX += defaultOffset?.x;
+		destinationX -= destinationW * this.transform.x;
+		destinationY += defaultOffset?.y;
+		destinationY -= destinationH * this.transform.y;
 
 		if(this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)){
 			this.displayOffset.x = Math.floor(this.displayOffset.x);
@@ -166,13 +164,14 @@ export class Path extends Component {
 
 		context.fillStyle = colour;
 		context.strokeStyle = outlineColour;
-		context.lineWidth = this.outline.size;
+		context.lineWidth = getValue(this.outline.size);
 		context.lineCap = this.outline.lineCap || "round";
+		context.lineJoin = this.outline.lineJoin || "round";
 		var path = new Path2D(this.path);
 
 		context.translate(destinationX, destinationY);
 		context.fill(path);
-		if(this.outline.size > 0) context.stroke(path);
+		if(context.lineWidth > 0) context.stroke(path);
 
 		context.closePath();
 		context.restore();
