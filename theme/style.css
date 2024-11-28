@@ -44,7 +44,6 @@ nav {
 	background-color: var(--background);
 	z-index: 2147483647;
 	box-sizing: border-box;
-	border-bottom: 1px solid var(--secondary);
 	justify-content: space-between;
 	align-items: center;
 }
@@ -81,6 +80,7 @@ code {
 }
 
 .select-options:not(.chip) {
+	box-shadow: var(--component-shadow);
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
@@ -111,6 +111,7 @@ code {
 }
 
 .select-option:not(.chip) {
+	box-shadow: var(--component-shadow);
 	display: inline-flex;
 	flex-direction: column;
 	position: relative;
@@ -241,6 +242,7 @@ code {
 
 .select-options .option,
 .select-option.chip .option {
+
 	&::before {
 		content: "";
 		display: inline-block;
@@ -311,3 +313,249 @@ button,
 
 button.elevated,
 .button-elevated {}
+
+input[role=switch] {
+
+	--background-off: var(--background);
+	--background-on: var(--primary);
+	--dot-colour-off: var(--primary);
+	--dot-colour-on: var(--secondary);
+	--border-off: 3px solid color-mix(in srgb, var(--background) 10.2%, transparent);
+	--border-on: 3px solid color-mix(in srgb, var(--background) 10.2%, transparent);
+  
+	--time: 300ms;
+	--dot-size: 1rem;
+	--dot-margin: 0.2rem;
+	--border-thickness: 0.2rem;
+	--border-color: var(--text);
+	position: relative;
+	appearance: none;
+	box-sizing: border-box;
+	border: var(--border-off);
+	box-sizing: content-box;
+	width: calc( var(--dot-size) * 3 );
+	height: var(--dot-size);
+	padding: var(--dot-margin);
+	border-radius: var(--dot-size);
+	overflow: hidden;
+	background: var(--background-off);
+	transition: background, border;
+	transition-duration: var(--time);
+	cursor: pointer;
+  
+	box-shadow: var(--component-shadow);
+}
+
+input[role=switch]:before {
+	content: "";
+	position: relative;
+	display: inline-block;
+	left: 0px;
+	width: var(--dot-size);
+	height: var(--dot-size);
+	background: var(--dot-colour-off);
+	border-radius: calc(var(--dot-size) / 2);
+	transition: width, left, background;
+	transition-duration: var(--time);
+}
+
+input[role=switch]:checked {
+	background: var(--background-on);
+	border: var(--border-on);
+}
+
+input[role=switch]:checked:before {
+	left: calc( var(--dot-size) * 2 );
+	background: var(--dot-colour-on);
+}
+
+input[role=switch]:not([disabled]):active:before {
+	width: calc( var(--dot-size) * 1.5 );
+}
+input[role=switch]:not([disabled]):active:checked:before {
+	left: calc( var(--dot-size) * 1.5 );
+}
+
+input[role=switch][disabled] {
+	filter: saturate(50%);
+	cursor: not-allowed;
+}
+
+nav {
+	position: fixed;
+	box-sizing: border-box;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem 10%;
+	background-color: var(--background);
+	box-shadow: 0 -20px 20px 1px #0000001A, 0 0 0 0px #0000001A;
+	transition: box-shadow, padding;
+	transition-duration: 300ms;
+	z-index: 2147483647;
+}
+
+nav div {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	width: max-content;
+	gap: 1rem;
+}
+
+:root.scroll nav {
+	box-shadow: var(--component-shadow);
+	padding: 0.5rem 12%;
+}
+
+#theme-switch {
+	display: inline-block;
+	transition: scale 200ms;
+	cursor: pointer;
+}
+#theme-switch:active {
+	scale: 0.8;
+}
+
+:root:is([data-theme="light"], :not([data-theme])) .show-if-dark {
+	display: none;
+}
+:root[data-theme="dark"] .show-if-light {
+	display: none;
+}
+
+input[role=switch] {
+
+	--background-off: var(--background);
+	--background-on: var(--primary);
+	--dot-colour-off: var(--primary);
+	--dot-colour-on: var(--secondary);
+	--border-off: 3px solid color-mix(in srgb, var(--background) 10.2%, transparent);
+	--border-on: 3px solid color-mix(in srgb, var(--background) 10.2%, transparent);
+
+	--time: 300ms;
+	--dot-size: 1rem;
+	--dot-margin: 0.2rem;
+	--border-thickness: 0.2rem;
+	--border-color: var(--text);
+
+	user-select: none;
+	position: relative;
+	touch-action: click;
+	appearance: none;
+	box-sizing: border-box;
+	border: var(--border-off);
+	box-sizing: content-box;
+	width: calc( var(--dot-size) * 3 );
+	height: var(--dot-size);
+	padding: var(--dot-margin);
+	border-radius: var(--dot-size);
+	overflow: hidden;
+	background: var(--background-off);
+	transition: background, border;
+	transition-duration: var(--time);
+	cursor: pointer;
+	box-shadow: var(--component-shadow);
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	-webkit-touch-callout: none;
+}
+
+input[role=switch]:before {
+	content: "";
+	position: relative;
+	display: inline-block;
+	left: 0px;
+	width: var(--dot-size);
+	height: var(--dot-size);
+	background: var(--dot-colour-off);
+	border-radius: calc(var(--dot-size) / 2);
+	transition: width, left, background;
+	transition-duration: var(--time);
+}
+
+input[role=switch]:checked {
+	background: var(--background-on);
+	border: var(--border-on);
+}
+
+input[role=switch]:checked:before {
+	left: calc( var(--dot-size) * 2 );
+	background: var(--dot-colour-on);
+}
+
+input[role=switch]:not([disabled]):active:before {
+	width: calc( var(--dot-size) * 1.5 );
+}
+input[role=switch]:not([disabled], :disabled):active:checked:before {
+	left: calc( var(--dot-size) * 1.5 );
+}
+
+input[role=switch]:is([disabled], :disabled) {
+	filter: saturate(50%);
+	cursor: not-allowed;
+}
+
+button, .button {
+	position: relative;
+	cursor: pointer;
+	border: none;
+	padding: 0.75rem 1.75rem;
+	background-color: transparent;
+	transition: filter;
+	transition-duration: 300ms;
+	border-radius: 1rem;
+	box-shadow: var(--component-shadow), inset 0 0 0 3px color-mix(in srgb, var(--background) 10.2%, transparent);
+	box-sizing: border-box;
+	color: var(--text);
+	width: max-content;
+	margin: 0.5rem 0.25rem;
+}
+
+button:before, .button:before {
+	content: "";
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background-color: var(--primary);
+	box-sizing: padding-box;
+	border-radius: inherit;
+	z-index: -1;
+	transition: filter, opacity;
+	transition-duration: 300ms;
+}
+
+button:is([disabled], :disabled),
+.button:is([disabled], :disabled) {
+	cursor: not-allowed;
+}
+
+button:is([disabled], :disabled):before,
+.button:is([disabled], :disabled):before {
+	opacity: 0.25;
+}
+
+button:not([disabled], :disabled):active:before,
+.button:not([disabled], :disabled):active:before {
+	filter: brightness(110%);
+}
+
+button.secondary:before,
+.button.secondary:before {
+	background-color: var(--secondary);
+}
+
+button.success:before,
+.button.success:before {
+	background-color: var(--success);
+}
+
+button.destructive:before,
+.button.destructive:before {
+	background-color: var(--destructive);
+}

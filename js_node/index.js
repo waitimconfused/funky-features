@@ -1,7 +1,7 @@
 import Graph from "./display/graph.js";
 import Node from "./display/nodes.js";
 import { keyboard, mouse } from "../toolbelt/lib/keyboard.js";
-import { Pane } from 'https://cdn.skypack.dev/tweakpane';
+// import { Pane } from 'https://cdn.skypack.dev/tweakpane';
 
 export var globalGraph = new Graph;
 
@@ -26,7 +26,7 @@ var escapePressed = false;
 
 graphUpdate();
 
-var optionsPane = new Pane({ title: 'Node Options' });
+// var optionsPane = new Pane({ title: 'Node Options' });
 export var optionsPaneVisibility = true;
 var focusedNode = null;
 var focusedNode_prev = null;
@@ -253,13 +253,13 @@ export function showOptionsPane(){
 }
 export function hideOptionsPane(){
 	optionsPaneVisibility = false;
-	if(optionsPane.containerElem_ != null) optionsPane?.dispose();
+	// if(optionsPane.containerElem_ != null) optionsPane?.dispose();
 }
 function veiwNode(node=new Node){
 
 	if(!optionsPaneVisibility) return;
-	if(optionsPane.containerElem_ != null) optionsPane?.dispose();
-	optionsPane = new Pane({ title: 'Node Options' });
+	// if(optionsPane.containerElem_ != null) optionsPane?.dispose();
+	// optionsPane = new Pane({ title: 'Node Options' });
 
 	if(!node) throw Error("The `viewNode` function was called without parameter: Node");
 
@@ -281,31 +281,31 @@ function veiwNode(node=new Node){
 		title = title.map(word => word.charAt(0).toUpperCase() + word.slice(1));
 		title = title.join(" ");
 
-		optionsPane.addBinding(options, item, { label: title });
+		// optionsPane.addBinding(options, item, { label: title });
 	}
 
-	optionsPane.addBlade({
-		view: 'separator',
-	});
+	// optionsPane.addBlade({
+	// 	view: 'separator',
+	// });
 
-	const saveButton = optionsPane.addButton({
-		title: 'Save'
-	});
-	saveButton.on('click', () => {
-		options.x = node.display.x;
-		options.y = node.display.y;
-		node.display = options;
-		focusedNode = null;
-		veiwNode(node);
-	});
+	// const saveButton = optionsPane.addButton({
+	// 	title: 'Save'
+	// });
+	// saveButton.on('click', () => {
+	// 	options.x = node.display.x;
+	// 	options.y = node.display.y;
+	// 	node.display = options;
+	// 	focusedNode = null;
+	// 	veiwNode(node);
+	// });
 
-	optionsPane.addButton({
-		title: 'Remove Node'
-	}).on('click', () => {
-		node.remove();
-		if(optionsPane.containerElem_ != null) optionsPane?.dispose();
-		console.log(globalGraph);
-	});
+	// optionsPane.addButton({
+	// 	title: 'Remove Node'
+	// }).on('click', () => {
+	// 	node.remove();
+	// 	if(optionsPane.containerElem_ != null) optionsPane?.dispose();
+	// 	console.log(globalGraph);
+	// });
 }
 
 export function lerp(a, b, t) {

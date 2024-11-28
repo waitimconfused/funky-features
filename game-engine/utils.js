@@ -29,6 +29,8 @@ export class Camera {
 		window.addEventListener("gesturestart", this.#preventDefaultEvent, {passive: false});
 		window.addEventListener("gesturechange", this.#preventDefaultEvent, {passive: false});
 		window.addEventListener("gestureend", this.#preventDefaultEvent, {passive: false});
+		window.addEventListener("wheel", this.#customZoomEvent, {passive: false});
+		window.addEventListener("keydown", this.#customZoomEvent);
 	}
 
 	trackingDelay = 0;
@@ -104,6 +106,9 @@ export class Camera {
 		this.zoom = this.defaultZoom;
 	}
 
+	canZoom = true;
+	canPan = true;
+
 	/**
 	 * 
 	 * @param { WheelEvent | KeyboardEvent } e
@@ -114,11 +119,13 @@ export class Camera {
 			if (e.ctrlKey) {
 				if (e.target != engine.canvas) return;
 				e.preventDefault();
+				if (this.canZoom == false) return;
 				this.zoom -= e.deltaY * this.wheelZoomMultiplier * this.zoom/2;
 				this.zoom = toRange(this.minZoom, this.zoom, this.maxZoom);
 			} else {
 				if (e.target != engine.canvas) return;
 				e.preventDefault();
+				if (this.canPan == false) return;
 				this.moveBy(e.deltaX/this.zoom, e.deltaY/this.zoom);
 			}
 		} else if (e instanceof KeyboardEvent) {
@@ -132,6 +139,7 @@ export class Camera {
 
 			if (scale != null) e.preventDefault(); else return;
 			if (e.repeat) return;
+			if (this.canZoom == false) return;
 
 			this.zoom += scale * this.keyZoomMultiplier;
 			if (["0"].includes(e.key)) {
@@ -149,19 +157,6 @@ export class Camera {
 	#preventDefaultEvent = (e) => {
 		if(e.ctrlKey && ["+","-","=","_"].includes(e.key)) e.preventDefault();
 		if(e.target == engine.canvas) e.preventDefault();
-	}
-
-	disableZoom() {
-		window.removeEventListener("wheel", this.#customZoomEvent);
-		window.addEventListener("wheel", this.#preventDefaultEvent, {passive: false});
-		window.removeEventListener("keydown", this.#customZoomEvent);
-		window.addEventListener("keydown", this.#preventDefaultEvent);
-	}
-	enableZoom() {
-		window.removeEventListener("wheel", this.#preventDefaultEvent, );
-		window.addEventListener("wheel", this.#customZoomEvent, {passive: false});
-		window.removeEventListener("keydown", this.#preventDefaultEvent);
-		window.addEventListener("keydown", this.#customZoomEvent);
 	}
 
 	script() {}
@@ -246,14 +241,20 @@ export class EngineClass {
 	componentHashes = [];
 	isPixelArt = false;
 	
-	#fullscreen = true;
+	#fullscreen = false;
 	get fullscreen () {
 		return this.#fullscreen;
 	}
 	/** @param {boolean} value */
 	set fullscreen (value) {
-		if (this.#fullscreen == false && value == true) {this.#resizeCanvas()}
+		let prevValue = this.#fullscreen;
 		this.#fullscreen = value;
+		if (prevValue == false && value == true) {
+			if (!this.background) {
+				this.background = document.body.style.backgroundColor || "white";
+			}
+			this.#resizeCanvas();
+		}
 	}
 
 	stats = {
@@ -280,6 +281,7 @@ export class EngineClass {
 		let response = await fetch(source);
 		let type = response.headers.get("Content-Type");
 		type = type.split(";")[0];
+		console.log(source, type);
 		let simpleType = "undefined";
 		let consoleLogComment = "";
 		if (type == "text/css") {
@@ -293,7 +295,7 @@ export class EngineClass {
 			link.href = source;
 			link.type = "text/css";
 			document.head.appendChild(link);
-		} else if (type.startsWith("font/")) {
+		} else if (type.includes("font")) {
 			simpleType = "font";
 			if (options.fontFamilyName == undefined) {
 				options.fontFamilyName = `font_asset${this.#assetsLoaded}`;
@@ -301,12 +303,15 @@ export class EngineClass {
 			const font = new FontFace(options.fontFamilyName, `url(${source})`);
 			await font.load();
 			document.fonts.add(font);
+			consoleLogComment = ` with font-family name "${options.fontFamilyName}"`;
 		} else if (type.startsWith("image/")) {
 			simpleType = "IMG";
 			image.cacheImage(source);
+		} else {
+			if (this.#show_loadAsset_logs) console.error(`Failed to load asset from url "${source}"${consoleLogComment}`)
+			return;
 		}
 		if (this.#show_loadAsset_logs) {
-			if (simpleType == "font") consoleLogComment += `named "${options.fontFamilyName}"`;
 			if (this.#assetsLoaded >= 5) consoleLogComment += "\nYou can disable this message by using `engine.disableLoadAssetLogs()`";
 			console.log(`Loaded ${simpleType} from url "${source}"${consoleLogComment}`);
 		}
@@ -341,8 +346,16 @@ export class EngineClass {
 		return this.canvas.style.cursor;
 	}
 
+	/** @param {number} size */
+	set width(size) {
+		this.setSize(size, this.canvas.height);
+	}
 	get width() {
 		return this.canvas.width;
+	}
+	/** @param {number} size */
+	set height(size) {
+		this.setSize(this.canvas.width, size);
 	}
 	get height() {
 		return this.canvas.height;
@@ -355,6 +368,13 @@ export class EngineClass {
 	}
 
 	#resizeCanvas() {
+		
+		if(this.canvas.onresize) {
+			if(width != prevCanvasWidth || height != prevCanvasHeight) this.canvas.onresize();
+		}
+
+		if (this.fullscreen == false) return;
+
 		let width = window.innerWidth;
 		let height = window.innerHeight;
 
@@ -372,10 +392,6 @@ export class EngineClass {
 		this.canvas.style.position = "fixed";
 		this.canvas.style.top = "0px";
 		this.canvas.style.left = "0px";
-
-		if(this.canvas.onresize) {
-			if(width != prevCanvasWidth || height != prevCanvasHeight) this.canvas.onresize();
-		}
 	}
 	#updateStats() {
 		this.stats.timestamp = Date.now();
@@ -383,16 +399,19 @@ export class EngineClass {
 		this.#lastCalledTime = this.stats.timestamp;
 		this.stats.fps = Math.round(1 / this.stats.delta);
 	}
-	constructor() {
-		document.body.appendChild(this.canvas);
-		this.canvas.style.position = "fixed";
-		this.canvas.style.borderRadius = "0px";
-		this.canvas.style.top = "0px";
-		this.canvas.style.left = "0px";
+
+	/** @param {HTMLCanvasElement} canvas */
+	constructor(canvas) {
+		if (canvas) {
+			this.canvas = canvas;
+		} else {
+			document.body.appendChild(this.canvas);
+		}
 		window.addEventListener("resize", () => {
 			if (this.fullscreen) this.#resizeCanvas();
 		});
-		this.camera.enableZoom();
+		this.camera.canZoom = true;
+		this.camera.canPan = true;
 		this.#resizeCanvas();
 		this.#tick();
 	}
@@ -463,18 +482,15 @@ export class EngineClass {
 	/**
 	 * @param { string } background
 	 */
-	setBackground(background) {
+	set background(background) {
 		if (isValidUrl(background) || (/\.{1,2}\//gm).test(background)) {
 			this.canvas.style.backgroundImage = `url(${background})`;
 		} else {
 			this.canvas.style.backgroundColor = background;
 		}
 	}
-	/**
-	 * @param { string } background
-	 */
-	set background(background) {
-		this.setBackground(background);
+	get background() {
+		return this.canvas.style.backgroundImage || this.canvas.style.backgroundColor || this.canvas.style.background;
 	}
 	/**
 	 * @param { string } href
@@ -488,6 +504,7 @@ export class EngineClass {
 		}
 		favicon.href = href;
 	}
+
 
 	#tick() {
 		this.preRenderingScript();
@@ -509,18 +526,16 @@ export class EngineClass {
 		context.imageSmoothingEnabled = this.isPixelArt;
 
 		context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		let numberOfComponents = this.componentHashes.length;
-		for(let i = 0; i < numberOfComponents; i ++) {
-			let hash = this.componentHashes[i];
-			let component = this.components[hash];
+		let components = Object.values(this.components);
+		for(let i = 0; i < components.length; i ++) {
+			let component = components[i];
 			if (!component) continue;
 			component.script(component);
 		}
 		this.camera.update();
 		let defaultOffset = new Point2(0, 0);
-		for(let i = 0; i < numberOfComponents; i ++) {
-			let hash = this.componentHashes[i];
-			let component = this.components[hash];
+		for(let i = 0; i < components.length; i ++) {
+			let component = components[i];
 			if (!component) continue;
 			component.render(context, defaultOffset);
 		}
@@ -529,6 +544,7 @@ export class EngineClass {
 			this.#tick();
 		});
 	}
+
 }
 export const engine = new EngineClass;
 
@@ -579,13 +595,16 @@ export class Component {
 		return parentIndex;
 	}
 
-	/**
-	 * @param {boolean} boolean
-	 */
+	/** @param {boolean} boolean */
 	set cameraTracking(boolean) {
 		if (boolean == true) engine.camera.trackObject(this);
 		if (boolean == false && engine.camera.trackingObject.hash == this.hash) engine.camera.trackObject(null);
-	};
+	}
+
+	/** @returns {boolean} */
+	get cameraTracking() {
+		return engine.camera.trackingObject?.hash == this.hash;
+	}
 
 	fixedPosition = false;
 	setFixedPosition(fixedPosition=this.fixedPosition) {
@@ -658,14 +677,26 @@ export class Component {
 		return this;
 	}
 
-	script = (component=this) => {}
-	setScript(callback=(self=this)=>{}) {
+	/**
+	 * @param {this} component 
+	 */
+	script = (component) => {}
+
+	/**
+	 * @param {(self:this) => {}} callback 
+	 * @returns 
+	 */
+	setScript(callback) {
+		if (typeof callback != "function") return this;
 		this.script = callback;
 		return this;
 	}
-	render() {
-		return this;
-	}
+	/**
+	 * 
+	 * @param {CanvasRenderingContext2D} context 
+	 * @param {Point2 | {x:number, y:number}} defaultOffset 
+	 */
+	render(context, defaultOffset) {}
 
 	setAttribute(name="", value) {
 		this.#attributes[name] = value;
@@ -688,25 +719,21 @@ export class Component {
 }
 
 export class ComponentGroup extends Component {
-	#cameraTracking = false;
-
-	display = new Point2(0, 0);
-	displayOffset = new Point2(0, 0);
+	display = new Point4(0, 0, 0, 0);
+	offset = new Point2(0, 0);
 
 	componentHashes = [];
 	components = {};
 
-	getType() {
-		return "Component Group";
-	}
+	get type() { return "ComponentGroup";}
 
 	setSize() {
-		throw new Error("The setSize() function is not supported with type ComponentGroup")
+		throw new Error("The setSize() function is not supported with type ComponentGroup");
 	}
 
 	constructor() {
 		super();
-		delete this.setSize
+		delete this.setSize;
 	}
 	
 	/**
@@ -768,26 +795,76 @@ export class ComponentGroup extends Component {
 		
 		if (!this.visibility) return this;
 
-		let offset = { x: 0, y: 0 };
+		let components = Object.values(this.components);
 
-		offset.x += defaultOffset?.x || 0;
-		offset.y += defaultOffset?.y || 0;
+		this.transform.x = toRange(0, this.transform.x, 1);
+		this.transform.y = toRange(0, this.transform.y, 1);
 
-		this.displayOffset.x = this.display.x + offset.x;
-		this.displayOffset.y = this.display.y + offset.y;
+		let minX = Math.min(...components.map(o => o.display.x - o.display.w * o.transform.x));
+		let minY = Math.min(...components.map(o => o.display.y - o.display.h * o.transform.y));
 
-		if(this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)){
-			this.displayOffset.x = Math.floor(this.displayOffset.x);
-			this.displayOffset.y = Math.floor(this.displayOffset.y);
-			this.displayOffset.x = Math.floor(this.displayOffset.x);
+		this.display.w = Math.max(...components.map(o => o.display.x + o.display.w * o.transform.x)) - minX;
+		this.display.h = Math.max(...components.map(o => o.display.y + o.display.h * o.transform.y)) - minY;
+
+		// this.display.y = Math.min(...array.map(o => o.display.y));
+		// console.log( Math.max(...array.map(o => o.x)) );
+
+		let destinationW = getValue( this.display.w );
+		let destinationH = getValue( this.display.h );
+		let destinationX = getValue( this.display.x );
+		let destinationY = getValue( this.display.y );
+
+		destinationX += defaultOffset?.x || 0;
+		destinationY += defaultOffset?.y || 0;
+
+		destinationX -= destinationW * this.transform.x;
+		destinationY -= destinationH * this.transform.y;
+		
+		context.save();
+		if (!this.fixedPosition) {
+			if (this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)) {
+				context.translate(Math.floor(engine.canvas.width / 2), Math.floor(engine.canvas.height / 2));
+				context.scale(Math.floor(engine.camera.zoom), Math.floor(engine.camera.zoom));
+				destinationX = Math.floor(destinationX);
+				destinationY = Math.floor(destinationY);
+				destinationW = Math.floor(destinationW);
+				destinationH = Math.floor(destinationH);
+			} else {
+				context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
+				context.scale(engine.camera.zoom, engine.camera.zoom);
+			}
+			context.translate(-engine.camera.position.x, -engine.camera.position.y);
 		}
+		context.translate(destinationX + destinationW * this.transform.x, destinationY + destinationH * this.transform.y);
+		context.rotate(this.rotation * Math.PI / 180);
+		context.translate(-destinationX - destinationW * this.transform.x, - destinationY - destinationH * this.transform.y);
 
-		let numberOfComponents = this.componentHashes.length;
-		for(let i = 0; i < numberOfComponents; i ++) {
-			let hash = this.componentHashes[i];
-			let component = this.components[hash];
+		let lineDash = 100 / engine.camera.zoom;
+		let size = 10 / engine.camera.zoom;
+		size = 0;
+
+		context.beginPath();
+		context.setLineDash([lineDash, lineDash/2]);
+		context.strokeStyle = "#222266";
+		context.lineWidth = lineDash / 10;
+		context.lineCap = "round";
+		context.lineJoin = "round";
+		context.roundRect(
+			destinationX - size*2,
+			destinationY - size*2,
+			destinationW + size*4,
+			destinationH + size*4,
+			lineDash/10
+		);
+		context.stroke();
+		context.closePath();
+
+		context.restore();
+
+		for(let i = 0; i < components.length; i ++) {
+			let component = components[i];
 			component.script(component);
-			component.render(context, this.displayOffset);
+			component.render(context, { x: destinationX, y: destinationY });
 		}
 	}
 }
@@ -988,4 +1065,4 @@ unitConverter.defineUnit("cz", (number) => {
 	return number / 100 * engine.camera.zoom;
 });
 
-console.log(getValue("100vw"));
+engine.fullscreen

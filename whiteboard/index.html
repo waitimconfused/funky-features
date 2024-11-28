@@ -14,56 +14,6 @@
 	<body translate="no">
 		<canvas id="whiteboard"></canvas>
 
-		<div class="sidenav right" id="layers">
-			<div class="popup-options">
-				<span class="icon-layers"></span>
-
-				<div class="drag"></div>
-
-				<svg class="minimize-button" width="7" height="11" viewBox="0 0 7 11" fill="none"
-					xmlns="http://www.w3.org/2000/svg">
-					<path d="M6.53857 7.23071L3.76934 9.99994L1.00011 7.23071" stroke="#0F0F0F" stroke-width="0.692308"
-						stroke-linecap="round" stroke-linejoin="round"></path>
-					<path d="M1 3.76929L3.76923 1.00006L6.53846 3.76929" stroke="#0F0F0F" stroke-width="0.692308"
-						stroke-linecap="round" stroke-linejoin="round"></path>
-				</svg>
-			</div>
-			<div class="content">
-				<h3>Layers</h3>
-				<div class="row">
-					<span class="icon-plus" id="add-layer"></span>
-				</div>
-				<div class="content column" id="layer-holder"></div>
-			</div>
-		</div>
-
-		<div class="sidenav right open" id="brushes">
-			<div class="popup-options">
-				<span class="icon-brush"></span>
-
-				<div class="drag"></div>
-
-				<svg class="minimize-button" width="7" height="11" viewBox="0 0 7 11" fill="none"
-					xmlns="http://www.w3.org/2000/svg">
-					<path d="M6.53857 7.23071L3.76934 9.99994L1.00011 7.23071" stroke="#0F0F0F" stroke-width="0.692308"
-						stroke-linecap="round" stroke-linejoin="round"></path>
-					<path d="M1 3.76929L3.76923 1.00006L6.53846 3.76929" stroke="#0F0F0F" stroke-width="0.692308"
-						stroke-linecap="round" stroke-linejoin="round"></path>
-				</svg>
-			</div>
-			<div class="content">
-				<h3>Brushes</h3>
-				<select id="sel-single" value="pen">
-					<option value="pen">Pencil</option>
-					<option value="erase">Eraser</option>
-				</select>
-				<br>
-				<label for="brush-size">Brush Size</label>
-				<input type="range" name="" id="brush-size">
-				<div class="content column" id="layer-holder"></div>
-			</div>
-		</div>
-
 		<div id="colour-picker" class="sidenav float">
 			<div class="popup-options">
 				<span class="icon-colour"></span>
@@ -91,7 +41,7 @@
 				</div>
 
 				<div class="colour-code-holder">
-					<label class="colour-code-selector">
+					<div class="colour-code-selector">
 						<svg width="7" height="11" viewBox="0 0 7 11" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M6.53857 7.23071L3.76934 9.99994L1.00011 7.23071" stroke="#0F0F0F"
 								stroke-width="0.692308" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -99,7 +49,7 @@
 								stroke-width="0.692308" stroke-linecap="round" stroke-linejoin="round"></path>
 						</svg>
 						<small data-options="HEX,RGB,HSL">HEX</small>
-					</label>
+					</div>
 
 					<input type="text" class="colour-code" maxlength="20">
 				</div>
@@ -140,8 +90,78 @@
 			</div>
 		</div>
 
+		<div class="sidenav right open" id="layers">
+			<div class="popup-options">
+				<span class="icon-layers"></span>
+
+				<div class="drag"></div>
+
+				<svg class="minimize-button" width="7" height="11" viewBox="0 0 7 11" fill="none"
+					xmlns="http://www.w3.org/2000/svg">
+					<path d="M6.53857 7.23071L3.76934 9.99994L1.00011 7.23071" stroke="#0F0F0F" stroke-width="0.692308"
+						stroke-linecap="round" stroke-linejoin="round"></path>
+					<path d="M1 3.76929L3.76923 1.00006L6.53846 3.76929" stroke="#0F0F0F" stroke-width="0.692308"
+						stroke-linecap="round" stroke-linejoin="round"></path>
+				</svg>
+			</div>
+			<div class="content">
+				<h3>Layers</h3>
+				<div class="row">
+					<span class="icon-plus" id="add-layer"></span>
+				</div>
+				<div class="content column" id="layer-holder"></div>
+			</div>
+		</div>
+
+		<div class="sidenav right" id="brushes">
+			<div class="popup-options">
+				<span class="icon-squiggle"></span>
+
+				<div class="drag"></div>
+
+				<svg class="minimize-button" width="7" height="11" viewBox="0 0 7 11" fill="none"
+					xmlns="http://www.w3.org/2000/svg">
+					<path d="M6.53857 7.23071L3.76934 9.99994L1.00011 7.23071" stroke="#0F0F0F" stroke-width="0.692308"
+						stroke-linecap="round" stroke-linejoin="round"></path>
+					<path d="M1 3.76929L3.76923 1.00006L6.53846 3.76929" stroke="#0F0F0F" stroke-width="0.692308"
+						stroke-linecap="round" stroke-linejoin="round"></path>
+				</svg>
+			</div>
+			<div class="content">
+				<h3>Brushes</h3>
+				<div class="row">
+					<span class="icon-plus" id="add-layer"></span>
+				</div>
+				<div class="content column" id="layer-holder"></div>
+			</div>
+		</div>
+
+		<div class="sidenav left" id="export">
+			<div class="popup-options">
+				<span class="icon-save"></span>
+
+				<div class="drag"></div>
+
+				<svg class="minimize-button" width="7" height="11" viewBox="0 0 7 11" fill="none"
+					xmlns="http://www.w3.org/2000/svg">
+					<path d="M6.53857 7.23071L3.76934 9.99994L1.00011 7.23071" stroke="#0F0F0F" stroke-width="0.692308"
+						stroke-linecap="round" stroke-linejoin="round"></path>
+					<path d="M1 3.76929L3.76923 1.00006L6.53846 3.76929" stroke="#0F0F0F" stroke-width="0.692308"
+						stroke-linecap="round" stroke-linejoin="round"></path>
+				</svg>
+			</div>
+			<div class="content">
+				<h3>Export</h3>
+				<div class="row">
+					<span class="icon-plus" id="add-layer"></span>
+				</div>
+				<div class="content column" id="layer-holder"></div>
+			</div>
+		</div>
+
 		<div id="loading">
-			<svg class="background" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+			<svg class="background" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+				fill="none">
 				<path
 					d="M4.725 4.96251L4.87805 4.85805C5.30046 4.56974 5.73904 4.2284 6.25 4.25001V4.25001C6.73158 4.26928 6.97172 4.35169 7.31875 4.69376C7.64237 5.08835 7.74255 5.33231 7.75 5.82501C7.7637 6.31681 7.66318 6.5616 7.45 6.98751C7.12298 7.60963 6.90546 7.96059 6.475 8.58751C5.66749 9.69452 5.29179 10.3167 4.775 11.4688C4.38316 12.3995 4.31199 12.8898 4.25 13.75C4.25952 14.3868 4.35137 14.7157 4.75625 15.2313C5.22543 15.6903 5.50675 15.7889 6.025 15.825C6.64993 15.8098 6.89219 15.7084 7.225 15.4063C8.55155 14.0855 9.12512 13.4942 9.9375 12.5C10.9472 11.3099 11.4858 10.7689 12.4 10.1375C13.2637 9.59339 13.7338 9.44683 14.55 9.42501C15.4034 9.44198 15.8187 9.61093 16.4375 10.2188C17.0176 10.9645 17.1914 11.4648 17.2625 12.4375V14.9625C17.2302 15.3343 17.1923 15.6599 17.1465 15.9514C16.8648 17.7443 15.6895 19.7889 13.875 19.75V19.75C13.1185 19.6941 12.8337 19.561 12.4625 19.1875V19.1875C11.7445 18.4532 11.829 17.2327 12.2899 16.3149C12.481 15.9343 12.7403 15.6354 13.0938 15.275C14.2183 14.222 14.8602 13.9807 16.0125 13.775L18.525 13.625H19.75"
 					stroke="#E8EAED" stroke-width="2.5" stroke-linecap="round" />
@@ -161,6 +181,16 @@
 		<script type="module" src="./sidenav.js"></script>
 		<script type="module" src="./colour-picker.js"></script>
 		<script type="module" src="./index.js"></script>
+
+		<script>
+			window.addEventListener("load", function () {
+				let loadingScreen = document.getElementById("loading");
+				loadingScreen.classList.add("hide");
+				loadingScreen.onanimationend = () => {
+					document.getElementById("loading").remove();
+				}
+			});
+		</script>
 	</body>
 
 </html>

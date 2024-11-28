@@ -137,3 +137,21 @@ function selectOption(option) {
 		option.parentElement.parentElement.setAttribute("value", option.getAttribute("value"));
 	}
 }
+
+const themeChangeButton = document.getElementById("theme-switch");
+const root = document.getElementsByTagName("html")[0];
+
+themeChangeButton.onclick = () => {
+	let currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+	let newTheme = (currentTheme == "light") ? "dark" : "light";
+	document.documentElement.setAttribute("data-theme", newTheme);
+}
+
+document.onscroll =  () => {
+	let rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+	if (window.scrollY > rem) {
+		root.classList.add("scroll");
+	} else {
+		root.classList.remove("scroll");
+	}
+};

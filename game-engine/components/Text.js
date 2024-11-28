@@ -1,3 +1,5 @@
+import { getValue } from "../../toolbelt/lib/units.js";
+import { parseColour } from "../../toolbelt/toolbelt.js";
 import { Component, engine, Point2 } from "../utils.js";
 
 export class Text extends Component {
@@ -50,7 +52,8 @@ export class Text extends Component {
 		return this;
 	}
 
-	letterSpacing = 0 || "0px";
+	/** @type {number | string} */
+	letterSpacing = "auto";
 
 	/**
 	 * @type {"ltr" | "rtl" | "inherit"}
@@ -62,7 +65,15 @@ export class Text extends Component {
 	 */
 	styling = "normal";
 
-	outline = { colour: "black", size: 0 };
+	/**
+	 * @type {{
+	* colour: string,
+	* size: number,
+	* lineCap: "butt" | "round" | "square",
+	* lineJoin: "miter" | "round" | "bevel" | "miter-clip" | "arcs",
+	* }}
+	*/
+	outline = { colour: "black", size: 0, lineCap: "round", lineJoin: "round" };
 	shadow = { colour: "black", blur: 0, offset: { x: 0, y: 0 } };
 
 	getType(){ return "Text"; }
@@ -73,23 +84,21 @@ export class Text extends Component {
 
 		if (!this.visibility) return this;
 
-		if (typeof this.fontSize == "number") this.fontSize += "px";
+		let fontSize = getValue(this.fontSize);
 		if (typeof this.letterSpacing == "number") this.letterSpacing += "px";
 
-		context.font = `${this.styling} ${this.fontSize} ${this.fontFamily}, Arial`;
+		context.font = `${this.styling} 16px "${this.fontFamily}", Arial`;
 		context.fillStyle = this.colour;
 		context.textAlign = this.textAlign;
 		context.textBaseline = this.textBaseLine;
 		context.direction = this.direction;
 		context.letterSpacing = this.letterSpacing;
 
-		let offset = { x: 0, y: 0 };
+		let destinationX = this.display.x;
+		let destinationY = this.display.y;
 
-		offset.x += defaultOffset.x;
-		offset.y += defaultOffset.y;
-
-		let destinationX = this.display.x + offset.x;
-		let destinationY = this.display.y + offset.y;
+		destinationX += defaultOffset.x;
+		destinationY += defaultOffset.y;
 		
 
 		context.save();
@@ -105,36 +114,38 @@ export class Text extends Component {
 		}
 		context.beginPath();
 
+		context.scale(fontSize / 16, fontSize / 16);
 
-		context.strokeStyle = this.outline.colour;
-		context.lineWidth = this.outline.size;
 
-		context.translate(this.display.x + offset.x, this.display.y + offset.y);
+		context.fillStyle = parseColour(this.colour);
+		context.strokeStyle = parseColour(this.outline.colour);
+		context.lineWidth = getValue(this.outline.size);
+		context.lineCap = this.outline.lineCap || "round";
+		context.lineJoin = this.outline.lineJoin || "round";
 
-		// context.fillStyle = "gray";
-		// context.fillRect(0, 0, this.display.w, this.display.h);
-		// context.fillStyle = this.textColour;
-
-		// context.rotate(angle);
-		// context.translate(-this.displayOffset.x, -this.displayOffset.y);
+		context.translate(destinationX, destinationY);
 
 		var lines = this.content.split('\n');
 
 		this.display.w = 0;
 		this.display.h = 0;
+
+		let lineY = 0;
 		for (var i = 0; i < lines.length; i++) {
 			let metrics = context.measureText(lines[i]);
 			if (metrics.width > this.display.w) this.display.w = metrics.width;
-			let lineHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
-			lineHeight *= 1.25;
-			this.display.h += lineHeight;
+			lineY += metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+			lineY += 2;
 
-			if (this.outline.size > 0) context.strokeText(lines[i], destinationX, destinationY + (i * lineHeight) );
-			context.strokeText(lines[i], 0, (i * lineHeight) );
-			context.fillText(lines[i], 0, (i * lineHeight) );
+			context.text
+			// context.strokeText(lines[i], 0, lineY);
+			context.fillText(lines[i], 0, lineY);
 		}
+		this.display.h = lineY;
 
 		context.closePath();
+		context.fill();
+		context.stroke();
 		context.restore();
 	
 		return this;

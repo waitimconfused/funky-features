@@ -1,4 +1,4 @@
-import * as tb from "../../../toolbelt/toolbelt.js";
+import * as tb from "../toolbelt/toolbelt.js";
 
 const colourPicker = document.getElementById("colour-picker");
 const colourPickerHandle = document.body.querySelector("#colour-picker .popup-options .drag");
@@ -43,8 +43,8 @@ actionCopy.addEventListener("click", () => {
 	navigator.clipboard.writeText(colourPicker.getAttribute("value"));
 });
 
-satLight.addEventListener("mousedown", move);
-document.documentElement.addEventListener("mousemove", move);
+satLight.addEventListener("pointerdown", move);
+document.documentElement.addEventListener("pointermove", move);
 
 colourPickerCollapseButton.addEventListener("click", () => {
 	colourPicker.classList.toggle("minimized");
@@ -53,7 +53,8 @@ colourPickerCollapseButton.addEventListener("click", () => {
 update();
 
 function move(e) {
-	if (satLight.matches(":active") == false) return;
+	if (satLight.matches(":hover") == false) return;
+	if (tb.mouse.click_l == false && tb.mouse.pen.pressure == 0) return;
 	let mousePos = tb.mouse.position.relative(satLight);
 	let x = tb.toRange(0, mousePos.x, 200);
 	let y = tb.toRange(0, mousePos.y, 200);

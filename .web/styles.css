@@ -50,6 +50,7 @@ small {font-size: 0.750rem; /* 12px */}
 
 
 body {
+	position: relative;
 	font-family: "Inter";
 	font-weight: 400;
 
@@ -58,7 +59,7 @@ body {
 	margin: 0px;
 	min-height: 100vh;
 	padding: 0 12%;
-	padding-top: 50vh;
+	padding-top: 75vh;
 }
 
 nav {
@@ -92,17 +93,6 @@ nav img.icon {
 	display: none;
 }
 
-.header-holder {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	width: 100vw;
-	height: 75vh;
-	box-sizing: border-box;
-	-webkit-perspective: 240px;
-	perspective: 240px;
-	perspective-origin: top center;
-}
 header {
 	position: absolute;
 	top: 2rem;
@@ -116,34 +106,6 @@ header {
 	align-items: center;
 	background-color: var(--secondary);
 	border-radius: 2rem;
-
-	animation-name: header-fade-out;
-	animation-duration: 1ms; /* Firefox requires this to apply the animation */
-	animation-direction: alternate;
-	animation-timeline: scroll();
-}
-
-@keyframes header-fade-out {
-	from {
-		top: 0px;
-		left: 0px;
-		width: 100vw;
-		height: calc(50vh - 4rem);
-		opacity: 1;
-		transform: rotateX(0deg);
-		border-radius: 0px;
-	}
-	10% {
-		top: 2rem;
-		left: 2rem;
-		width: calc(100vw - 4rem);
-		height: calc(50vh - 4rem);
-		border-radius: 2rem;
-	}
-	80%, to {
-		scale: 0.75;
-		transform: rotateX(-10deg);
-	}
 }
 
 header .scroll-down {

@@ -1,6 +1,6 @@
 import { ComponentGroup, engine, Point2 } from "../game-engine/utils.js";
 import { Canvas, Circle, Image, Path, Rect, Text } from "../game-engine/components.js"
-import { keyboard, toRange, Vector } from "../toolbelt/toolbelt.js";
+import { keyboard, mouse, toRange, Vector } from "../toolbelt/toolbelt.js";
 
 const layersDiv = document.getElementById("layer-holder");
 const newLayerButton = document.getElementById("add-layer");
@@ -16,8 +16,8 @@ engine.enableLoadAssetLogs();
 
 engine.fullscreen = true;
 
-var width = 3840;
-var height = 2160;
+var width = screen.width;
+var height = screen.height;
 
 // width = 100;
 // height = 100;
@@ -69,13 +69,9 @@ function newLayer() {
 	if (layers.length == 0) {
 		canvas.colour = "white";
 		canvas.outline.colour = "#D9D9D9";
-		canvas.outline.size = 10;
+		canvas.outline.size = "1 / 100cz";
 		canvas.shadow.colour = "#0000001A";
-		canvas.shadow.blur = 20;
-		canvas.script = () => {
-			canvas.outline.size = 1 / engine.camera.zoom;
-			canvas.shadow.blur = 20 / engine.camera.zoom;
-		};
+		canvas.shadow.blur = "20 / 100cz";
 		layerDiv.classList.add("selected");
 	} else {
 		canvas.colour = "transparent";
@@ -100,88 +96,35 @@ newLayerButton.onclick = () => {
 newLayer();
 // canvas.transform.set(0, 0);
 
-const UI = new ComponentGroup;
-engine.addObject(UI);
-UI.fixedPosition = true;
-
-const colourValue = new Circle;
-UI.addObject(colourValue);
-colourValue.fixedPosition = true;
-colourValue.radius = data.pen.size;
-colourValue.outline.colour = "black";
-colourValue.outline.size = 3;
-
-const colourValueIcon = new Image;
-UI.addObject(colourValueIcon);
-colourValueIcon.fixedPosition = true;
-colourValueIcon.source = "./assets/pens/pen.svg";
-colourValueIcon.display.set(0, 0, 25, 25);
-
-const layerRect = new Rect;
-UI.addObject(layerRect);
-layerRect.fixedPosition = true;
-layerRect.transform.set(0, 0);
-layerRect.display.set(30, 80, 80, 35);
-layerRect.radius = 10;
-
-const layerIcon = new Image;
-UI.addObject(layerIcon);
-layerIcon.fixedPosition = true;
-layerIcon.source = "./assets/layers.svg";
-layerIcon.display.set(50, 100, 25, 25);
-
-const layerNumber = new Text;
-UI.addObject(layerNumber);
-layerNumber.content = "0";
-layerNumber.colour = "#e8eaed";
-layerNumber.fontSize = 25;
-layerNumber.fixedPosition = true;
-layerNumber.textAlign = "left";
-layerNumber.moveTo(65, 100);
-
-const penSizeRect = new Rect;
-UI.addObject(penSizeRect);
-penSizeRect.fixedPosition = true;
-penSizeRect.transform.set(0, 0);
-penSizeRect.display.set(30, 120, 80, 35);
-penSizeRect.radius = 10;
-
-const penSizeIcon = new Image;
-UI.addObject(penSizeIcon);
-penSizeIcon.fixedPosition = true;
-penSizeIcon.source = "./assets/pen_size.svg";
-penSizeIcon.display.set(50, 135, 25, 25);
-
-const penSizeNumber = new Text;
-UI.addObject(penSizeNumber);
-penSizeNumber.content = "0";
-penSizeNumber.colour = "#e8eaed";
-penSizeNumber.fontSize = 25;
-penSizeNumber.fixedPosition = true;
-penSizeNumber.textAlign = "left";
-penSizeNumber.moveTo(65, 135);
-
 const cursor = new Circle;
 engine.addObject(cursor);
 cursor.radius = 10;
 cursor.colour = "none";
 cursor.outline.colour = "black";
-cursor.outline.size = 1;
+cursor.outline.size = "1 / 100cz";
 
 const cursor2 = new Circle;
 engine.addObject(cursor2);
 cursor2.radius = 10;
 cursor2.colour = "none";
 cursor2.outline.colour = "black";
-cursor2.outline.size = 1;
+cursor2.outline.size = cursor.outline.size;
 
 keyboard.on(["]"], () => {
 	data.pen.size += 5;
-}, { passive: false });
+}, { passive: true });
 keyboard.on(["["], () => {
 	data.pen.size -= 5;
 	if (data.pen.size < 0) data.pen.size = 0;
-}, { passive: false });
+}, { passive: true });
+
+keyboard.on(["shift", "]"], () => {
+	data.pen.size += 1;
+}, { passive: true });
+keyboard.on(["shift", "["], () => {
+	data.pen.size -= 1;
+	if (data.pen.size < 0) data.pen.size = 0;
+}, { passive: true });
 
 
 keyboard.on(["e"], () => {
@@ -248,6 +191,10 @@ engine.cursor = "pointer";
 var penDown = false;
 var lastMousePos = new Point2(-1, -1);
 var lastClickedMousePos = new Point2(-1, -1);
+var isZooming = false;
+var zoomDistance = 0;
+var zoomDistance_last = 0;
+
 engine.preRenderingScript = () => {
 
 	let canvasHash = layers[data.layerNumber];
@@ -255,38 +202,64 @@ engine.preRenderingScript = () => {
 	let canvas = engine.getObject(canvasHash);
 
 	let mousePos = engine.mouse.toWorld();
-	// let canvasMouse = engine.mouse.toObject(canvas);
 	let canvasMouse = cursor.display.clone()
 		.translate(-canvas.display.x + canvas.display.w * canvas.transform.x, 0)
 		.translate(0, -canvas.display.y + canvas.display.h * canvas.transform.y);
-	let clicking = engine.mouse.click_l && engine.canvas.matches(":active");
+	let clicking = (engine.mouse.click_l || mouse.pen.pressure > 0) && engine.canvas.matches(":hover");
 
-	if (!clicking) cursor.moveTo(mousePos);
+	let penSize = data.pen.size;
 
-	layerNumber.content = (data.layerNumber+1) + "/" + layers.length;
-	penSizeNumber.content = data.pen.size;
+	if (mouse.pen.pressure) penSize += (Math.floor(50 * mouse.pen.pressure) - 25) / engine.camera.zoom;
+	penSize = toRange(0, penSize, 100);
+
+	cursor.moveTo(mousePos);
 
 	if (keyboard.isPressed("shift") && lastClickedMousePos.equals(-1, -1)) {
 		lastClickedMousePos.set(canvasMouse);
 	}
 
-	cursor.radius = data.pen.size;
-	cursor.outline.size = 5 / engine.camera.zoom;
-	cursor.outline.size = Math.min(5, cursor.outline.size);
-	cursor2.outline.size = cursor.outline.size;
+	if (keyboard.isPressed("ctrl") && clicking) {
+		if (isZooming == false) {
+			cursor.fixedPosition = true;
+			cursor.outline.size = 1;
+			cursor2.fixedPosition = true;
+			cursor2.outline.size = 1;
+			cursor2.moveTo(engine.mouse);
+			cursor2.visibility = true;
+			zoomDistance_last = zoomDistance;
+			isZooming = true;
+		}
+		cursor.radius = data.pen.size * engine.camera.zoom;
+		cursor2.radius = cursor.radius;
+		cursor.moveTo(engine.mouse);
+		zoomDistance = Math.hypot( cursor2.display.x - cursor.display.x, cursor2.display.y - cursor.display.y ) || 0;
 
+		let changeInZoom = (zoomDistance_last - zoomDistance);
+		if (cursor.display.y > cursor2.display.y) changeInZoom *= -1;
+		engine.camera.zoom += changeInZoom / 10000;
+		engine.camera.zoom = Math.max(engine.camera.zoom, 0);
+		console.log(changeInZoom);
+
+		return;
+	} else if (isZooming == true){
+		isZooming = false;
+		cursor.fixedPosition = false;
+		cursor.radius = data.pen.size;
+		cursor.outline.size = "1 / 100cz";
+		cursor2.fixedPosition = false;
+		cursor2.radius = cursor.radius;
+		cursor2.outline.size = cursor.outline.size;
+	}
+
+	cursor.radius = penSize;
 	cursor2.zIndex = -1;
 	cursor.zIndex = -1;
 
 	cursor2.visibility = keyboard.isPressed("shift");
 	if (cursor.visibility) {
-		cursor2.radius = data.pen.size;
-		cursor2.outline.size = cursor.outline.size;
+		cursor2.radius = penSize;
 		cursor2.moveTo(lastClickedMousePos.x - canvas.display.w * canvas.transform.x, lastClickedMousePos.y - canvas.display.h * canvas.transform.y);
 	}
-
-	colourValue.moveTo(50, 50);
-	colourValueIcon.moveTo(colourValue);
 
 	// let rgb = [];
 	// let time = performance.now() / 5000;
@@ -299,22 +272,19 @@ engine.preRenderingScript = () => {
 	// var colour = `rgb(${rgb.join(", ")})`;
 	// colour = hsl;
 	var colour = document.getElementById("colour-picker").getAttribute("value");
-	colourValue.colour = colour;
 
 	if (data.pen.mode == "erase") {
 		canvas.context.globalCompositeOperation = "destination-out";
-		colourValueIcon.source = "./assets/pens/eraser.svg";
 	} else {
 		canvas.context.globalCompositeOperation = "source-over";
-		colourValueIcon.source = "./assets/pens/pen.svg";
 	}
 
-	if (clicking && data.pen.size > 0) {
+	if (clicking && penSize > 0) {
 
 		let vector = new Vector;
 		vector.setPos(mousePos.x - cursor.display.x, mousePos.y - cursor.display.y);
 		vector.mag /= data.pen.smoothing + 1;
-		if (vector.mag > 1) cursor.moveBy(vector.xy());
+		if (vector.mag > 1 && mouse.pen.pressure == 0) cursor.moveBy(vector.xy());
 		else cursor.moveTo(mousePos);
 
 		let p1 = lastMousePos;
@@ -327,7 +297,7 @@ engine.preRenderingScript = () => {
 		canvas.context.beginPath();
 		canvas.context.fillStyle = "transparent";
 		canvas.context.strokeStyle = colour;
-		canvas.context.lineWidth = data.pen.size * 2;
+		canvas.context.lineWidth = penSize * 2;
 		canvas.context.lineCap = "round";
 		canvas.context.moveTo(p1.x, p1.y);
 		canvas.context.lineTo(p2.x, p2.y);
@@ -338,8 +308,8 @@ engine.preRenderingScript = () => {
 		canvas.context.fillStyle = colour;
 		canvas.context.strokeStyle = "transparent";
 		canvas.context.lineWidth = 0;
-		canvas.context.arc(p1.x, p1.y, data.pen.size, 0, 2 * Math.PI);
-		canvas.context.arc(p2.x, p2.y, data.pen.size, 0, 2 * Math.PI);
+		canvas.context.arc(p1.x, p1.y, penSize, 0, 2 * Math.PI);
+		canvas.context.arc(p2.x, p2.y, penSize, 0, 2 * Math.PI);
 		canvas.context.closePath();
 		canvas.context.fill();
 		lastClickedMousePos.set(canvasMouse.x, canvasMouse.y);
@@ -351,14 +321,6 @@ engine.preRenderingScript = () => {
 		layerIconContext.drawImage(canvas.documentElement, 0, 0, layerIcon.width, layerIcon.height);
 	}
 
-	penDown = clicking && data.pen.size > 0;
+	penDown = clicking && penSize > 0;
 	lastMousePos.set(canvasMouse.x, canvasMouse.y);
 }
-
-window.addEventListener("load", function () {
-	let loadingScreen = document.getElementById("loading");
-	loadingScreen.classList.add("hide");
-	loadingScreen.onanimationend = () => {
-		document.getElementById("loading").remove();
-	}
-});

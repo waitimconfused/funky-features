@@ -213,10 +213,6 @@ class XboxController extends Controller {
 		}
 	}
 
-	availableEventNames = [
-		"A&TGYHUJ",
-	]
-
 	reload(gamepad=new Gamepad) {
 
 		if(gamepad instanceof Gamepad == false) throw new Error("Error at object Xbox: function 'reload()' requires the parameter 'gamepad:Gamepad'");

@@ -7,6 +7,11 @@
 	--text: black;
 }
 
+body:has(.sidenav .popup-options .drag:active),
+body:has(.sidenav .popup-options .drag:active) canvas {
+	cursor: move !important;
+}
+
 .sidenav.float {
 	width: 100px;
 	height: 32px;
@@ -78,9 +83,13 @@
 .sidenav .popup-options .drag {
 	padding: 0.1rem 0.5rem;
 	border-radius: 6px;
-	cursor: move;
+	cursor: pointer;
 	transition: background;
 	transition-duration: 100ms;
+}
+
+.sidenav .popup-options .drag:active {
+	cursor: move;
 }
 
 .sidenav .popup-options .drag:hover {
@@ -188,7 +197,7 @@
 	content: "";
 	position: absolute;
 	background-color: transparent;
-	bottom: -52px;
+	bottom: -51px;
 	height: 50px;
 	width: 25px;
 	border-top: 2px solid #E5E5E5;
@@ -207,7 +216,7 @@
 }
 
 .sidenav.right .popup-options::after {
-	right: 2px;
+	right: 1.5px;
 	border-bottom-right-radius: 25px;
 	border-right: 2px solid #E5E5E5;
 	box-shadow: 2px 25px 0 0 white;

@@ -148,26 +148,69 @@ export var mouse = new class Mouse {
 	click_l = false;
 	click_r = false;
 
+	pen = {
+		pressure: 0,
+	}
+
 	#hooks = [];
 
 	constructor() {
-		window.addEventListener("mousedown", (e) => {
-			mouse.click_l = true;
-			mouse.updateHooks(e);
-		});
-		window.addEventListener("mouseup", (e) => {
-			mouse.click_l = false;
-			mouse.click_r = false;
-			mouse.updateHooks(e);
-		});
 		window.addEventListener("contextmenu", (e) => {
 			e.preventDefault();
 			mouse.click_r = true;
 			mouse.updateHooks(e);
 		});
-		window.addEventListener("mousemove", (e) => {
+
+		window.addEventListener("pointerdown", (e) => {
+			if (e.pointerType == "touch") return;
+			if (e.pointerType == "pen") e.preventDefault();
 			mouse.position.x = e.clientX;
 			mouse.position.y = e.clientY;
+			mouse.click_l = true;
+			mouse.pen.pressure = 0;
+			mouse.updateHooks(e);
+		});
+		window.addEventListener("pointermove", (e) => {
+			if (e.pointerType == "touch") return;
+			if (e.pointerType == "pen") e.preventDefault();
+			mouse.position.x = e.clientX;
+			mouse.position.y = e.clientY;
+			mouse.pen.pressure = (e.pointerType == "pen") ? e.pressure : 0;
+			mouse.updateHooks(e);
+		});
+		window.addEventListener("pointerup", (e) => {
+			if (e.pointerType == "touch") return;
+			if (e.pointerType == "pen") e.preventDefault();
+			mouse.position.x = e.clientX;
+			mouse.position.y = e.clientY;
+			mouse.click_l = false;
+			mouse.pen.pressure = 0;
+			mouse.updateHooks(e);
+		});
+
+		window.addEventListener("touchstart", (e) => {
+			mouse.position.x = e.touches[0].clientX;
+			mouse.position.y = e.touches[0].clientY;
+			mouse.click_l = false;
+			mouse.pen.pressure = 0;
+			mouse.updateHooks(e);
+		});
+		window.addEventListener("touchmove", (e) => {
+			mouse.position.x = e.touches[0].clientX;
+			mouse.position.y = e.touches[0].clientY;
+			mouse.click_l = true;
+			mouse.updateHooks(e);
+		});
+		window.addEventListener("touchend", (e) => {
+			mouse.position.x = e.touches[0].clientX;
+			mouse.position.y = e.touches[0].clientY;
+			mouse.click_l = false;
+			mouse.updateHooks(e);
+		});
+		window.addEventListener("touchcancel", (e) => {
+			mouse.position.x = e.touches[0].clientX;
+			mouse.position.y = e.touches[0].clientY;
+			mouse.click_l = false;
 			mouse.updateHooks(e);
 		});
 	}

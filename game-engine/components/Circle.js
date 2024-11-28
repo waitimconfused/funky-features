@@ -2,19 +2,34 @@ import { getValue } from "../../toolbelt/lib/units.js";
 import { parseColour } from "../../toolbelt/toolbelt.js";
 import { Component, Point2, engine } from "../utils.js";
 
+
 export class Circle extends Component {
-	#cameraTracking = false;
 	display = new Point2(0, 0);
 	displayOffset = new Point2(0, 0);
 	radius = 100;
 	colour = "purple";
-	outline = { colour: "black", size: 0 };
+	/**
+	 * @type { {colour: string, size: number|string } }
+	 */
+	outline = { colour: "black", size: "5 / 100cz" };
+	/**
+	 * @type {{
+	 * colour: string,
+	 * blur: number|string,
+	 * offset: { x: number|string, y: number|string }
+	 * }}
+	 */
 	shadow = { colour: "black", blur: 0, offset: { x: 0, y: 0 } };
-	cameraTracking = false;
 
 	getType(){ return "Circle"; }
 
-	render(context=new CanvasRenderingContext2D, defaultOffset={x:0,y:0}){
+	/**
+	 * @param {CanvasRenderingContext2D} context
+	 * @param {{x: 0, y: 0}} defaultOffset
+	 */
+	render(context, defaultOffset){
+
+		if (!defaultOffset) defaultOffset = {x: 0, y: 0};
 		
 		if (!this.visibility) return this;
 
@@ -52,7 +67,7 @@ export class Circle extends Component {
 		context.lineWidth = outlineSize;
 		context.arc(destinationX, destinationY, radius, 0, 2 * Math.PI);
 		context.fill();
-		if(context.lineWidth > 0) context.stroke();
+		if(outlineSize > 0) context.stroke();
 		context.closePath();
 
 		context.restore();

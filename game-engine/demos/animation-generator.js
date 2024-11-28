@@ -1,6 +1,8 @@
-import { animation, engine, Point2 } from "../utils.js";
-import * as components from "../index.js";
+import { engine, Point2 } from "../utils.js";
+import * as components from "../components.js";
 import { keyboard, mouse, toRange } from "../../toolbelt/toolbelt.js";
+
+engine.camera.keyZoomMultiplier
 
 const output = document.getElementById("output");
 

@@ -1,4 +1,5 @@
-import { toRange } from "../../toolbelt/toolbelt.js";
+import { getValue } from "../../toolbelt/lib/units.js";
+import { parseColour, toRange } from "../../toolbelt/toolbelt.js";
 import { Component, Animation, engine, Point2 } from "../utils.js";
 
 export class Canvas extends Component {
@@ -39,23 +40,16 @@ export class Canvas extends Component {
 		this.transform.x = toRange(0, this.transform.x, 1);
 		this.transform.y = toRange(0, this.transform.y, 1);
 
-		let destinationW = this.documentElement.width;
-		let destinationH = this.documentElement.height;
+		let destinationW = getValue(this.documentElement.width);
+		let destinationH = getValue(this.documentElement.height);
 
-		let offset = { x: 0, y: 0 };
-		
-		offset.x += defaultOffset.x;
-		offset.y += defaultOffset.y;
+		let destinationX = getValue(this.display.x);
+		let destinationY = getValue(this.display.y);
 
-		offset.x -= destinationW * this.transform.x;
-		offset.y -= destinationH * this.transform.y;
-
-		if(this.fixedPosition == false) {
-			offset.x -= engine.camera.position.x;
-			offset.y -= engine.camera.position.y;
-		}
-		let destinationX = this.display.x + offset.x;
-		let destinationY = this.display.y + offset.y;
+		destinationX += defaultOffset.x;
+		destinationY += defaultOffset.y;
+		destinationX -= destinationW * this.transform.x;
+		destinationY -= destinationH * this.transform.y;
 
 		context.save();
 		if (!this.fixedPosition) {
@@ -70,16 +64,17 @@ export class Canvas extends Component {
 				context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
 				context.scale(engine.camera.zoom, engine.camera.zoom);
 			}
+			context.translate(-engine.camera.position.x, -engine.camera.position.y);
 		}
 
-		context.fillStyle = this.colour;
-		context.strokeStyle = this.outline.colour;
-		context.lineWidth = this.outline.size;
+		context.fillStyle = parseColour(this.colour);
+		context.strokeStyle = parseColour(this.outline.colour);
+		context.lineWidth = getValue(this.outline.size);
 
-		context.shadowColor = this.shadow.colour;
-		context.shadowOffsetX = this.shadow.offset.x;
-		context.shadowOffsetY = this.shadow.offset.y;
-		context.shadowBlur = this.shadow.blur;
+		context.shadowColor = parseColour(this.shadow.colour);
+		context.shadowOffsetX = getValue(this.shadow.offset.x);
+		context.shadowOffsetY = getValue(this.shadow.offset.y);
+		context.shadowBlur = getValue(this.shadow.blur);
 
 		context.beginPath();
 		context.rect(destinationX, destinationY, destinationW, destinationH);
@@ -94,7 +89,7 @@ export class Canvas extends Component {
 			destinationW, destinationH,
 		);
 
-		if (this.outline.size > 0) {
+		if (context.lineWidth > 0) {
 			context.beginPath();
 			context.rect(destinationX, destinationY, destinationW, destinationH);
 			context.closePath();

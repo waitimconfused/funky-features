@@ -44,4 +44,4 @@ export class CustomUnitConverter {
 }
 
 export const unitConverter = new CustomUnitConverter;
-export const getValue = function(value) { return unitConverter.getValue(value) };
+export const getValue = function(value) {return unitConverter.getValue(value) };

@@ -162,8 +162,8 @@ export class Path extends Component {
 
 		context.beginPath();
 
-		context.fillStyle = colour;
-		context.strokeStyle = outlineColour;
+		context.fillStyle = parseColour(colour);
+		context.strokeStyle = parseColour(outlineColour);
 		context.lineWidth = getValue(this.outline.size);
 		context.lineCap = this.outline.lineCap || "round";
 		context.lineJoin = this.outline.lineJoin || "round";

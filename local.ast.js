@@ -6,12 +6,9 @@ const Ast = require("asterisk-server");
 const fs = require("fs");
 const path = require("path");
 
-Ast.serverside.open
-
-Ast.clearLogs();
-Ast.serverside.open(1201);
-Ast.files.regester404("./404.html");
-Ast.api.lock();
+Ast.server.open(1201);
+Ast.files.registerStatusPage(404, "./404.html");
+Ast.api.lockIP();
 
 function mkdir(dir=""){
 	if(!fs.existsSync(dir)) fs.mkdirSync(dir);
