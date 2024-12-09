@@ -7,7 +7,7 @@ const newLayerButton = document.getElementById("add-layer");
 const whiteboard = document.getElementById("whiteboard");
 
 engine.setCanvas(whiteboard);
-engine.setBackground("white");
+engine.background = "white";
 engine.disableLoadAssetLogs();
 engine.loadAsset("./assets/pens/pen.svg");
 engine.loadAsset("./assets/pens/eraser.svg");
@@ -159,24 +159,24 @@ keyboard.on(["ctrl", "e"], () => {
 
 	let d = new Date();
 
-    let year = d.getFullYear();
-    let month = '' + (d.getMonth() + 1);
-    let day = '' + d.getDate();
+	let year = d.getFullYear();
+	let month = '' + (d.getMonth() + 1);
+	let day = '' + d.getDate();
 
-    let hour = d.getHours();
-    let minute = d.getMinutes().toString().padStart(2, "0");
+	let hour = d.getHours();
+	let minute = d.getMinutes().toString().padStart(2, "0");
 
-    if (month.length < 2)  month = '0' + month;
-    if (day.length < 2)  day = '0' + day;
+	if (month.length < 2)  month = '0' + month;
+	if (day.length < 2)  day = '0' + day;
 
-    let fileName = [year, month, day].join('-') + "__" + [hour, minute].join(':') + ".png";
+	let fileName = [year, month, day].join('-') + "__" + [hour, minute].join(':') + ".png";
 
 	let downloadLink = document.createElement("a");
-    downloadLink.setAttribute("download", fileName);
-    let dataURL = canvas.toDataURL("image/png");
-    let url = dataURL.replace(/^data:image\/png/, "data:application/octet-stream");
-    downloadLink.setAttribute('href', url);
-    downloadLink.click();
+	downloadLink.setAttribute("download", fileName);
+	let dataURL = canvas.toDataURL("image/png");
+	let url = dataURL.replace(/^data:image\/png/, "data:application/octet-stream");
+	downloadLink.setAttribute('href', url);
+	downloadLink.click();
 
 }, { passive: false });
 

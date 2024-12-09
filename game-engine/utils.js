@@ -843,22 +843,6 @@ export class ComponentGroup extends Component {
 		let size = 10 / engine.camera.zoom;
 		size = 0;
 
-		context.beginPath();
-		context.setLineDash([lineDash, lineDash/2]);
-		context.strokeStyle = "#222266";
-		context.lineWidth = lineDash / 10;
-		context.lineCap = "round";
-		context.lineJoin = "round";
-		context.roundRect(
-			destinationX - size*2,
-			destinationY - size*2,
-			destinationW + size*4,
-			destinationH + size*4,
-			lineDash/10
-		);
-		context.stroke();
-		context.closePath();
-
 		context.restore();
 
 		for(let i = 0; i < components.length; i ++) {
