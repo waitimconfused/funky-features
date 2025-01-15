@@ -17,7 +17,7 @@ export class CustomUnitConverter {
 	 * @returns {number}
 	 */
 	getValue(value) {
-		if (typeof value == "number") return value;
+		if (typeof value != "string") return value;
 		/** @type {string[]} */
 		let sections = value.split(/([0-9\.-]+[a-zA-Z]*)/g).filter((a) => !!a);
 	

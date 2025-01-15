@@ -43,8 +43,6 @@ for (let i = 0; i < sidenavs.length; i++) {
 
 	}
 
-	console.log(sidenav, options)
-
 	if (options.collapsed == true) {
 		sidenav.classList.remove("open");
 	} else {

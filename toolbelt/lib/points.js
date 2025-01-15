@@ -34,6 +34,30 @@ export class Point2 {
 		return this;
 	}
 
+	/** @param {number|1} increment */
+	round(increment) {
+		if (!increment) increment = 1;
+		this.x = Math.round(this.x / increment) * increment;
+		this.y = Math.round(this.y / increment) * increment;
+		return this;
+	}
+
+	/** @param {number|1} increment */
+	floor(increment) {
+		if (!increment) increment = 1;
+		this.x = Math.floor(this.x / increment) * increment;
+		this.y = Math.floor(this.y / increment) * increment;
+		return this;
+	}
+
+	/** @param {number|1} increment */
+	ceil(increment) {
+		if (!increment) increment = 1;
+		this.x = Math.ceil(this.x / increment) * increment;
+		this.y = Math.ceil(this.y / increment) * increment;
+		return this;
+	}
+
 	/**
 	 * 
 	 * @param {number | Point2} x 
@@ -54,6 +78,34 @@ export class Point2 {
 	clone() {
 		return new Point2(this.x, this.y);
 	}
+
+	/** @param {Point2} point */
+	distanceTo(point) { return Point2.distanceBetween(this, point); }
+	/** @param {Point2} point */
+	angleTo(point) { return Point2.angleBetween(this, point); }
+
+	/**
+	 * @param {Point2|{x:number,y:number}} p1
+	 * @param {Point2|{x:number,y:number}} p2
+	 * @returns {number}
+	 */
+	static distanceBetween(p1, p2) {
+		return Math.hypot(p2.x-p1.x, p2.y-p1.y);
+	}
+
+	/**
+	 * @param {Point2|{x:number,y:number}} start
+	 * @param {Point2|{x:number,y:number}} end
+	 * @returns {number}
+	 */
+	static angleBetween(start, end) {
+		return Math.atan2(end.x-start.x, end.y-start.y);
+	}
+
+	/** Reference to: `Point2.distanceBetween(p1, p2)`*/
+	static distance = Point2.distanceBetween;
+	/** Reference to: `Point2.angleBetween(start, end)`*/
+	static angle = Point2.angleBetween;
 }
 
 export class Point3 extends Point2 {
@@ -190,6 +242,10 @@ export class Point4 {
 		);
 		
 		return intersecting;
+	}
+
+	clone() {
+		return new Point4(this.x, this.y, this.w, this.h);
 	}
 
 	toObject() {

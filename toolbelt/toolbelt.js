@@ -91,6 +91,44 @@ export class Range {
 	static isInRange(min, number, max) {
 		return number >= min && number <= max;
 	}
+
+	static random() {
+		return Math.random() * (max - min) + min;
+	}
+}
+
+export class Round {
+
+	static round = Math.round;
+	static floor = Math.floor;
+	static ceil = Math.ceil;
+
+	static roundToNearest(number=3.14, step=1) {
+		let rounded = Math.round(number / step) * step;
+		if (`${rounded}`.includes(".")) {
+			let step_decimalNumbers = `${step}`.replace(/(\d*)\./, "").length;
+			rounded = rounded.toFixed(step_decimalNumbers)
+		}
+		return rounded;
+	}
+	
+	static floorToNearest(number = 3.14, nearest = 1) {
+		let rounded = Math.floor(number / step) * step;
+		if (`${rounded}`.includes(".")) {
+			let step_decimalNumbers = `${step}`.replace(/(\d*)\./, "").length;
+			rounded = rounded.toFixed(step_decimalNumbers)
+		}
+		return rounded;
+	}
+	
+	static ceilToNearest(number = 3.14, nearest = 1) {
+		let rounded = Math.ceil(number / step) * step;
+		if (`${rounded}`.includes(".")) {
+			let step_decimalNumbers = `${step}`.replace(/(\d*)\./, "").length;
+			rounded = rounded.toFixed(step_decimalNumbers)
+		}
+		return rounded;
+	}
 }
 
 /** @param {number} min @param {number} max @returns {Range} */
@@ -111,7 +149,7 @@ export function ceilToNearest(number = 3.14, nearest = 1) {
 }
 
 export function randomInRange(min, max) {
-	return Math.random() * (max - min + 1) + min;
+	return Math.random() * (max - min) + min;
 }
 
 export function lerp(a, b, t) {
@@ -214,7 +252,6 @@ export function parseColour(colour) {
 	}
 	if (/^color-mix\(.*\)$/gm.test(output)) {
 		let parameters = output.replace(/^color-mix\(|\)$/g, "").replace(/\s*,\s/g, ",").split(",");
-		console.log(parameters);
 	}
 
 	return output;

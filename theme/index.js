@@ -141,7 +141,7 @@ function selectOption(option) {
 const themeChangeButton = document.getElementById("theme-switch");
 const root = document.getElementsByTagName("html")[0];
 
-themeChangeButton.onclick = () => {
+if (themeChangeButton) themeChangeButton.onclick = () => {
 	let currentTheme = document.documentElement.getAttribute("data-theme") || "light";
 	let newTheme = (currentTheme == "light") ? "dark" : "light";
 	document.documentElement.setAttribute("data-theme", newTheme);

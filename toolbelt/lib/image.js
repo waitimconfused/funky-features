@@ -70,9 +70,13 @@ export function draw(
 	if(cropHeight == -1) cropHeight = undefined;
 
 	try {
+		let source = imgSource;
+		if (saveAsset && imgSource instanceof HTMLCanvasElement == false) {
+			source = cacheImage(imgSource);
+		}
 		if(cropWidth && cropHeight){
 			context.drawImage(
-				saveAsset?cacheImage(imgSource):imgSource,
+				source,
 	
 				cropXPos || 0, cropYPos || 0,
 				cropWidth, cropHeight,
@@ -82,7 +86,7 @@ export function draw(
 			);
 		}else{
 			context.drawImage(
-				saveAsset?cacheImage(imgSource):imgSource,
+				source,
 	
 				destinationXPos, destinationYPos,
 				destinationWidth, destinationHeight,
@@ -106,12 +110,10 @@ export function cacheImage(imgSource=""){
 	if (imgSource == "") imgSource = errorImage.src;
 	else if (imgSource.endsWith("/")) imgSource = errorImage.src;
 	let loadedImage = document.querySelector(`div#assets>img[src="${imgSource}"]`);
-	if(loadedImage == null){
-		let newlyLoadedImage = document.createElement("img");
-		newlyLoadedImage.src = imgSource;
-		assetDIV.appendChild(newlyLoadedImage);
-		return(newlyLoadedImage);
-	}else{
-		return(loadedImage);
-	}
+	if(loadedImage) return loadedImage;
+
+	let newlyLoadedImage = document.createElement("img");
+	newlyLoadedImage.src = imgSource;
+	assetDIV.appendChild(newlyLoadedImage);
+	return newlyLoadedImage;
 }

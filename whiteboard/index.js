@@ -1,4 +1,4 @@
-import { ComponentGroup, engine, Point2 } from "../game-engine/utils.js";
+import { engine, Point2 } from "../game-engine/utils.js";
 import { Canvas, Circle, Image, Path, Rect, Text } from "../game-engine/components.js"
 import { keyboard, mouse, toRange, Vector } from "../toolbelt/toolbelt.js";
 
@@ -47,6 +47,24 @@ var data = {
 	}
 }
 
+const cursor = new Circle;
+engine.addObject(cursor);
+cursor.radius = 10;
+cursor.colour = "none";
+cursor.outline.colour = "black";
+cursor.outline.size = "1 / 100cz";
+
+const cursor2 = new Circle;
+engine.addObject(cursor2);
+cursor2.radius = 10;
+cursor2.colour = "none";
+cursor2.outline.colour = "black";
+cursor2.outline.size = cursor.outline.size;
+
+cursor.script = () => {
+	cursor.zIndex = -1;
+}
+
 function newLayer() {
 	let newLayersIndex = layers.length;
 	let canvas = new Canvas;
@@ -65,6 +83,9 @@ function newLayer() {
 	layerDiv.appendChild(layerIcon);
 	layerIcon.width = 100 * (width / height);
 	layerIcon.height = 100;
+
+	canvas.outline.colour = "transparent";
+	canvas.outline.size = 0;
 
 	if (layers.length == 0) {
 		canvas.colour = "white";
@@ -94,21 +115,6 @@ newLayerButton.onclick = () => {
 
 };
 newLayer();
-// canvas.transform.set(0, 0);
-
-const cursor = new Circle;
-engine.addObject(cursor);
-cursor.radius = 10;
-cursor.colour = "none";
-cursor.outline.colour = "black";
-cursor.outline.size = "1 / 100cz";
-
-const cursor2 = new Circle;
-engine.addObject(cursor2);
-cursor2.radius = 10;
-cursor2.colour = "none";
-cursor2.outline.colour = "black";
-cursor2.outline.size = cursor.outline.size;
 
 keyboard.on(["]"], () => {
 	data.pen.size += 5;
@@ -169,7 +175,7 @@ keyboard.on(["ctrl", "e"], () => {
 	if (month.length < 2)  month = '0' + month;
 	if (day.length < 2)  day = '0' + day;
 
-	let fileName = [year, month, day].join('-') + "__" + [hour, minute].join(':') + ".png";
+	let fileName = [year, month, day].join('-') + "_" + [hour, minute].join(':') + ".png";
 
 	let downloadLink = document.createElement("a");
 	downloadLink.setAttribute("download", fileName);
