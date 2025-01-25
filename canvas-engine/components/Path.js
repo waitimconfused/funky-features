@@ -8,7 +8,7 @@ export class Path extends Component {
 	transform = new Point2(0.5, 0.5);
 	displayOffset = new Point2(0, 0, 100, 100);
 	radius = 100;
-	colour = "purple";
+	colour = "#FF00FF";
 	/**
 	 * 
 	 * @param { string } colour

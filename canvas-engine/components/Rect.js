@@ -202,12 +202,12 @@ export class Rect extends Component {
 	#cameraTracking = false;
 	display = new Point4(0, 0, 100, 100);
 	displayOffset = new Point4(0, 0, 100, 100);
-	colour = "purple";
+	colour = "#FF00FF";
 	setColour(colour="") { this.colour = colour; return this; }
 	outline = { colour: "black", size: "5 / 100cz" };
 	shadow = { colour: "black", blur: 0, offset: { x: 0, y: 0 } };
 	radius = 0;
-	/** @type { number } In Degrees */
+	/** @type { number } Angle of rotation (degrees) */
 	rotation = 0;
 	setBorderRadius(radius=this.radius) { this.radius = radius; return this; }
 	cameraTracking = false;
@@ -294,7 +294,7 @@ export class Rect extends Component {
 		context.translate(-destinationX - destinationW * this.transform.x, - destinationY - destinationH * this.transform.y);
 
 		context.beginPath();
-		context.fillStyle = this.colour || "purple";
+		context.fillStyle = this.colour || "#FF00FF";
 		context.strokeStyle = this.outline.colour;
 		let lineWidth = getValue(this.outline.size);
 		context.lineWidth = lineWidth;

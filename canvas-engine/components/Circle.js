@@ -2,12 +2,14 @@ import { getValue } from "../../toolbelt/lib/units.js";
 import { parseColour, Range } from "../../toolbelt/toolbelt.js";
 import { Component, Point2, engine } from "../utils.js";
 
+const degToRad = Math.PI / 180;
+
 
 export class Circle extends Component {
 	display = new Point2(0, 0);
 	displayOffset = new Point2(0, 0);
 	radius = 100;
-	colour = "purple";
+	colour = "#FF00FF";
 	/**
 	 * @type {{
 	 * colour: string,
@@ -27,13 +29,13 @@ export class Circle extends Component {
 	shadow = { colour: "black", blur: 0, offset: { x: 0, y: 0 } };
 
 	/** @type {"disc" | "pie" | "ring" | "arc"} Default value is `"disc"`*/
-	mode = "disc";
+	kind = "disc";
 
 	/** @type {number} Applies when `mode` is `"pie"` or `"arc"`. Starting angle of circle, in radians */
 	startAngle = 0;
 
 	/** @type {number} Applies when `mode` is `"pie"` or `"arc"`. Ending angle of circle, in radians */
-	endAngle = Math.PI * 2;
+	endAngle = 360;
 
 	/** @type {?number} Applies when `mode` is `"ring"`  `"angle"`. If `null`, `innerRadius` will be `radius / 2` */
 	innerRadius = null;
@@ -87,11 +89,13 @@ export class Circle extends Component {
 		let endAngle = Math.PI * 2;
 		let counterClockwise = false;
 
-		if (this.mode == "pie" || this.mode == "arc") {
-			startAngle = this.startAngle;
-			endAngle = this.endAngle;
+		if (this.kind == "pie" || this.kind == "arc") {
+			startAngle = this.startAngle * degToRad;
+			endAngle = this.endAngle * degToRad;
 			counterClockwise = (endAngle < startAngle);
 		}
+
+		let isHollow = (this.kind == "ring" || this.kind == "arc");
 
 		context.beginPath();
 		context.fillStyle = colour;
@@ -99,11 +103,11 @@ export class Circle extends Component {
 		context.lineWidth = outlineSize;
 		context.lineCap = this.outline.lineCap;
 		context.lineJoin = this.outline.lineJoin;
-		if (this.mode == "pie") {
+		if (this.kind == "pie") {
 			context.moveTo(destinationX, destinationY);
 		}
 		context.arc(destinationX, destinationY, radius, startAngle, endAngle, counterClockwise);
-		if (this.mode == "ring" || this.mode == "arc") {
+		if (isHollow) {
 			context.lineTo(destinationX, destinationY);
 			context.closePath();
 			context.fill();
@@ -113,9 +117,6 @@ export class Circle extends Component {
 			context.arc(destinationX, destinationY, innerRadius, 0, Math.PI*2, counterClockwise);
 			// context.lineTo(destinationX, destinationY);
 		}
-		if (this.mode == "pie") {
-			context.lineTo(destinationX, destinationY);
-		}
 		context.closePath();
 
 		context.fill();
@@ -124,11 +125,25 @@ export class Circle extends Component {
 		if (outlineSize > 0) {
 			context.beginPath();
 			context.arc(destinationX, destinationY, radius, startAngle, endAngle, counterClockwise);
-			context.arc(destinationX, destinationY, innerRadius, endAngle, startAngle, !counterClockwise);
-			context.lineTo(
-				destinationX + Math.cos(startAngle) * radius,
-				destinationY + Math.sin(startAngle) * radius
-			);
+			if (this.kind == "ring") {
+				context.moveTo(
+					destinationX + Math.cos(endAngle) * innerRadius,
+					destinationY + Math.sin(endAngle) * innerRadius
+				);
+				context.arc(destinationX, destinationY, innerRadius, endAngle, startAngle, !counterClockwise);
+			} else if (this.kind == "arc") {
+				context.arc(destinationX, destinationY, innerRadius, endAngle, startAngle, !counterClockwise);
+				context.lineTo(
+					destinationX + Math.cos(startAngle) * radius,
+					destinationY + Math.sin(startAngle) * radius
+				);
+			} else if (this.kind == "pie" && (startAngle-endAngle) % (Math.PI * 2) != 0) {
+				context.lineTo(destinationX, destinationY);
+				context.lineTo(
+					destinationX + Math.cos(startAngle) * radius,
+					destinationY + Math.sin(startAngle) * radius
+				);
+			}
 			context.stroke();
 		}
 

@@ -66,6 +66,11 @@ export class Text extends Component {
 	styling = "normal";
 
 	/**
+	 * @type {number} Angle of rotation (degrees)
+	 */
+	rotation = 0;
+
+	/**
 	 * @type {{
 	* colour: string,
 	* size: number,
@@ -113,8 +118,8 @@ export class Text extends Component {
 			context.translate(-engine.camera.position.x, -engine.camera.position.y);
 		}
 		context.beginPath();
-
 		context.translate(destinationX, destinationY);
+		context.rotate(this.rotation * Math.PI / 180);
 
 
 		context.fillStyle = parseColour(this.colour);

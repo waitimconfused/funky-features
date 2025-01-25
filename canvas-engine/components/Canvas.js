@@ -5,7 +5,7 @@ import { Component, engine, Point2 } from "../utils.js";
 export class Canvas extends Component {
 	#cameraTracking = false;
 
-	colour = "purple";
+	colour = "#FF00FF";
 	outline = { colour: "black", size: 0 };
 	shadow = { colour: "black", blur: 0, offset: { x: 0, y: 0 } };
 
