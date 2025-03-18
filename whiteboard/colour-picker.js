@@ -56,8 +56,9 @@ function move(e) {
 	if (satLight.matches(":hover") == false) return;
 	if (tb.mouse.click_l == false && tb.mouse.pen.pressure == 0) return;
 	let mousePos = tb.mouse.position.relative(satLight);
-	let x = tb.toRange(0, mousePos.x, 200);
-	let y = tb.toRange(0, mousePos.y, 200);
+	let x = tb.Range.clamp(0, mousePos.x, 200);
+	let y = tb.Range.clamp(0, mousePos.y, 200);
+
 	satLightHandle.style.top = y + "px";
 	satLightHandle.style.left = x + "px";
 

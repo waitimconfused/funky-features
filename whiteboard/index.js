@@ -1,6 +1,6 @@
 import { engine, Point2 } from "../game-engine/utils.js";
 import { Canvas, Circle, Image, Path, Rect, Text } from "../game-engine/components.js"
-import { keyboard, mouse, toRange, Vector } from "../toolbelt/toolbelt.js";
+import { keyboard, mouse, Range, Vector } from "../toolbelt/toolbelt.js";
 
 const layersDiv = document.getElementById("layer-holder");
 const newLayerButton = document.getElementById("add-layer");
@@ -216,7 +216,7 @@ engine.preRenderingScript = () => {
 	let penSize = data.pen.size;
 
 	if (mouse.pen.pressure) penSize += (Math.floor(50 * mouse.pen.pressure) - 25) / engine.camera.zoom;
-	penSize = toRange(0, penSize, 100);
+	penSize = Range.clamp(0, penSize, 100);
 
 	cursor.moveTo(mousePos);
 

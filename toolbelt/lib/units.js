@@ -16,7 +16,7 @@ export class CustomUnitConverter {
 	 * @param {number | string} value
 	 * @returns {number}
 	 */
-	getValue(value) {
+	getValue(value, ...params) {
 		if (typeof value != "string") return value;
 		/** @type {string[]} */
 		let sections = value.split(/([0-9\.-]+[a-zA-Z]*)/g).filter((a) => !!a);
@@ -30,7 +30,7 @@ export class CustomUnitConverter {
 			})
 			if (unit) {
 				let number = parseFloat(section);
-				section = unit.callback(number);
+				section = unit.callback(number, ...params);
 			}
 	
 			output += `${section}`;
@@ -44,4 +44,7 @@ export class CustomUnitConverter {
 }
 
 export const unitConverter = new CustomUnitConverter;
-export const getValue = function(value) {return unitConverter.getValue(value) };
+
+export const getValue = function(value, ...params) {
+	return unitConverter.getValue(value, ...params)
+};

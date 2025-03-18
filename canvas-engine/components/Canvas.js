@@ -1,6 +1,6 @@
 import { getValue } from "../../toolbelt/lib/units.js";
-import { parseColour, toRange } from "../../toolbelt/toolbelt.js";
-import { Component, engine, Point2 } from "../utils.js";
+import { parseColour, Range } from "../../toolbelt/toolbelt.js";
+import { Component, Point2 } from "../utils.js";
 
 export class Canvas extends Component {
 	#cameraTracking = false;
@@ -54,8 +54,8 @@ export class Canvas extends Component {
 		
 		if (!this.visibility) return this;
 
-		this.transform.x = toRange(0, this.transform.x, 1);
-		this.transform.y = toRange(0, this.transform.y, 1);
+		this.transform.x = Range.clamp(0, this.transform.x, 1);
+		this.transform.y = Range.clamp(0, this.transform.y, 1);
 
 		let destinationW = getValue(this.documentElement.width);
 		let destinationH = getValue(this.documentElement.height);
@@ -70,18 +70,18 @@ export class Canvas extends Component {
 
 		context.save();
 		if (!this.fixedPosition) {
-			if (this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)) {
-				context.translate(Math.floor(engine.canvas.width / 2), Math.floor(engine.canvas.height / 2));
-				context.scale(Math.floor(engine.camera.zoom), Math.floor(engine.camera.zoom));
+			if (this.isPixelArt == true || (this.isPixelArt == "unset" && this.engine.isPixelArt)) {
+				context.translate(Math.floor(this.engine.canvas.width / 2), Math.floor(this.engine.canvas.height / 2));
+				context.scale(Math.floor(this.engine.camera.zoom), Math.floor(this.engine.camera.zoom));
 				destinationX = Math.floor(destinationX);
 				destinationY = Math.floor(destinationY);
 				destinationW = Math.floor(destinationW);
 				destinationH = Math.floor(destinationH);
 			} else {
-				context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
-				context.scale(engine.camera.zoom, engine.camera.zoom);
+				context.translate(this.engine.canvas.width / 2, this.engine.canvas.height / 2);
+				context.scale(this.engine.camera.zoom, this.engine.camera.zoom);
 			}
-			context.translate(-engine.camera.position.x, -engine.camera.position.y);
+			context.translate(-this.engine.camera.position.x, -this.engine.camera.position.y);
 		}
 
 		context.fillStyle = parseColour(this.colour);

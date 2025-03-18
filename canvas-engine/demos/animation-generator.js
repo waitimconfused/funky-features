@@ -1,6 +1,6 @@
 import { engine, Point2 } from "../utils.js";
 import * as components from "../components.js";
-import { keyboard, mouse, toRange } from "../../toolbelt/toolbelt.js";
+import { keyboard, mouse, Range } from "../../toolbelt/toolbelt.js";
 
 engine.camera.keyZoomMultiplier
 
@@ -27,7 +27,7 @@ engine.canvas.addEventListener('wheel', (e) => {
 		e.preventDefault();
 		// if (imageSize.equals(0, 0)) return;
 		engine.camera.zoom -= e.deltaY * 0.01;
-		engine.camera.zoom = toRange(0.0000000000001, engine.camera.zoom, 100);
+		engine.camera.zoom = Range.clamp(0.0000000000001, engine.camera.zoom, 100);
 	} else {
 		if(e.target != engine.canvas) return undefined;
 		e.preventDefault();

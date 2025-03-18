@@ -83,7 +83,7 @@ class HTMLInput extends Component {
 		let validCursor = [this.hash, null].includes(engine.activeObject);
 
 		let mouse = engine.mouse.toObject(this);
-		this.#hovering = Range.isInRange(0, mouse.x, destinationW) && Range.isInRange(0, mouse.y, destinationH);
+		this.#hovering = Range.fits(0, mouse.x, destinationW) && Range.fits(0, mouse.y, destinationH);
 		this.#hovering = ( validCursor && this.#hovering );
 		if (this.#hovering) {
 			engine.hoverObject = true;

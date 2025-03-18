@@ -1,4 +1,5 @@
 import { engine, Image } from "./game-engine/imports.js";
+import { Toolbelt } from "./toolbelt-v2/index.js";
 // import { keyboard } from "./toolbelt/toolbelt.js";
 
 // var audio = new Audio('/CriticalTheme.wav');

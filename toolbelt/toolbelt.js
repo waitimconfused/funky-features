@@ -6,63 +6,8 @@ export * as point from "./lib/points.js";
 export * from "./lib/colours.js";
 export * as units from "./lib/units.js";
 
-export class Range {
-	#min = 0;
-	#max = 1;
+export const Range = new class Range {
 
-	/** @param {number} number */
-	set min(number) {
-		this.#min = number;
-		if (this.#min > this.#max) {
-			this.#min = [this.#max, this.#max = this.#min][0];
-		}
-	}
-
-	/** @returns {number} */
-	get min() {
-		return this.#min;
-	}
-
-	/** @param {number} number */
-	set max(number) {
-		this.#max = number;
-		if (this.#max < this.#min) {
-			this.#max = [this.#min, this.#min = this.#max][0];
-		}
-	}
-
-	/** @returns {number} */
-	get max() {
-		return this.#max;
-	}
-
-	constructor(min, max) {
-		this.#min = Math.min(min, max);
-		this.#max = Math.max(min, max);
-	}
-
-	/**
-	 * @param { function | undefined } func 
-	 * @returns {number[]}
-	 */
-	select(func) {
-		if (!func) func = ((x) => x);
-		let array = [];
-		for (let i = this.#min; i <= this.#max; i++) {
-			let item = func(i);
-			if (typeof item == "number") array.push(item);
-			if (typeof item == "boolean" && item) array.push(i);
-		}
-		return array;
-	}
-
-	/**
-	 * @param {number} number
-	 * @returns {boolean}
-	 */
-	clamp(number) {
-		return Math.max(Math.min(number, this.max), this.min);
-	}
 	/**
 	 * 
 	 * @param {number} min
@@ -70,40 +15,69 @@ export class Range {
 	 * @param {number} max
 	 * @returns {number}
 	 */
-	static clamp(min, number, max) {
+	clamp(min, number, max) {
 		return Math.max(Math.min(number, max), min);
 	}
 
 	/**
-	 * @param {number} number
-	 * @returns  {boolean}
-	 */
-	contains(number) {
-		return number >= this.min && number <= this.max;
-	}
-	/**
-	 * 
+	 * Detect if any number is within the range [min, max]
 	 * @param {number} min
 	 * @param {number} number
 	 * @param {number} max
-	 * @returns {boolean}
+	 * @returns  {boolean}
 	 */
-	static isInRange(min, number, max) {
+	fits(min, number, max) {
 		return number >= min && number <= max;
 	}
 
-	static random() {
+	/**
+	 * Returns a random number in the range [min, max]
+	 * @param {number} min
+	 * @param {number} max
+	 * @returns {number}
+	 */
+	random(min, max) {
 		return Math.random() * (max - min) + min;
+	}
+
+	/**
+	 * Returns the sine of a number, scaled to fit range
+	 * @param {number} min
+	 * @param {number} max
+	 * @param {number} number
+	 * @returns {number}
+	 */
+	sin(min, max, number) {
+		if (min > max) max = [min, min = max][0];
+
+		let scale = Math.abs( (max-min) / 2 );
+		let offset = (max+min)/2;
+		return scale * Math.sin(number) + offset;
+	}
+
+	/**
+	 * Returns the cosine of a number, scaled to fit range
+	 * @param {number} min
+	 * @param {number} max
+	 * @param {number} number
+	 * @returns {number}
+	 */
+	cos(min, max, number) {
+		if (min > max) max = [min, min = max][0];
+
+		let scale = Math.abs( (max-min) / 2 );
+		let offset = (max+min)/2;
+		return scale * Math.cos(number) + offset;
 	}
 }
 
-export class Round {
+export const Round = new class Round {
 
-	static round = Math.round;
-	static floor = Math.floor;
-	static ceil = Math.ceil;
+	round = Math.round;
+	floor = Math.floor;
+	ceil = Math.ceil;
 
-	static roundToNearest(number=3.14, step=1) {
+	roundToNearest(number=3.14, step=1) {
 		let rounded = Math.round(number / step) * step;
 		if (`${rounded}`.includes(".")) {
 			let step_decimalNumbers = `${step}`.replace(/(\d*)\./, "").length;
@@ -112,7 +86,7 @@ export class Round {
 		return rounded;
 	}
 	
-	static floorToNearest(number = 3.14, nearest = 1) {
+	floorToNearest(number = 3.14, nearest = 1) {
 		let rounded = Math.floor(number / step) * step;
 		if (`${rounded}`.includes(".")) {
 			let step_decimalNumbers = `${step}`.replace(/(\d*)\./, "").length;
@@ -121,7 +95,7 @@ export class Round {
 		return rounded;
 	}
 	
-	static ceilToNearest(number = 3.14, nearest = 1) {
+	ceilToNearest(number = 3.14, nearest = 1) {
 		let rounded = Math.ceil(number / step) * step;
 		if (`${rounded}`.includes(".")) {
 			let step_decimalNumbers = `${step}`.replace(/(\d*)\./, "").length;
@@ -132,9 +106,6 @@ export class Round {
 }
 
 /** @param {number} min @param {number} max @returns {Range} */
-export function range(min, max) { return new Range(min, max); }
-export const toRange = Range.clamp
-export const isInRange = Range.isInRange
 
 export function roundToNearest(number = 3.14, nearest = 1) {
 	return Math.round(number / nearest) * nearest;
@@ -240,6 +211,7 @@ export class Vector {
 
 /**
  * @param {string|null|undefined} colour 
+ * @returns {string}
  */
 export function parseColour(colour) {
 	let output = colour;
@@ -248,7 +220,7 @@ export function parseColour(colour) {
 	}
 	if (/^var\(.*\)$/gm.test(output)) {
 		let cssVar = output.replace(/^var\(|\)$/g, "")
-		output = getComputedStyle(engine.canvas).getPropertyValue(cssVar);
+		output = window.getComputedStyle(document.documentElement).getPropertyValue(cssVar);
 	}
 	if (/^color-mix\(.*\)$/gm.test(output)) {
 		let parameters = output.replace(/^color-mix\(|\)$/g, "").replace(/\s*,\s/g, ",").split(",");

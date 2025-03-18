@@ -167,7 +167,7 @@ export var mouse = new class Mouse {
 			mouse.position.x = e.clientX;
 			mouse.position.y = e.clientY;
 			mouse.click_l = true;
-			mouse.pen.pressure = 0;
+			mouse.pen.pressure = (e.pointerType == "pen") ? e.pressure : 0;
 			mouse.updateHooks(e);
 		});
 		window.addEventListener("pointermove", (e) => {

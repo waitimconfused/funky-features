@@ -1,4 +1,4 @@
-import { mouse } from "../toolbelt/toolbelt.js";
+import { mouse, Range } from "../toolbelt/toolbelt.js";
 
 /** @type {HTMLCanvasElement} */
 const canvas = document.getElementById("canvas");
@@ -133,7 +133,7 @@ function customZoomEvent(e) {
 			e.preventDefault();
 
 			zoom -= e.deltaY * 0.01 * zoom / 2;
-			// this.zoom = toRange(this.minZoom, this.zoom, this.maxZoom);
+			// this.zoom = Range.clamp(this.minZoom, this.zoom, this.maxZoom);
 		} else {
 			e.preventDefault();
 
@@ -158,7 +158,7 @@ function customZoomEvent(e) {
 			cameraPos.y = 0;
 			zoom = 10;
 		}
-		// this.zoom = toRange(this.minZoom, this.zoom, this.maxZoom);
+		// this.zoom = Range.clamp(this.minZoom, this.zoom, this.maxZoom);
 	}
 
 }

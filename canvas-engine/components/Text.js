@@ -1,6 +1,6 @@
 import { getValue } from "../../toolbelt/lib/units.js";
 import { parseColour } from "../../toolbelt/toolbelt.js";
-import { Component, engine, Point2 } from "../utils.js";
+import { Component, Point2 } from "../utils.js";
 
 export class Text extends Component {
 	content = "Text Object";
@@ -108,14 +108,14 @@ export class Text extends Component {
 
 		context.save();
 		if (this.fixedPosition == false) {
-			if (this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)) {
-				context.translate(Math.floor(engine.canvas.width / 2), Math.floor(engine.canvas.height / 2));
-				context.scale(Math.floor(engine.camera.zoom), Math.floor(engine.camera.zoom));
+			if (this.isPixelArt == true || (this.isPixelArt == "unset" && this.engine.isPixelArt)) {
+				context.translate(Math.floor(this.engine.canvas.width / 2), Math.floor(this.engine.canvas.height / 2));
+				context.scale(Math.floor(this.engine.camera.zoom), Math.floor(this.engine.camera.zoom));
 			} else {
-				context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
-				context.scale(engine.camera.zoom, engine.camera.zoom);
+				context.translate(this.engine.canvas.width / 2, this.engine.canvas.height / 2);
+				context.scale(this.engine.camera.zoom, this.engine.camera.zoom);
 			}
-			context.translate(-engine.camera.position.x, -engine.camera.position.y);
+			context.translate(-this.engine.camera.position.x, -this.engine.camera.position.y);
 		}
 		context.beginPath();
 		context.translate(destinationX, destinationY);

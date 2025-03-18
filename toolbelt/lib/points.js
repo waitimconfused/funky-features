@@ -1,4 +1,4 @@
-import { isInRange } from "../toolbelt.js";
+import { Range } from "../toolbelt.js";
 
 export class Point2 {
 	x = 0;
@@ -210,7 +210,7 @@ export class Point4 {
 	 */
 	contains(x=0, y=0) {
 		if (typeof x == "object" && x.x && x.y) { y = x.y; x = x.x; }
-		return isInRange(this.x, x, this.x+this.w) && isInRange(this.y, y, this.y+this.h);
+		return Range.fits(this.x, x, this.x+this.w) && Range.fits(this.y, y, this.y+this.h);
 	}
 
 	/**
@@ -228,11 +228,11 @@ export class Point4 {
 		let r2_up = point4.y - point4.h / 2;
 		let r2_down = point4.y + point4.h / 2;
 
-		let r1IntersectingX = isInRange(r2_left, r1_left, r2_right) || isInRange(r2_left, r1_left, r2_right);
-		let r1IntersectingY = isInRange(r2_up, r1_up, r2_down) || isInRange(r2_up, r1_down, r2_down);
+		let r1IntersectingX = Range.fits(r2_left, r1_left, r2_right) || Range.fits(r2_left, r1_left, r2_right);
+		let r1IntersectingY = Range.fits(r2_up, r1_up, r2_down) || Range.fits(r2_up, r1_down, r2_down);
 
-		let r2IntersectingX = isInRange(r1_left, r2_left, r1_right) || isInRange(r1_left, r2_left, r1_right);
-		let r2IntersectingY = isInRange(r1_up, r2_up, r1_down) || isInRange(r2_up, r1_down, r2_down);
+		let r2IntersectingX = Range.fits(r1_left, r2_left, r1_right) || Range.fits(r1_left, r2_left, r1_right);
+		let r2IntersectingY = Range.fits(r1_up, r2_up, r1_down) || Range.fits(r2_up, r1_down, r2_down);
 
 		let intersecting = (
 			(r1IntersectingX && r1IntersectingY) ||

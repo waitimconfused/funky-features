@@ -1,7 +1,9 @@
-import { ceilToNearest, image, mouse, Range, toRange, Vector } from "../toolbelt/toolbelt.js";
+import { ceilToNearest, image, mouse, Range, Vector } from "../toolbelt/toolbelt.js";
 import { Point2, Point3, Point4 } from "../toolbelt/lib/points.js";
 import { getValue, unitConverter } from "../toolbelt/lib/units.js";
 export { Point2, Point3, Point4 };
+
+var engines = {};
 
 function isValidUrl(urlString) {
 	try { 
@@ -28,9 +30,17 @@ class Camera {
 	wheelZoomMultiplier = 0.01;
 	keyZoomMultiplier = 0.1;
 
-	resetZoomResetsPosition = false;
+	ctrl0 = {
+		resetZoom: true,
+		resetPos: false
+	};
 
-	constructor() {
+	/** @type {Engine} */
+	#engine;
+	get engine() { return this.#engine; }
+
+	/** @param {Engine} parentEngine */
+	constructor(engine) {
 		window.addEventListener("gesturestart", this.#preventDefaultEvent, {passive: false});
 		window.addEventListener("gesturechange", this.#preventDefaultEvent, {passive: false});
 		window.addEventListener("gestureend", this.#preventDefaultEvent, {passive: false});
@@ -38,6 +48,8 @@ class Camera {
 		window.addEventListener("keydown", this.#customZoomEvent);
 
 		this.trackingTimingFunction.linear();
+
+		this.#engine = engine;
 	}
 
 	/** @type { null | Component } */
@@ -150,17 +162,21 @@ class Camera {
 		return this;
 	}
 
+	/**
+	 * 
+	 * @param {boolean} resetDefaults Flag for resetting all values, including the defaults
+	 */
 	reset(resetDefaults) {
 		if (resetDefaults) {
 			this.defaultZoom = 1;
-
 			this.minZoom = 0.1;
 			this.maxZoom = 999;
-
 			this.wheelZoomMultiplier = 0.01;
 			this.keyZoomMultiplier = 0.1;
-
-			this.resetZoomResetsPosition = false;
+			this.ctrl0.resetZoom = true;
+			this.ctrl0.resetPos = false;
+			this.canZoom = false;
+			this.canPan = false;
 		}
 		this.position.x = 0;
 		this.position.y = 0;
@@ -168,8 +184,8 @@ class Camera {
 		this.trackingObject = null;
 	}
 
-	canZoom = true;
-	canPan = true;
+	canZoom = false;
+	canPan = false;
 
 	/**
 	 * 
@@ -178,15 +194,14 @@ class Camera {
 	#customZoomEvent = (e) => {
 
 		if (e instanceof WheelEvent) {
+			if (e.target != this.engine.canvas) return;
 			if (e.ctrlKey) {
-				if (e.target != engine.canvas) return;
 				e.preventDefault();
 				if (this.canZoom == false) return;
 
 				this.zoom -= e.deltaY * this.wheelZoomMultiplier * this.zoom/2;
-				this.zoom = toRange(this.minZoom, this.zoom, this.maxZoom);
+				this.zoom = Range.clamp(this.minZoom, this.zoom, this.maxZoom);
 			} else {
-				if (e.target != engine.canvas) return;
 				e.preventDefault();
 				if (this.canPan == false) return;
 				this.moveBy(e.deltaX/this.zoom, e.deltaY/this.zoom);
@@ -205,11 +220,11 @@ class Camera {
 			if (this.canZoom == false) return;
 
 			this.zoom += scale * this.keyZoomMultiplier;
-			if (["0"].includes(e.key)) {
-				if (this.resetZoomResetsPosition) this.moveTo(0, 0);
-				this.zoom = this.defaultZoom;
+			if (e.key == "0") {
+				if (this.ctrl0.resetZoom) this.zoom = this.defaultZoom;
+				if (this.ctrl0.resetPos) this.moveTo(0, 0);
 			}
-			this.zoom = toRange(this.minZoom, this.zoom, this.maxZoom);
+			this.zoom = Range.clamp(this.minZoom, this.zoom, this.maxZoom);
 		}
 	
 	}
@@ -219,51 +234,14 @@ class Camera {
 	 */
 	#preventDefaultEvent = (e) => {
 		if(e.ctrlKey && ["+","-","=","_"].includes(e.key)) e.preventDefault();
-		if(e.target == engine.canvas) e.preventDefault();
+		if(e.target == this.engine.canvas) e.preventDefault();
 	}
 
-	script() {}
+	/** @param {Camera} camera */
+	script = (camera) => {}
 
 	#trackDelay = 1;
 	update() {
-		if (this.trackingObject) {
-
-			// if ( performance.now() - this.#trackingStartTime < this.#trackDelay ) return;
-
-			this.trackingDuration = Math.max(this.trackingDuration, 1);
-
-			let startTime = this.#trackingStartTime;
-			let time = performance.now();
-
-			let startPos = new Point2(this.#trackingOrigin.x, this.#trackingOrigin.y);
-			let endPos = new Point2(this.trackingObject.display.x, this.trackingObject.display.y);
-
-			let distance = startPos.distanceTo(endPos);
-			let direction = startPos.angleTo(endPos);
-
-			let timePercentage = (time-startTime) / (this.trackingDuration);
-
-			timePercentage = Range.clamp(0, timePercentage, 1);
-
-			let duration = time-startTime;
-
-			// lerp(a, b, t) = a + (b-a) * t
-
-			// let newPos = new Point2;
-			// newPos.x = startPos.x + (endPos.x-startPos.x) * timePercentage;
-			// newPos.y = startPos.y + (endPos.y-startPos.y) * timePercentage;
-
-			let newPos = new Point2;
-			newPos.x = startPos.x + Math.sin(direction) * (distance/duration);
-			newPos.y = startPos.y + Math.cos(direction) * (distance/duration);
-
-			if (timePercentage == 1) {
-				this.#trackingOrigin = endPos;
-				this.#trackingStartTime = performance.now();
-			}
-
-			this.moveTo(newPos);
-		}
 		this.script(this);
 	}
 }
@@ -280,8 +258,8 @@ var pattern;
 // 	pattern = engine.canvas.getContext("2d").createPattern(patternImage, "repeat");
 // }
 
-export const engine = new class EngineClass {
-	camera = new Camera;
+export class Engine {
+	camera = new Camera(this);
 
 	/**
 	 * @type {{
@@ -290,7 +268,8 @@ export const engine = new class EngineClass {
 	 *	click_l: boolean,
 	 *	click_r: boolean,
 	 * 	toWorld: (x?:number, y?:number) => Point2,
-	 * 	toObject: (object: Component, x:undefined|number, y:undefined|number) => Point2
+	 * 	toObject: (object: Component, x:undefined|number, y:undefined|number) => Point2,
+	 * 	hoverable: boolean,
 	 * }}
 	 */
 	mouse = mouse.addHook({
@@ -336,15 +315,17 @@ export const engine = new class EngineClass {
 				e.stopPropagation();
 				e.preventDefault();
 			};
-		}
+		},
+		hoverable: true
 	});
 
 	canvas = document.createElement("canvas");
 
 	/** @type {Object<string, Component>} */
-	components = {};
+	components = {
+	};
 	/** @type {string[]} */
-	componentHashes = [];
+	renderingHashes = [];
 	isPixelArt = false;
 
 	stats = {
@@ -353,7 +334,7 @@ export const engine = new class EngineClass {
 	};
 
 	/** @type {"back-front" | "front-back"} */
-	scriptOrder = "back-front";
+	scriptOrder = "front-back";
 	/** @type {"back-front" | "front-back"} */
 	renderOrder = "back-front";
 
@@ -367,7 +348,7 @@ export const engine = new class EngineClass {
 	#previousData = { isPixelArt: false };
 	#show_loadAsset_logs = true;
 	#assetsLoaded = 0;
-	#fullscreen = true;
+	#fullscreen = false;
 
 	setSize(width=this.canvas.width, height=this.canvas.height) {
 		this.canvas.width = width;
@@ -531,8 +512,6 @@ export const engine = new class EngineClass {
 		window.addEventListener("resize", () => {
 			if (this.fullscreen) this.#resizeCanvas();
 		});
-		this.camera.canZoom = true;
-		this.camera.canPan = true;
 		this.#resizeCanvas();
 		this.#tick();
 
@@ -561,16 +540,22 @@ export const engine = new class EngineClass {
 	addObject(...components) {
 		for (let i = 0; i < components.length; i ++) {
 			let component = components[i];
+
 			if(component instanceof Component == false) throw new Error("Cannot add object to engine if object is not of type: Component");
 			if(this.hasObject(component)) throw new Error("Cannot add object to engine if object was already added.");
-			let randomToken = window.crypto.randomUUID()
-			component.hash = randomToken;
-			this.componentHashes.push(randomToken);
-			this.components[randomToken] = component;
-			let fakeContext = document.createElement("canvas").getContext("2d");
-			component.render(fakeContext);
-			component.script(component);
+			
 			component.parent = this;
+			component.engine = this;
+
+			let randomToken = generateUUID();
+			component.hash = randomToken;
+
+			this.renderingHashes.push(randomToken);
+			this.components[randomToken] = component;
+
+			let fakeContext = document.createElement("canvas").getContext("2d")
+			component.script(component);
+			component.render(fakeContext, {x:0,y:0});
 		}
 		return this;
 	}
@@ -579,7 +564,7 @@ export const engine = new class EngineClass {
 	 */
 	hasObject(component) {
 		if(component instanceof Component == false) throw new Error("Cannot find object in engine if object is not of type: Component");
-		let indexOfComponent = this.componentHashes.indexOf(component.hash);
+		let indexOfComponent = this.renderingHashes.indexOf(component.hash);
 		return indexOfComponent > -1;
 	}
 	/**
@@ -589,7 +574,7 @@ export const engine = new class EngineClass {
 	 */
 	getObject(hash) {
 		if(["string", "number"].includes( typeof(hash) ) == false) throw new Error("Cannot find object in engine if hash is not of type: String | Number");
-		if (typeof hash == "number") hash = this.componentHashes.at(hash);
+		if (typeof hash == "number") hash = this.renderingHashes.at(hash);
 		return this.components[hash];
 	}
 	/**
@@ -599,9 +584,9 @@ export const engine = new class EngineClass {
 		if(component instanceof Component == false) throw new Error("Cannot remove object to engine if object is not of type: Component");
 		if(this.hasObject(component) == false) throw new Error("Cannot remove object from engine if object was never added");
 		let hash = `${component.hash}`;
-		let indexOfComponent = this.componentHashes.indexOf(hash);
+		let indexOfComponent = this.renderingHashes.indexOf(hash);
 		delete this.components[hash];
-		this.componentHashes.splice(indexOfComponent, 1);
+		this.renderingHashes.splice(indexOfComponent, 1);
 	}
 
 	/**
@@ -631,6 +616,9 @@ export const engine = new class EngineClass {
 	}
 
 	#tick() {
+
+		this.mouse.hoverable = true;
+
 		this.preRenderingScript();
 		this.#updateStats();
 
@@ -686,22 +674,21 @@ export const engine = new class EngineClass {
 		}
 
 
-		this.hoverObject = false;
-		for(let i = 0; i < this.componentHashes.length; i ++) {
+		for(let i = 0; i < this.renderingHashes.length; i ++) {
 			let index;
 			switch (this.scriptOrder) {
 				case "back-front":
 					index = i;
 					break;
 				case "back-front":
-					index = this.componentHashes.length -i -1;
+					index = this.renderingHashes.length -i -1;
 					break;
 				default:
 					this.scriptOrder = "back-front";
 					index = i;
 					break;
 			}
-			let hash = this.componentHashes[index];
+			let hash = this.renderingHashes[index];
 			let component = this.components[hash];
 			if (!component || component instanceof Component == false) {
 				console.log("I can't render this:", component);
@@ -712,21 +699,21 @@ export const engine = new class EngineClass {
 		this.camera.update();
 
 		let defaultOffset = new Point2(0, 0);
-		for(let i = 0; i < this.componentHashes.length; i ++) {
+		for(let i = 0; i < this.renderingHashes.length; i ++) {
 			let index;
 			switch (this.renderOrder) {
 				case "back-front":
 					index = i;
 					break;
 				case "back-front":
-					index = this.componentHashes.length -i -1;
+					index = this.renderingHashes.length -i -1;
 					break;
 				default:
 					this.renderOrder = "back-front";
 					index = i;
 					break;
 			}
-			let hash = this.componentHashes[index];
+			let hash = this.renderingHashes[index];
 			let component = this.components[hash];
 			if (!component || component instanceof Component == false) {
 				console.log("I can't render this:", component);
@@ -752,8 +739,11 @@ export const engine = new class EngineClass {
 
 export class Component {
 	hash = "";
+	/** @type {Engine} */
+	engine;
+
 	/**
-	 * @type { null | EngineClass | ComponentGroup }
+	 * @type { Engine|ComponentGroup }
 	 */
 	parent = null;
 	display = new Point4(0, 0, 10, 10);
@@ -836,7 +826,7 @@ export class Component {
 		if (y == null) y = this.display.y;
 		this.display.x = x;
 		this.display.y = y;
-		if (engine.isPixelArt == true || this?.isPixelArt == true) {
+		if (this.engine.isPixelArt == true || this?.isPixelArt == true) {
 			this.display.x = Math.round(this.display.x);
 			this.display.y = Math.round(this.display.y);
 		}
@@ -857,7 +847,7 @@ export class Component {
 		y = y ?? 0;
 		this.display.x += x;
 		this.display.y += y;
-		if (engine.isPixelArt || this?.isPixelArt) {
+		if (this.engine.isPixelArt || this?.isPixelArt) {
 			this.display.x = Math.round(this.display.x);
 			this.display.y = Math.round(this.display.y);
 		}
@@ -955,17 +945,23 @@ export class ComponentGroup extends Component {
 	addObject(...components) {
 		for (let i = 0; i < components.length; i ++) {
 			let component = components[i];
-			if(engine.hasObject(component)) engine.removeObject(component);
+
 			if(component instanceof Component == false) throw new Error("Cannot add object to group if object is not of type: Component");
 			if(this.hasObject(component)) throw new Error("Cannot add object to group if object was already added.");
-			let randomToken = window.crypto.randomUUID();
+			if(this.engine.hasObject(component)) this.engine.removeObject(component);
+
+			component.parent = this;
+			component.engine = this.engine;
+
+			let randomToken = generateUUID();
 			component.hash = randomToken;
+
 			this.componentHashes.push(randomToken);
 			this.components[randomToken] = component;
+
 			let fakeContext = document.createElement("canvas").getContext("2d");
 			component.render(fakeContext);
 			component.script(component);
-			component.parent = this;
 		}
 		return this;
 	}
@@ -1005,8 +1001,8 @@ export class ComponentGroup extends Component {
 
 		let components = Object.values(this.components);
 
-		this.transform.x = toRange(0, this.transform.x, 1);
-		this.transform.y = toRange(0, this.transform.y, 1);
+		this.transform.x = Range.clamp(0, this.transform.x, 1);
+		this.transform.y = Range.clamp(0, this.transform.y, 1);
 
 		let minX = Math.min(...components.map(o => o.display.x - o.display.w * o.transform.x));
 		let minY = Math.min(...components.map(o => o.display.y - o.display.h * o.transform.y));
@@ -1014,10 +1010,10 @@ export class ComponentGroup extends Component {
 		this.display.w = Math.max(...components.map(o => o.display.x + o.display.w * o.transform.x)) - minX;
 		this.display.h = Math.max(...components.map(o => o.display.y + o.display.h * o.transform.y)) - minY;
 
-		let destinationW = getValue( this.display.w );
-		let destinationH = getValue( this.display.h );
-		let destinationX = getValue( this.display.x );
-		let destinationY = getValue( this.display.y );
+		let destinationW = getValue( this.display.w, this.engine );
+		let destinationH = getValue( this.display.h, this.engine );
+		let destinationX = getValue( this.display.x, this.engine );
+		let destinationY = getValue( this.display.y, this.engine );
 
 		destinationX += defaultOffset?.x || 0;
 		destinationY += defaultOffset?.y || 0;
@@ -1027,18 +1023,18 @@ export class ComponentGroup extends Component {
 		
 		context.save();
 		if (!this.fixedPosition) {
-			if (this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)) {
-				context.translate(Math.floor(engine.canvas.width / 2), Math.floor(engine.canvas.height / 2));
-				context.scale(Math.floor(engine.camera.zoom), Math.floor(engine.camera.zoom));
+			if (this.isPixelArt == true || (this.isPixelArt == "unset" && this.engine.isPixelArt)) {
+				context.translate(Math.floor(this.engine.canvas.width / 2), Math.floor(this.engine.canvas.height / 2));
+				context.scale(Math.floor(this.engine.camera.zoom), Math.floor(this.engine.camera.zoom));
 				destinationX = Math.floor(destinationX);
 				destinationY = Math.floor(destinationY);
 				destinationW = Math.floor(destinationW);
 				destinationH = Math.floor(destinationH);
 			} else {
-				context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
-				context.scale(engine.camera.zoom, engine.camera.zoom);
+				context.translate(this.engine.canvas.width / 2, this.engine.canvas.height / 2);
+				context.scale(this.engine.camera.zoom, this.engine.camera.zoom);
 			}
-			context.translate(-engine.camera.position.x, -engine.camera.position.y);
+			context.translate(-this.engine.camera.position.x, -this.engine.camera.position.y);
 		}
 		context.translate(destinationX + destinationW * this.transform.x, destinationY + destinationH * this.transform.y);
 		context.rotate(this.rotation * Math.PI / 180);
@@ -1054,26 +1050,42 @@ export class ComponentGroup extends Component {
 	}
 }
 
-unitConverter.defineUnit("vw", (number) => {
+function generateUUID() { // Public Domain/MIT
+    var d = new Date().getTime();//Timestamp
+    var d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now()*1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16;//random number between 0 and 16
+        if(d > 0){//Use timestamp until depleted
+            r = (d + r)%16 | 0;
+            d = Math.floor(d/16);
+        } else {//Use microseconds since page-load if supported
+            r = (d2 + r)%16 | 0;
+            d2 = Math.floor(d2/16);
+        }
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+}
+
+unitConverter.defineUnit("vw", (number, engine) => {
 	return number / 100 * engine.veiwportWidth;
 });
-unitConverter.defineUnit("w", (number) => {
+unitConverter.defineUnit("w", (number, engine) => {
 	return number / 100 * engine.width;
 });
 
-unitConverter.defineUnit("vh", (number) => {
+unitConverter.defineUnit("vh", (number, engine) => {
 	return number / 100 * engine.veiwportHeight;
 });
-unitConverter.defineUnit("h", (number) => {
+unitConverter.defineUnit("h", (number, engine) => {
 	return number / 100 * engine.height;
 });
 
-unitConverter.defineUnit("cx", (number) => {
+unitConverter.defineUnit("cx", (number, engine) => {
 	return number / 100 * engine.camera.position.x;
 });
-unitConverter.defineUnit("cy", (number) => {
+unitConverter.defineUnit("cy", (number, engine) => {
 	return number / 100 * engine.camera.position.y;
 });
-unitConverter.defineUnit("cz", (number) => {
+unitConverter.defineUnit("cz", (number, engine) => {
 	return number / 100 * engine.camera.zoom;
 });

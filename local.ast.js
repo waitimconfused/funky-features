@@ -34,6 +34,8 @@ if(fs.existsSync("./faker_banker.json")){
 	faker_banker = JSON.parse( fs.readFileSync("./faker_banker.json") )
 }
 
+Ast.files.addRedirect("/favicon.ico", "/_assets/favicon.ico");
+
 class BankAccount {
 
 	money = 100;

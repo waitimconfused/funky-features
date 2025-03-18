@@ -116,6 +116,11 @@ export class Controller {
 		this.values.buttons = gamepad.buttons;
 	}
 
+	/**
+	 * Initialize the event listeners, and start the update ticker
+	 * 
+	 * Can only be ran once
+	 */
 	static initialize() {
 		if (initialized) return;
 	

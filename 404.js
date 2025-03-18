@@ -1,6 +1,8 @@
-import { engine, Component, ComponentGroup } from "./game-engine/utils.js";
-import { Circle, Path, Rect, Text } from "./game-engine/components.js";
+import { Engine, Component, ComponentGroup } from "./canvas-engine/utils.js";
+import { Circle, Path, Rect, Text } from "./canvas-engine/components.js";
 import { getValue } from "./toolbelt/lib/units.js";
+
+const engine = new Engine;
 
 engine.fullscreen = true;
 engine.camera.zoom = 1;
@@ -22,7 +24,7 @@ handle.script = () => {
 	let mouse = engine.mouse.toWorld();
 	let distance = Math.hypot( mouse.x - handle.display.x, mouse.y - handle.display.y );
 
-	if (handleDragging || distance < getValue( handle.radius ) && engine.mouse.click_l) {
+	if (handleDragging || distance < getValue( handle.radius, engine ) && engine.mouse.click_l) {
 		handle.moveTo(mouse);
 		handleDragging = engine.mouse.click_l;
 	}

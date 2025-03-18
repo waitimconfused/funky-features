@@ -1,6 +1,6 @@
 import { draw as drawImage } from "../../toolbelt/lib/image.js";
-import { toRange } from "../../toolbelt/toolbelt.js";
-import { Component, engine, Point2, Point4 } from "../utils.js";
+import { Range } from "../../toolbelt/toolbelt.js";
+import { Component, Point2, Point4 } from "../utils.js";
 import { AnimationCluster } from "../animations.js";
 import { SuperGif } from "../../libgif.js";
 
@@ -30,7 +30,7 @@ export class Image extends Component {
 	 * 
 	 * ```js
 	 * const image = new Image;
-	 * engine.addObject(image);
+	 * this.engine.addObject(image);
 	 * image.source = "/path/to/gif_file.gif";
 	 * image.animation.fps = 7;
 	 * 
@@ -45,7 +45,7 @@ export class Image extends Component {
 	 * ```
 	 */
 	set source(value) {
-		if (typeof value == "string") engine.loadAsset(value);
+		if (typeof value == "string") this.engine.loadAsset(value);
 		if (typeof value == "string" && value.endsWith(".gif")) {
 			let isInitiallyVisible = this.visibility;
 			this.visibility = false;
@@ -106,13 +106,21 @@ export class Image extends Component {
 		return this;
 	}
 
-	setSourcePath(path = "") {
+	/** @param {string} path */
+	setSourcePath(path) {
 		if (this.source instanceof AnimationCluster) throw new Error("Cannot set source of image if image is of type Image-Animation.");
 		this.source = path;
 		return this;
 	}
 
-	setCrop(x = 0, y = 0, w = 0, h = 0) {
+	/**
+	 * @param {number} x
+	 * @param {number} y
+	 * @param {number} w
+	 * @param {number} h
+	 * @returns {this}
+	 */
+	setCrop(x, y, w, h) {
 		if (this.source instanceof AnimationCluster) throw new Error("Cannot crop image if image is of type Image-Animation.");
 		this.crop.x = x;
 		this.crop.y = y;
@@ -121,12 +129,18 @@ export class Image extends Component {
 		return this;
 	}
 
-	render(context = new CanvasRenderingContext2D, defaultOffset = new Point2) {
+	/**
+	 * 
+	 * @param {CanvasRenderingContext2D} context
+	 * @param {Point2} defaultOffset 
+	 * @returns {this}
+	 */
+	render(context, defaultOffset) {
 
 		if (!this.visibility) return this;
 
-		this.transform.x = toRange(0, this.transform.x, 1);
-		this.transform.y = toRange(0, this.transform.y, 1);
+		this.transform.x = Range.clamp(0, this.transform.x, 1);
+		this.transform.y = Range.clamp(0, this.transform.y, 1);
 
 		let destinationW = this.display.w;
 		let destinationH = this.display.h;
@@ -151,18 +165,18 @@ export class Image extends Component {
 
 		context.save();
 		if (!this.fixedPosition) {
-			if (this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)) {
-				context.translate(Math.floor(engine.canvas.width / 2), Math.floor(engine.canvas.height / 2));
-				context.scale(Math.floor(engine.camera.zoom), Math.floor(engine.camera.zoom));
+			if (this.isPixelArt == true || (this.isPixelArt == "unset" && this.engine.isPixelArt)) {
+				context.translate(Math.floor(this.engine.canvas.width / 2), Math.floor(this.engine.canvas.height / 2));
+				context.scale(Math.floor(this.engine.camera.zoom), Math.floor(this.engine.camera.zoom));
 				destinationX = Math.floor(destinationX);
 				destinationY = Math.floor(destinationY);
 				destinationW = Math.floor(destinationW);
 				destinationH = Math.floor(destinationH);
 			} else {
-				context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
-				context.scale(engine.camera.zoom, engine.camera.zoom);
+				context.translate(this.engine.canvas.width / 2, this.engine.canvas.height / 2);
+				context.scale(this.engine.camera.zoom, this.engine.camera.zoom);
 			}
-			context.translate(-engine.camera.position.x, -engine.camera.position.y);
+			context.translate(-this.engine.camera.position.x, -this.engine.camera.position.y);
 		}
 		context.translate(destinationX + destinationW * this.transform.x, destinationY + destinationH * this.transform.y);
 		context.rotate(this.rotation * Math.PI / 180);
@@ -174,24 +188,37 @@ export class Image extends Component {
 		}
 
 		let filters = {
-			pixelated: (this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)),
+			pixelated: (this.isPixelArt == true || (this.isPixelArt == "unset" && this.engine.isPixelArt)),
 			alpha: this.opacity,
 		};
 
+		let destinationObj = {
+			x: destinationX,
+			y: destinationY,
+			w: destinationW,
+			h: destinationH
+		}
+
 		if (this.source == "Image-Animation") {
+			let cropObj = {
+				x: currentFrame.x,
+				y: currentFrame.y,
+				w: currentFrame.width,
+				h: currentFrame.height
+			}
 			drawImage(
 				currentFrame.source,
-				destinationX, destinationY, destinationW, destinationH,
-				currentFrame.x, currentFrame.y, currentFrame.width, currentFrame.height,
-				filters, engine.canvas
+				destinationObj,
+				cropObj,
+				filters, this.engine.canvas
 			);
 		} else {
 			drawImage(
 				this.source,
-				destinationX, destinationY, destinationW, destinationH,
-				this.crop.x, this.crop.y, this.crop.w, this.crop.h,
+				destinationObj,
+				this.crop,
 				filters,
-				engine.canvas
+				this.engine.canvas
 			);
 		}
 
@@ -204,7 +231,7 @@ export class Image extends Component {
 
 /**
  * @param {string} source
- * @returns {Promise<{ asCanvas:()=>HTMLCanvasElement, frames:HTMLCanvasElement[], framesWidth:number, framesHeight:number, length:number>}
+ * @returns {Promise<{ asCanvas:()=>HTMLCanvasElement, frames:HTMLCanvasElement[], framesWidth:number, framesHeight:number, length:number>}}
 */
 function gifToSpritesheet(source) {
 

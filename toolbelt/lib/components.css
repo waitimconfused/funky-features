@@ -1,0 +1,161 @@
+:root {
+	--tb-clickable-color: #67BED9;
+	--tb-clickable_hover-color: color-mix(in srgb, var(--tb-clickable-color), black 30%);
+}
+
+tb-button {
+	padding: 0.5rem 1rem;
+	cursor: pointer;
+	border-radius: 1rem;
+	box-sizing: border-box;
+	display: inline-block;
+}
+
+tb-button[variant="filled"],
+tb-button:not([variant]) {
+	background-color:  var(--tb-clickable-color);
+}
+
+tb-button[variant="outline"] {
+	box-shadow: inset 0 0 0 2px var(--tb-clickable-color);
+}
+
+tb-button[variant="filled"]:hover,
+tb-button:not([variant]):hover {
+	background-color:  var(--tb-clickable_hover-color);
+}
+tb-button[variant="outline"]:hover {
+	box-shadow: inset 0 0 0 2px var(--tb-clickable_hover-color);
+}
+
+
+
+
+
+tb-switch {
+	--padding: 0.5rem;
+	--width: 4rem;
+	--height: 2rem;
+	position: relative;
+	display: inline-block;
+	width: var(--width);
+	height: var(--height);
+	box-shadow: inset 0 0 0 2px var(--tb-clickable-color);
+	border-radius: 1.5rem;
+	cursor: pointer;
+	pointer-events: all;
+	user-select: none;
+}
+
+tb-switch::before {
+	content: "";
+	position: absolute;
+	--size-x: calc( var(--height) - var(--padding) * 2 );
+	--size-y: calc( var(--height) - var(--padding) * 2 );
+	--active-size-x-multiplier: 1.5;
+	width: var(--size-x);
+	height: var(--size-y);
+	top: var(--padding);
+	left: var(--padding);
+	background-color: var(--tb-clickable-color);
+	border-radius:  calc( var(--height)/2 - var(--padding) );
+	transition: left, width;
+	transition-duration: 100ms;
+	visibility: visible;
+}
+
+tb-switch:active::before {
+	--size-x: calc( var(--height) * var(--active-size-x-multiplier) - var(--padding) * 2 * var(--active-size-x-multiplier) );
+}
+tb-switch[value="on"] {
+	background-color: var(--tb-clickable-color);
+}
+tb-switch[value="on"]::before {
+	left: calc( var(--width) - var(--size-x) - var(--padding) );
+	background-color: white;
+}
+
+
+
+
+
+tb-checkbox {
+	position: relative;
+	display: block;
+	width: 2rem;
+	height: 2rem;
+	box-shadow: inset 0 0 0 2px var(--tb-clickable-color);
+	border-radius: 0.5rem;
+	pointer-events: all;
+	user-select: none;
+	cursor: pointer;
+	margin: 0.5rem 0;
+	transition: background-color;
+	transition-duration: 200ms;
+}
+tb-checkbox[value="on"] {
+	background-color: var(--tb-clickable-color);
+}
+
+tb-checkbox::before {
+	content: "";
+	position: absolute;
+	width: 0.5rem;
+	height: 1rem;
+	box-shadow: inset -4px -4px 0 0 white;
+	top: 50%;
+	left: 50%;
+	translate: -50% -50%;
+	transform: translate(0, 0.25rem) scale(1.1) rotate(45deg);
+	filter: blur(1px);
+	opacity: 0;
+	transition: opacity, transform, filter;
+	transition-duration: 400ms;
+}
+tb-checkbox[value="on"]::before {
+	opacity: 1;
+	transform: rotate(45deg);
+	filter: none;
+}
+
+
+
+
+
+tb-radio {
+	position: relative;
+	display: block;
+	width: 2rem;
+	height: 2rem;
+	box-shadow: inset 0 0 0 2px var(--tb-clickable-color);
+	border-radius: 100%;
+	pointer-events: all;
+	user-select: none;
+	cursor: pointer;
+	margin: 0.5rem 0;
+	offset-position: 2rem 0;
+}
+
+tb-radio::before {
+	content: "";
+	position: absolute;
+	background-color: var(--tb-clickable-color);
+	width: 0px;
+	height: 0px;
+	top: 50%;
+	left: 50%;
+	translate: -50% -50%;
+	border-radius: 100%;
+	transition: width, height;
+	transition-duration: 100ms;
+}
+tb-radio[checked]::before {
+	width: calc( 100% - 1rem );
+	height: calc( 100% - 1rem );
+}
+
+
+tb-input::part(input) {
+	color: red;
+	rotate: 45deg;
+}

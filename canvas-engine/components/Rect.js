@@ -1,6 +1,6 @@
 import { getValue } from "../../toolbelt/lib/units.js";
-import { isInRange, lerp, toRange } from "../../toolbelt/toolbelt.js";
-import { Component, Point2, Point4, engine } from "../utils.js";
+import { Range, lerp, mouse } from "../../toolbelt/toolbelt.js";
+import { Component, Point2, Point4 } from "../utils.js";
 
 /**
  * 
@@ -81,7 +81,7 @@ class AnimationLib {
 		let startTime = this.#frameStartTime;
 		let endTime = this.#frameEndTime;
 		let t = (time-startTime) / (endTime - startTime);
-		t = toRange(0, t, 1);
+		t = Range.clamp(0, t, 1);
 		let interpolationValue = this.#easingFunction(t);
 
 		let thisFrame = this.#keyframes[this.#frame];
@@ -206,9 +206,28 @@ export class Rect extends Component {
 	setColour(colour="") { this.colour = colour; return this; }
 	outline = { colour: "black", size: "5 / 100cz" };
 	shadow = { colour: "black", blur: 0, offset: { x: 0, y: 0 } };
+
+	/**
+	 * A number or list specifying the radii of the circular arc
+	 * to be used for the corners of the rectangle. The number and
+	 * order of the radii function in the same way as the
+	 * border-radius CSS property when width and height are positive:
+	 * 
+	 * - `all-corners`
+	 * - `[all-corners]`
+	 * - `[top-left-and-bottom-right, top-right-and-bottom-left]`
+	 * - `[top-left, top-right-and-bottom-left, bottom-right]`
+	 * - `[top-left, top-right, bottom-right, bottom-left]`
+	 * 
+	 * **Source: *[MDN docs | Canvas roundRect()](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/roundRect#radii)***
+	 * 
+	 * @type {number|number[]}
+	*/
 	radius = 0;
-	/** @type { number } Angle of rotation (degrees) */
+	/** @type { number } Angle of rotation (degrees or radians depending on `Rect.rotationMode`) */
 	rotation = 0;
+	/** @type {"deg"|"rad"} Any value other than `"deg"` or `"rad"` defaults to no rotation */
+	rotationMode = "deg";
 	setBorderRadius(radius=this.radius) { this.radius = radius; return this; }
 	cameraTracking = false;
 
@@ -232,11 +251,12 @@ export class Rect extends Component {
 			if (typeof x == "object" && x.x && x.y) { y = x.y; x = x.x; }
 			let myPosX = this.display.x - this.display.w * this.transform.x;
 			let myPosY = this.display.y - this.display.h * this.transform.y;
-			return isInRange(
+			return Range.fits(
 				myPosX,
-				x, myPosX + this.display.w
+				x,
+				myPosX + this.display.w
 			) &&
-			isInRange(
+			Range.fits(
 				myPosY,
 				y,
 				myPosY + this.display.h
@@ -246,7 +266,13 @@ export class Rect extends Component {
 
 	getType(){ return "Rect"; }
 
-	render(context=new CanvasRenderingContext2D, defaultOffset=new Point2){
+	/**
+	 * 
+	 * @param {CanvasRenderingContext2D} context 
+	 * @param {Point2} defaultOffset 
+	 * @returns {this}
+	 */
+	render(context, defaultOffset){
 
 		if(["", "none"].includes(this.colour)) this.colour = "transparent";
 
@@ -261,13 +287,13 @@ export class Rect extends Component {
 		// 	this.rotation = currentFrame.rotation;
 		// }
 
-		this.transform.x = toRange(0, this.transform.x, 1);
-		this.transform.y = toRange(0, this.transform.y, 1);
+		this.transform.x = Range.clamp(0, this.transform.x, 1);
+		this.transform.y = Range.clamp(0, this.transform.y, 1);
 
-		let destinationW = getValue( this.display.w );
-		let destinationH = getValue( this.display.h );
-		let destinationX = getValue( this.display.x );
-		let destinationY = getValue( this.display.y );
+		let destinationW = getValue( this.display.w, this.engine );
+		let destinationH = getValue( this.display.h, this.engine );
+		let destinationX = getValue( this.display.x, this.engine );
+		let destinationY = getValue( this.display.y, this.engine );
 
 		destinationX += defaultOffset.x;
 		destinationX -= destinationW * this.transform.x;
@@ -276,27 +302,35 @@ export class Rect extends Component {
 		
 		context.save();
 		if (!this.fixedPosition) {
-			if (this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)) {
-				context.translate(Math.floor(engine.canvas.width / 2), Math.floor(engine.canvas.height / 2));
-				context.scale(Math.floor(engine.camera.zoom), Math.floor(engine.camera.zoom));
+			if (this.isPixelArt == true || (this.isPixelArt == "unset" && this.engine.isPixelArt)) {
+				context.translate(Math.floor(this.engine.canvas.width / 2), Math.floor(this.engine.canvas.height / 2));
+				context.scale(Math.floor(this.engine.camera.zoom), Math.floor(this.engine.camera.zoom));
 				destinationX = Math.floor(destinationX);
 				destinationY = Math.floor(destinationY);
 				destinationW = Math.floor(destinationW);
 				destinationH = Math.floor(destinationH);
 			} else {
-				context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
-				context.scale(engine.camera.zoom, engine.camera.zoom);
+				context.translate(this.engine.canvas.width / 2, this.engine.canvas.height / 2);
+				context.scale(this.engine.camera.zoom, this.engine.camera.zoom);
 			}
-			context.translate(-engine.camera.position.x, -engine.camera.position.y);
+			context.translate(-this.engine.camera.position.x, -this.engine.camera.position.y);
 		}
 		context.translate(destinationX + destinationW * this.transform.x, destinationY + destinationH * this.transform.y);
-		context.rotate(this.rotation * Math.PI / 180);
+		if (this.rotationMode == "deg") context.rotate(this.rotation * Math.PI / 180);
+		else if (this.rotationMode == "rad") context.rotate(this.rotation);
 		context.translate(-destinationX - destinationW * this.transform.x, - destinationY - destinationH * this.transform.y);
 
 		context.beginPath();
 		context.fillStyle = this.colour || "#FF00FF";
+
+		let mousePos = this.engine.mouse.toObject(this);
+		if (Range.fits(0, mousePos.x, this.display.w) && this.engine.mouse.hoverable) {
+			context.fillStyle = "red";
+			this.engine.mouse.hoverable = false;
+		}
+
 		context.strokeStyle = this.outline.colour;
-		let lineWidth = getValue(this.outline.size);
+		let lineWidth = getValue(this.outline.size, this.engine);
 		context.lineWidth = lineWidth;
 		context.roundRect(
 			destinationX,

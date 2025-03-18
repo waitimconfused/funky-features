@@ -1,6 +1,6 @@
 import { engine, ComponentGroup } from "../utils.js";
 import * as components from "../components.js";
-import { mouse, toRange } from "../../toolbelt/toolbelt.js";
+import { mouse, Range } from "../../toolbelt/toolbelt.js";
 
 engine.setIcon("./demos/4/favicon.svg");
 
@@ -254,8 +254,8 @@ function makeTile(type="", direction=90, x=0, y=0, tileOptions={ dragLock: false
 
 	if (type == "end") map.targetsRequired += 1;
 
-	x = toRange(0, x, map.width-1);
-	y = toRange(0, y, map.height-1);
+	x = Range.clamp(0, x, map.width-1);
+	y = Range.clamp(0, y, map.height-1);
 
 	direction = Math.round(direction / 90) * 90
 
@@ -627,7 +627,7 @@ function dragTile(tile=new ComponentGroup) {
 		if(!dx) dx = mouse.position.x - tile.display.x; tile.setAttribute("offsetX", dx);
 		if(!dy) dy = mouse.position.y - tile.display.y; tile.setAttribute("offsetY", dy);
 
-		tile.moveTo(toRange(0, mouse.position.x - dx, (map.width-1)*100), toRange(0, mouse.position.y - dy, (map.height-1)*100));
+		tile.moveTo(Range.clamp(0, mouse.position.x - dx, (map.width-1)*100), Range.clamp(0, mouse.position.y - dy, (map.height-1)*100));
 		tile.setAttribute("isDragging", mouse.click_l);
 		tileDragHandle.colour = tileDragHandle.outline.colour;
 		userSelectedComponentHash = tile.hash;

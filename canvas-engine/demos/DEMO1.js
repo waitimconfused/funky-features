@@ -1,6 +1,6 @@
 import { ComponentGroup, engine } from "../utils.js";
 import * as components from "../components.js";
-import { isInRange, keyboard, mouse } from "../../toolbelt/toolbelt.js";
+import { keyboard, mouse, Range } from "../../toolbelt/toolbelt.js";
 
 let worldData = [
 	["red", "green", "blue"],
@@ -171,8 +171,8 @@ function rectWrapAround(rect=new components.Rect) {
 
 	if(
 		mouse.click_l &&
-		isInRange(rect.displayOffset.x, mouse.position.x, rect.displayOffset.x + rect.displayOffset.w) &&
-		isInRange(rect.displayOffset.y, mouse.position.y, rect.displayOffset.y + rect.displayOffset.h)
+		Range.fits(rect.displayOffset.x, mouse.position.x, rect.displayOffset.x + rect.displayOffset.w) &&
+		Range.fits(rect.displayOffset.y, mouse.position.y, rect.displayOffset.y + rect.displayOffset.h)
 	) {
 		let r = Math.round(Math.random() * 255);
 		let g = Math.round(Math.random() * 255);

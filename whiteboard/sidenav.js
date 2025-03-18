@@ -105,12 +105,12 @@ function dragElement(elmnt, handle) {
 		if (elmnt.parentNode.classList.contains("float")) side = "float";
 
 		if (["left", "right"].includes(side)) {
-			let top = tb.toRange(25, e.clientY - handle.offsetTop - elmntHandleRect.height / 2, window.innerHeight - elmntHandleRect.height - 75);
+			let top = tb.Range.clamp(25, e.clientY - handle.offsetTop - elmntHandleRect.height / 2, window.innerHeight - elmntHandleRect.height - 75);
 			elmnt.style.top = top + "px";
 			options.handle.y = top;
 		} else if (side == "float") {
-			let top = tb.toRange(8, e.clientY - handle.offsetTop - elmntHandleRect.height / 2, window.innerHeight - parentRect.height - 8);
-			let left = tb.toRange(8, e.clientX - handle.offsetLeft - elmntHandleRect.width / 2, window.innerWidth - parentRect.width - 8);
+			let top = tb.Range.clamp(8, e.clientY - handle.offsetTop - elmntHandleRect.height / 2, window.innerHeight - parentRect.height - 8);
+			let left = tb.Range.clamp(8, e.clientX - handle.offsetLeft - elmntHandleRect.width / 2, window.innerWidth - parentRect.width - 8);
 			elmnt.parentNode.style.top = top + "px";
 			elmnt.parentNode.style.left = left + "px";
 
@@ -183,7 +183,7 @@ function putFloatingSidenavsInScreen() {
 		let floatingSidenav = floatingSidenavs[i];
 		let rect = floatingSidenav.getBoundingClientRect();
 
-		floatingSidenav.style.top = tb.toRange(8, floatingSidenav.offsetTop, window.innerHeight - rect.height - 8) + "px";
-		floatingSidenav.style.left = tb.toRange(8, floatingSidenav.offsetLeft, window.innerWidth - rect.width - 8) + "px";
+		floatingSidenav.style.top = tb.Range.clamp(8, floatingSidenav.offsetTop, window.innerHeight - rect.height - 8) + "px";
+		floatingSidenav.style.left = tb.Range.clamp(8, floatingSidenav.offsetLeft, window.innerWidth - rect.width - 8) + "px";
 	}
 }

@@ -1,6 +1,6 @@
 import { getValue } from "../../toolbelt/lib/units.js";
-import { parseColour, toRange } from "../../toolbelt/toolbelt.js";
-import { Component, Point2, Point4, engine } from "../utils.js";
+import { parseColour, Range } from "../../toolbelt/toolbelt.js";
+import { Component, Point2, Point4 } from "../utils.js";
 
 export class Path extends Component {
 	#cameraTracking = false;
@@ -130,8 +130,8 @@ export class Path extends Component {
 		
 		if (!this.visibility) return this;
 
-		this.transform.x = toRange(0, this.transform.x, 1);
-		this.transform.y = toRange(0, this.transform.y, 1);
+		this.transform.x = Range.clamp(0, this.transform.x, 1);
+		this.transform.y = Range.clamp(0, this.transform.y, 1);
 
 		let destinationW = getValue(this.display.w);
 		let destinationH = getValue(this.display.h);
@@ -143,7 +143,7 @@ export class Path extends Component {
 		destinationY += defaultOffset?.y;
 		destinationY -= destinationH * this.transform.y;
 
-		if(this.isPixelArt == true || (this.isPixelArt == "unset" && engine.isPixelArt)){
+		if(this.isPixelArt == true || (this.isPixelArt == "unset" && this.engine.isPixelArt)){
 			this.displayOffset.x = Math.floor(this.displayOffset.x);
 			this.displayOffset.y = Math.floor(this.displayOffset.y);
 			this.displayOffset.x = Math.floor(this.displayOffset.x);
@@ -152,9 +152,9 @@ export class Path extends Component {
 
 		context.save();
 		if (!this.fixedPosition) {
-			context.translate(engine.canvas.width / 2, engine.canvas.height / 2);
-			context.scale(engine.camera.zoom, engine.camera.zoom);
-			context.translate(-engine.camera.position.x, -engine.camera.position.y);
+			context.translate(this.engine.canvas.width / 2, this.engine.canvas.height / 2);
+			context.scale(this.engine.camera.zoom, this.engine.camera.zoom);
+			context.translate(-this.engine.camera.position.x, -this.engine.camera.position.y);
 		}
 		context.translate(destinationX + destinationW * this.transform.x, destinationY + destinationH * this.transform.y);
 		context.rotate(this.rotation * Math.PI / 180);

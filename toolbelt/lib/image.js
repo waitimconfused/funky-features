@@ -1,5 +1,10 @@
 const assetDIV = loadAssets();
 
+/**
+ * @type {Object<string, { loaded: boolean, image: HTMLImageElement }>}
+ */
+const cachedImages = {};
+
 const errorImage = document.createElement("img");
 errorImage.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV/TSqVUHewg4pChOlkQLeIoVSyChdJWaNXB5NIvaGJIUlwcBdeCgx+LVQcXZ10dXAVB8APE1cVJ0UVK/F9SaBHjwXE/3t173L0DhGaNqWZgAlA1y8gkE2K+sCIGXxFCAP2Iwy8xU09lF3LwHF/38PH1LsazvM/9OfqUoskAn0g8y3TDIl4nnt60dM77xBFWkRTic+Jxgy5I/Mh12eU3zmWHBZ4ZMXKZOeIIsVjuYrmLWcVQiePEUUXVKF/Iu6xw3uKs1uqsfU/+wnBRW85yneYIklhECmmIkFFHFTVYiNGqkWIiQ/sJD/+w40+TSyZXFYwc89iACsnxg//B727N0tSkmxROAD0vtv0xCgR3gVbDtr+Pbbt1AvifgSut499oAjOfpDc6WvQIGNgGLq47mrwHXO4AQ0+6ZEiO5KcplErA+xl9UwEYvAVCq25v7X2cPgA56mrpBjg4BMbKlL3m8e7e7t7+PdPu7wdhVHKgRoo0GwAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+cKBA8WIsDjvWIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAJklEQVQoz2P8z/CfARtgZGDEKs7EQCIY1UAMYMQlgSt+RoOVJhoAKAMEHdElw9AAAAAASUVORK5CYII=";
 assetDIV.appendChild(errorImage);
@@ -17,23 +22,28 @@ export function loadAssets(){
 
 /**
  * 
- * @param {string} imgSource 
- * @param {number} destinationXPos 
- * @param {number} destinationYPos 
- * @param {number} destinationWidth 
- * @param {number} destinationHeight 
- * @param {number} cropXPos 
- * @param {number} cropYPos 
- * @param {number} cropWidth 
- * @param {number} cropHeight 
- * @param { { pixelated: boolean, alpha: number } } filters 
- * @param {HTMLCanvasElement} canvas 
- * @param {boolean} saveAsset 
+ * @param {string|HTMLImageElement|HTMLCanvasElement} imgSource
+ * 
+ * @param {object} destination
+ * 	@param {number} destination.x
+ * 	@param {number} destination.y
+ * 	@param {number} destination.w
+ * 	@param {number} destination.h
+ * 
+ * @param {?object} crop
+ * 	@param {number} crop.x
+ * 	@param {number} crop.y
+ * 	@param {number} crop.w
+ * 	@param {number} crop.h
+ * 
+ * @param { { pixelated: boolean, alpha: number } } filters
+ * @param {HTMLCanvasElement} canvas
+ * @param {boolean|true} saveAsset Defaults to `true`
  */
 export function draw(
-	imgSource="",
-	destinationXPos, destinationYPos, destinationWidth, destinationHeight,
-	cropXPos, cropYPos, cropWidth, cropHeight,
+	imgSource,
+	destination,
+	crop,
 	filters, canvas, saveAsset=true
 ){
 
@@ -46,50 +56,50 @@ export function draw(
 		context.mozImageSmoothingEnabled = false;
 		context.webkitImageSmoothingEnabled = false;
 		context.imageSmoothingEnabled = false;
-		destinationXPos = Math.floor(destinationXPos);
-		destinationYPos = Math.floor(destinationYPos);
-		destinationWidth = Math.floor(destinationWidth);
-		destinationHeight = Math.floor(destinationHeight);
+		destination.x = Math.floor(destination.x);
+		destination.y = Math.floor(destination.y);
+		destination.w = Math.floor(destination.w);
+		destination.h = Math.floor(destination.h);
 	}
 
 	context.save();
-	if(destinationWidth < 0){
-		destinationWidth *= -1;
+	if(destination.w < 0){
+		destination.w *= -1;
 		context.scale(-1, 1);
 		context.translate(
 			0 - canvas.width,
 			0
 		);
-		destinationXPos = canvas.width - destinationXPos;
+		destination.x = canvas.width - destination.x;
 	}
 
-	if(cropXPos == -1) cropXPos = 0;
-	if(cropYPos == -1) cropYPos = 0;
+	if(crop.x == -1) crop.x = 0;
+	if(crop.y == -1) crop.y = 0;
 
-	if(cropWidth == -1) cropWidth = undefined;
-	if(cropHeight == -1) cropHeight = undefined;
+	if(crop.w == -1) crop.w = undefined;
+	if(crop.h == -1) crop.h = undefined;
 
 	try {
 		let source = imgSource;
 		if (saveAsset && imgSource instanceof HTMLCanvasElement == false) {
-			source = cacheImage(imgSource);
+			source = retrieveImage(imgSource);
 		}
-		if(cropWidth && cropHeight){
+		if(crop.w && crop.h){
 			context.drawImage(
 				source,
 	
-				cropXPos || 0, cropYPos || 0,
-				cropWidth, cropHeight,
+				crop.x || 0, crop.y || 0,
+				crop.w, crop.h,
 	
-				destinationXPos, destinationYPos,
-				destinationWidth, destinationHeight,
+				destination.x, destination.y,
+				destination.w, destination.h,
 			);
 		}else{
 			context.drawImage(
 				source,
 	
-				destinationXPos, destinationYPos,
-				destinationWidth, destinationHeight,
+				destination.x, destination.y,
+				destination.w, destination.h,
 			);
 		}
 	}catch {
@@ -98,17 +108,38 @@ export function draw(
 
 			0, 0, 16, 16,
 
-			Math.floor(destinationXPos), Math.floor(destinationYPos),
-			Math.floor(destinationWidth), Math.floor(destinationHeight),
+			Math.floor(destination.x), Math.floor(destination.y),
+			Math.floor(destination.w), Math.floor(destination.h),
 		);
 	}
 	context.restore();
 	context.globalAlpha = 1;
 }
 
+function retrieveImage(imgSource) {
+	if (imgSource == "") imgSource = errorImage.src;
+	else if (imgSource.endsWith("/")) imgSource = errorImage.src;
+
+	if ( imgSource in cachedImages ) {
+		return cachedImages[imgSource].image;
+	}
+
+	let newImage = new Image;
+	newImage.src = imgSource;
+	cachedImages[imgSource] = {loaded: false, image: newImage};
+
+	newImage.onload = () => {
+		cachedImages[imgSource].loaded = true;
+	}
+
+	return newImage;
+
+}
+
 export function cacheImage(imgSource=""){
 	if (imgSource == "") imgSource = errorImage.src;
 	else if (imgSource.endsWith("/")) imgSource = errorImage.src;
+
 	let loadedImage = document.querySelector(`div#assets>img[src="${imgSource}"]`);
 	if(loadedImage) return loadedImage;
 
