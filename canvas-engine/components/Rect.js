@@ -325,7 +325,7 @@ export class Rect extends Component {
 
 		let mousePos = this.engine.mouse.toObject(this);
 		if (Range.fits(0, mousePos.x, this.display.w) && this.engine.mouse.hoverable) {
-			context.fillStyle = "red";
+			// context.fillStyle = "red";
 			this.engine.mouse.hoverable = false;
 		}
 

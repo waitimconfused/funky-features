@@ -105,7 +105,6 @@ function selectOptions(option) {
 /** @param { HTMLSpanElement } option */
 function selectOption(option) {
 	let isNowSelected = !option.hasAttribute("selected");
-	let unselectedDiv = option.parentElement;
 	let isChip = option.parentElement.classList.contains("chip");
 	let fixedOption = option.parentElement.parentElement.querySelector(".option.fixed");
 
