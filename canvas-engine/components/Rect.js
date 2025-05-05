@@ -295,9 +295,9 @@ export class Rect extends Component {
 		let destinationX = getValue( this.display.x, this.engine );
 		let destinationY = getValue( this.display.y, this.engine );
 
-		destinationX += defaultOffset.x;
+		destinationX += defaultOffset?.x ?? 0;
 		destinationX -= destinationW * this.transform.x;
-		destinationY += defaultOffset.y;
+		destinationY += defaultOffset?.y ?? 0;
 		destinationY -= destinationH * this.transform.y;
 		
 		context.save();
