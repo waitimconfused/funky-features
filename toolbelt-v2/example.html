@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Toolbelt - V2</title>
+	<style>
+
+		#mouse-cursor {
+			position: fixed;
+			translate: -50% -50%;
+			width: 1rem;
+			height: 1rem;
+			background-color: rgb( var(--r,0), var(--g,0), var(--b,0) );
+			border-radius: 50%;
+			border: 2px solid black;
+		}
+
+		button {
+			margin: 0;
+			box-shadow: 0 0 0 1px #0000001a;
+			border-radius: 0.5rem;
+			background-color: #FFFFFF0d;
+			min-width: 2rem;
+			min-height: 2rem;
+			border: none;
+			cursor: pointer;
+		}
+
+	</style>
+</head>
+<body>
+	<div id="mouse-cursor"></div>
+
+	<custom-menu kind="toolbar" draggable drag-clamp="10" drag-snapping-grid="1 2" direction="row">
+		<button class="icon">←</button>
+		<button class="icon">→</button>
+		<button class="icon">⛶</button>
+		<custom-menu kind="dropdown">
+			<option value="1">Option 1</option>
+			<option value="2">Option 2</option>
+			<option value="3">Option 3</option>
+		</custom-menu>
+	</custom-menu>
+
+	<script type="module" src="./example.js"></script>
+</body>
+</html>
