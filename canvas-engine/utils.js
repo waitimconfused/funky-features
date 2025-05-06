@@ -471,29 +471,30 @@ export class Engine {
 
 	#resizeCanvas() {
 		
-		if(this.canvas.onresize) {
-			if(width != prevCanvasWidth || height != prevCanvasHeight) this.canvas.onresize();
-		}
-
 		if (this.fullscreen == false) return;
-
-		let width = window.innerWidth;
-		let height = window.innerHeight;
-
+		
 		let prevCanvasWidth = this.canvas.width;
 		let prevCanvasHeight = this.canvas.height;
-
+		
+		let width = window.innerWidth;
+		let height = window.innerHeight;
+		
 		this.canvas.width = width;
 		this.canvas.height = height;
-
+		
 		this.canvas.style.width = "var(--width)";
 		this.canvas.style.height = "var(--height)";
 		this.canvas.style.setProperty('--width', `${width}px`);
 		this.canvas.style.setProperty('--height', `${height}px`);
-
+		
 		this.canvas.style.position = "fixed";
 		this.canvas.style.top = "0px";
 		this.canvas.style.left = "0px";
+
+		
+		if(this.canvas.onresize) {
+			if(this.canvas.width != prevCanvasWidth || this.canvas.height != prevCanvasHeight) this.canvas.onresize();
+		}
 	}
 	#updateStats() {
 		this.stats.timestamp = performance.now();
