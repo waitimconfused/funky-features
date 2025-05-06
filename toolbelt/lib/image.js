@@ -131,14 +131,21 @@ function retrieveImage(imgSource) {
 }
 
 export function cacheImage(imgSource=""){
-	if (imgSource == "") imgSource = errorImage.src;
-	else if (imgSource.endsWith("/")) imgSource = errorImage.src;
+	return new Promise((resolve, reject) => {
+		if (imgSource == "") imgSource = errorImage.src;
+		else if (imgSource.endsWith("/")) imgSource = errorImage.src;
 
-	let loadedImage = document.querySelector(`div#assets>img[src="${imgSource}"]`);
-	if(loadedImage) return loadedImage;
+		let loadedImage = document.querySelector(`div#assets>img[src="${imgSource}"]`);
+		if(loadedImage) {
+			resolve(loadedImage);
+			return;
+		}
 
-	let newlyLoadedImage = document.createElement("img");
-	newlyLoadedImage.src = imgSource;
-	assetDIV.appendChild(newlyLoadedImage);
-	return newlyLoadedImage;
+		let newlyLoadedImage = document.createElement("img");
+		newlyLoadedImage.onload = () => {
+			resolve(newlyLoadedImage);
+		}
+		newlyLoadedImage.src = imgSource;
+		assetDIV.appendChild(newlyLoadedImage);
+	})
 }

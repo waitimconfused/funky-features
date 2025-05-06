@@ -411,7 +411,8 @@ export class Engine {
 					consoleLogComment = ` with font-family name "${options.fontFamilyName}"`;
 				} else if (type.startsWith("image/")) {
 					simpleType = "IMG";
-					image.cacheImage(source);
+					image.cacheImage(source)
+					.then(resolve);
 				} else {
 					if (this.#show_loadAsset_logs) console.error(`Failed to load asset from url "${source}"${consoleLogComment}`)
 					reject();
