@@ -155,7 +155,7 @@ class Camera {
 		}
 		this.position.x += x;
 		this.position.y += y;
-		if (engine.isPixelArt || this?.isPixelArt) {
+		if (this.#engine.isPixelArt || this?.isPixelArt) {
 			this.position.x = Math.round(this.position.x);
 			this.position.y = Math.round(this.position.y);
 		}
