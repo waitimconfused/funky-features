@@ -138,9 +138,9 @@ export class Path extends Component {
 		let destinationX = getValue(this.display.x);
 		let destinationY = getValue(this.display.y);
 
-		destinationX += defaultOffset?.x;
+		destinationX += defaultOffset?.x ?? 0;
 		destinationX -= destinationW * this.transform.x;
-		destinationY += defaultOffset?.y;
+		destinationY += defaultOffset?.y ?? 0;
 		destinationY -= destinationH * this.transform.y;
 
 		if(this.isPixelArt == true || (this.isPixelArt == "unset" && this.engine.isPixelArt)){

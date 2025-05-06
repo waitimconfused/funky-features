@@ -63,8 +63,8 @@ export class Circle extends Component {
 		let radius = getValue( this.radius, this.engine );
 		let innerRadius = getValue(this.innerRadius, this.engine) ?? radius/2;
 		let outlineSize = getValue(this.outline.size, this.engine);
-		destinationX += defaultOffset.x;
-		destinationY += defaultOffset.y;
+		destinationX += defaultOffset?.x ?? 0;
+		destinationY += defaultOffset?.y ?? 0;
 
 		innerRadius = Range.clamp(0, innerRadius, radius);
 

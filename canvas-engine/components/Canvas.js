@@ -63,8 +63,8 @@ export class Canvas extends Component {
 		let destinationX = getValue(this.display.x);
 		let destinationY = getValue(this.display.y);
 
-		destinationX += defaultOffset.x;
-		destinationY += defaultOffset.y;
+		destinationX += defaultOffset?.x ?? 0;
+		destinationY += defaultOffset?.y ?? 0;
 		destinationX -= destinationW * this.transform.x;
 		destinationY -= destinationH * this.transform.y;
 

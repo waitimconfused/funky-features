@@ -155,8 +155,8 @@ export class Image extends Component {
 
 		let offset = { x: 0, y: 0 };
 
-		offset.x += defaultOffset.x;
-		offset.y += defaultOffset.y;
+		offset.x += defaultOffset?.x ?? 0;
+		offset.y += defaultOffset?.y ?? 0;
 
 		offset.x -= destinationW * this.transform.x;
 		offset.y -= destinationH * this.transform.y;

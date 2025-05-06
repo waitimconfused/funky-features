@@ -102,8 +102,8 @@ export class Text extends Component {
 		let destinationX = this.display.x;
 		let destinationY = this.display.y;
 
-		destinationX += defaultOffset.x;
-		destinationY += defaultOffset.y;
+		destinationX += defaultOffset?.x ?? 0;
+		destinationY += defaultOffset?.y ?? 0;
 		
 
 		context.save();
