@@ -24,17 +24,9 @@ export function loadAssets(){
  * 
  * @param {string|HTMLImageElement|HTMLCanvasElement} imgSource
  * 
- * @param {object} destination
- * 	@param {number} destination.x
- * 	@param {number} destination.y
- * 	@param {number} destination.w
- * 	@param {number} destination.h
+ * @param {{ x:number, y:number, w:number, h:number }} destination
  * 
- * @param {?object} crop
- * 	@param {number} crop.x
- * 	@param {number} crop.y
- * 	@param {number} crop.w
- * 	@param {number} crop.h
+ * @param {?{ x:null, y:number, w:number, h:number }} crop
  * 
  * @param { { pixelated: boolean, alpha: number } } filters
  * @param {HTMLCanvasElement} canvas
@@ -73,11 +65,13 @@ export function draw(
 		destination.x = canvas.width - destination.x;
 	}
 
-	if(crop.x == -1) crop.x = 0;
-	if(crop.y == -1) crop.y = 0;
-
-	if(crop.w == -1) crop.w = undefined;
-	if(crop.h == -1) crop.h = undefined;
+	if (crop) {
+		if(crop.x == -1) crop.x = 0;
+		if(crop.y == -1) crop.y = 0;
+	
+		if(crop.w == -1) crop.w = undefined;
+		if(crop.h == -1) crop.h = undefined;
+	}
 
 	try {
 		let source = imgSource;

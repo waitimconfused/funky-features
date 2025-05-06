@@ -373,51 +373,57 @@ export class Engine {
 	}
 
 	/**
-	 * 
 	 * @param { string } source
 	 * @param {{
 	 * 	fontFamilyName?: string
 	 * }} options
+	 * @returns {Promise<void>}
 	 */
-	async loadAsset(source, options) {
+	loadAsset(source, options) {
 		if (!options) options = {};
-		let response = await fetch(source);
-		let type = response.headers.get("Content-Type");
-		type = type.split(";")[0];
-		let simpleType = "undefined";
-		let consoleLogComment = "";
-		if (type == "text/css") {
-			simpleType = "CSS";
-			if (document.head.querySelector(`link[rel="stylesheet"][href="${source}"]`)) {
-				if (this.#show_loadAsset_logs) console.warn(`The loading of CSS from url "${source}" was cancled due to already being loaded.`);
-				return;
-			}
-			let link = document.createElement("link");
-			link.rel = "stylesheet";
-			link.href = source;
-			link.type = "text/css";
-			document.head.appendChild(link);
-		} else if (type.includes("font")) {
-			simpleType = "font";
-			if (options.fontFamilyName == undefined) {
-				options.fontFamilyName = `font_asset${this.#assetsLoaded}`;
-			}
-			const font = new FontFace(options.fontFamilyName, `url(${source})`);
-			await font.load();
-			document.fonts.add(font);
-			consoleLogComment = ` with font-family name "${options.fontFamilyName}"`;
-		} else if (type.startsWith("image/")) {
-			simpleType = "IMG";
-			image.cacheImage(source);
-		} else {
-			if (this.#show_loadAsset_logs) console.error(`Failed to load asset from url "${source}"${consoleLogComment}`)
-			return;
-		}
-		if (this.#show_loadAsset_logs) {
-			if (this.#assetsLoaded >= 5) consoleLogComment += "\nYou can disable this message by using `engine.disableLoadAssetLogs()`";
-			console.log(`Loaded ${simpleType} from url "${source}"${consoleLogComment}`);
-		}
-		this.#assetsLoaded += 1;
+		return new Promise((resolve, reject) => {
+			fetch(source)
+			.then((response) => {
+				let type = response.headers.get("Content-Type");
+				type = type.split(";")[0];
+				let simpleType = "undefined";
+				let consoleLogComment = "";
+				if (type == "text/css") {
+					simpleType = "CSS";
+					if (document.head.querySelector(`link[rel="stylesheet"][href="${source}"]`)) {
+						if (this.#show_loadAsset_logs) console.warn(`The loading of CSS from url "${source}" was cancled due to already being loaded.`);
+						return;
+					}
+					let link = document.createElement("link");
+					link.rel = "stylesheet";
+					link.href = source;
+					link.type = "text/css";
+					document.head.appendChild(link);
+					link.onload = () => resolve;
+				} else if (type.includes("font")) {
+					simpleType = "font";
+					if (options.fontFamilyName == undefined) {
+						options.fontFamilyName = `font_asset${this.#assetsLoaded}`;
+					}
+					const font = new FontFace(options.fontFamilyName, `url(${source})`);
+					document.fonts.add(font);
+					font.load().then( () => resolve );
+					consoleLogComment = ` with font-family name "${options.fontFamilyName}"`;
+				} else if (type.startsWith("image/")) {
+					simpleType = "IMG";
+					image.cacheImage(source);
+				} else {
+					if (this.#show_loadAsset_logs) console.error(`Failed to load asset from url "${source}"${consoleLogComment}`)
+					reject();
+					return;
+				}
+				if (this.#show_loadAsset_logs) {
+					if (this.#assetsLoaded >= 5) consoleLogComment += "\nYou can disable this message by using `engine.disableLoadAssetLogs()`";
+					console.log(`Loaded ${simpleType} from url "${source}"${consoleLogComment}`);
+				}
+				this.#assetsLoaded += 1;
+			});
+		})
 	}
 	/**
 	 * Disable all console messages when calling `engine.loadAsset()`
