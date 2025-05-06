@@ -1001,51 +1001,51 @@ export class ComponentGroup extends Component {
 
 		let components = Object.values(this.components);
 
-		this.transform.x = Range.clamp(0, this.transform.x, 1);
-		this.transform.y = Range.clamp(0, this.transform.y, 1);
+		// this.transform.x = Range.clamp(0, this.transform.x, 1);
+		// this.transform.y = Range.clamp(0, this.transform.y, 1);
 
-		let minX = Math.min(...components.map(o => o.display.x - o.display.w * o.transform.x));
-		let minY = Math.min(...components.map(o => o.display.y - o.display.h * o.transform.y));
+		// let minX = Math.min(...components.map(o => o.display.x - o.display.w * o.transform.x));
+		// let minY = Math.min(...components.map(o => o.display.y - o.display.h * o.transform.y));
 
-		this.display.w = Math.max(...components.map(o => o.display.x + o.display.w * o.transform.x)) - minX;
-		this.display.h = Math.max(...components.map(o => o.display.y + o.display.h * o.transform.y)) - minY;
+		// this.display.w = Math.max(...components.map(o => o.display.x + o.display.w * o.transform.x)) - minX;
+		// this.display.h = Math.max(...components.map(o => o.display.y + o.display.h * o.transform.y)) - minY;
 
-		let destinationW = getValue( this.display.w, this.engine );
-		let destinationH = getValue( this.display.h, this.engine );
-		let destinationX = getValue( this.display.x, this.engine );
-		let destinationY = getValue( this.display.y, this.engine );
+		// let destinationW = getValue( this.display.w, this.engine );
+		// let destinationH = getValue( this.display.h, this.engine );
+		// let destinationX = getValue( this.display.x, this.engine );
+		// let destinationY = getValue( this.display.y, this.engine );
 
-		destinationX += defaultOffset?.x || 0;
-		destinationY += defaultOffset?.y || 0;
+		// destinationX += defaultOffset?.x || 0;
+		// destinationY += defaultOffset?.y || 0;
 
-		destinationX -= destinationW * this.transform.x;
-		destinationY -= destinationH * this.transform.y;
+		// // destinationX -= destinationW * this.transform.x;
+		// // destinationY -= destinationH * this.transform.y;
 		
-		context.save();
-		if (!this.fixedPosition) {
-			if (this.isPixelArt == true || (this.isPixelArt == "unset" && this.engine.isPixelArt)) {
-				context.translate(Math.floor(this.engine.canvas.width / 2), Math.floor(this.engine.canvas.height / 2));
-				context.scale(Math.floor(this.engine.camera.zoom), Math.floor(this.engine.camera.zoom));
-				destinationX = Math.floor(destinationX);
-				destinationY = Math.floor(destinationY);
-				destinationW = Math.floor(destinationW);
-				destinationH = Math.floor(destinationH);
-			} else {
-				context.translate(this.engine.canvas.width / 2, this.engine.canvas.height / 2);
-				context.scale(this.engine.camera.zoom, this.engine.camera.zoom);
-			}
-			context.translate(-this.engine.camera.position.x, -this.engine.camera.position.y);
-		}
-		context.translate(destinationX + destinationW * this.transform.x, destinationY + destinationH * this.transform.y);
-		context.rotate(this.rotation * Math.PI / 180);
-		context.translate(-destinationX - destinationW * this.transform.x, - destinationY - destinationH * this.transform.y);
+		// context.save();
+		// if (!this.fixedPosition) {
+		// 	if (this.isPixelArt == true || (this.isPixelArt == "unset" && this.engine.isPixelArt)) {
+		// 		context.translate(Math.floor(this.engine.canvas.width / 2), Math.floor(this.engine.canvas.height / 2));
+		// 		context.scale(Math.floor(this.engine.camera.zoom), Math.floor(this.engine.camera.zoom));
+		// 		destinationX = Math.floor(destinationX);
+		// 		destinationY = Math.floor(destinationY);
+		// 		destinationW = Math.floor(destinationW);
+		// 		destinationH = Math.floor(destinationH);
+		// 	} else {
+		// 		context.translate(this.engine.canvas.width / 2, this.engine.canvas.height / 2);
+		// 		context.scale(this.engine.camera.zoom, this.engine.camera.zoom);
+		// 	}
+		// 	context.translate(-this.engine.camera.position.x, -this.engine.camera.position.y);
+		// }
+		// context.translate(destinationX + destinationW * this.transform.x, destinationY + destinationH * this.transform.y);
+		// context.rotate(this.rotation * Math.PI / 180);
+		// context.translate(-destinationX - destinationW * this.transform.x, - destinationY - destinationH * this.transform.y);
 
-		context.restore();
+		// context.restore();
 
 		for(let i = 0; i < components.length; i ++) {
 			let component = components[i];
 			component.script(component);
-			component.render(context, { x: destinationX, y: destinationY });
+			component.render(context, defaultOffset);
 		}
 	}
 }
