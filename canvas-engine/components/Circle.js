@@ -78,8 +78,8 @@ export class Circle extends Component {
 			destinationX -= this.engine.camera.position.x;
 			destinationY -= this.engine.camera.position.y;
 			if (this.isPixelArt == true || (this.isPixelArt == "unset" && this.engine.isPixelArt)) {
-				context.translate(Math.round(this.engine.canvas.width / 2), Math.round(this.engine.canvas.height / 2));
-				context.scale(Math.round(this.engine.camera.zoom), Math.round(this.engine.camera.zoom));
+				context.translate(Math.floor(this.engine.canvas.width / 2), Math.floor(this.engine.canvas.height / 2));
+				context.scale(Math.floor(this.engine.camera.zoom), Math.rounfloord(this.engine.camera.zoom));
 			} else {
 				context.translate(this.engine.canvas.width / 2, this.engine.canvas.height / 2);
 				context.scale(this.engine.camera.zoom, this.engine.camera.zoom);

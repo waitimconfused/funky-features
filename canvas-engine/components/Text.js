@@ -103,7 +103,11 @@ export class Text extends Component {
 
 		destinationX += defaultOffset?.x ?? 0;
 		destinationY += defaultOffset?.y ?? 0;
-		
+
+		if (this.isPixelArt) {
+			destinationX = Math.floor(destinationX);
+			destinationY = Math.floor(destinationY);
+		}
 
 		context.save();
 		if (this.fixedPosition == false) {
@@ -119,7 +123,6 @@ export class Text extends Component {
 		context.beginPath();
 		context.translate(destinationX, destinationY);
 		context.rotate(this.rotation * Math.PI / 180);
-
 
 		context.fillStyle = Colour.parseColour(this.colour);
 		context.strokeStyle = Colour.parseColour(this.outline.colour);

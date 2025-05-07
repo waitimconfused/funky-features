@@ -163,15 +163,18 @@ export class Image extends Component {
 		let destinationX = this.display.x + offset.x;
 		let destinationY = this.display.y + offset.y;
 
+		if (this.isPixelArt) {
+			destinationX = Math.floor(destinationX);
+			destinationY = Math.floor(destinationY);
+			destinationW = Math.floor(destinationW);
+			destinationH = Math.floor(destinationH);
+		}
+
 		context.save();
 		if (!this.fixedPosition) {
 			if (this.isPixelArt == true || (this.isPixelArt == "unset" && this.engine.isPixelArt)) {
 				context.translate(Math.floor(this.engine.canvas.width / 2), Math.floor(this.engine.canvas.height / 2));
 				context.scale(Math.floor(this.engine.camera.zoom), Math.floor(this.engine.camera.zoom));
-				destinationX = Math.floor(destinationX);
-				destinationY = Math.floor(destinationY);
-				destinationW = Math.floor(destinationW);
-				destinationH = Math.floor(destinationH);
 			} else {
 				context.translate(this.engine.canvas.width / 2, this.engine.canvas.height / 2);
 				context.scale(this.engine.camera.zoom, this.engine.camera.zoom);
