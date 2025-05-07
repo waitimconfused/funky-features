@@ -12,7 +12,7 @@ import { CustomMenu } from "./lib/CustomMenu.js";
 import { CustomUnitConverter, getValue, unitConverter } from "./lib/Units.js";
 
 import { image } from "./lib/Image.js";
-import { Point2, Point3, Point4 } from "./lib/points.js";
+import { Point2, Point3, Point4 } from "./lib/Points.js";
 
 window.toolbelt = {
 	keyboard, mouse,
