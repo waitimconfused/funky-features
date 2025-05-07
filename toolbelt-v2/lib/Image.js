@@ -1,4 +1,7 @@
-const assetDIV = loadAssets();
+const assetDIV = document.createElement("div");
+assetDIV.setAttribute("id", "assets");
+assetDIV.setAttribute("style", "display:none;");
+document.body.appendChild(assetDIV);
 
 /**
  * @type {Object<string, { loaded: boolean, image: HTMLImageElement }>}
@@ -10,6 +13,7 @@ errorImage.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQ
 assetDIV.appendChild(errorImage);
 
 export const image = new class TBImage {
+
 	loadAssets(){
 		if(document.querySelectorAll("div#assets").length == 0){
 			let assetDIV = document.createElement("div");
