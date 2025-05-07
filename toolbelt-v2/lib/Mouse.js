@@ -158,7 +158,7 @@ export const mouse = new class TBMouse {
 		if (trigger_offWClick) this.#triggerEvents("off", "wclick", e);
 		if (trigger_offLClick || trigger_offRClick || trigger_offWClick) this.#triggerEvents("off", "click", e);
 
-		this.#updateHooks();
+		this.#updateHooks(e);
 	}
 
 	/**
