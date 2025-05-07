@@ -97,9 +97,7 @@ export const mouse = new class TBMouse {
 	 */
 	#updateHooks(e) {
 		for (let i = 0; i < this.#hooks.length; i++) {
-			/**
-			 * @type { MouseHook }
-			 */
+			/** @type { MouseHook } */
 			let hook = this.#hooks[i];
 			hook.x = this.position.x;
 			hook.y = this.position.y;
