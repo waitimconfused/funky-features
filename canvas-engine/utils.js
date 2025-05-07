@@ -502,7 +502,7 @@ export class Engine {
 		this.stats.timestamp = performance.now();
 		this.stats.delta = (this.stats.timestamp - this.#lastCalledTime) / (1000/60);
 		this.#lastCalledTime = performance.now();
-		this.stats.fps = Math.round(1 / this.stats.delta);
+		this.stats.fps = Math.round(1000 / this.stats.delta);
 	}
 
 	/** @param {HTMLCanvasElement} canvas */
