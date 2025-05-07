@@ -25,14 +25,16 @@ export const keyboard = new class TBKeyboard {
 			let index = this.#keys.indexOf(key);
 			if (index != -1) return;
 			this.#keys.push(key);
-			if (this.debug) this.#triggerEvents("down", e);
+			this.#triggerEvents("down", e);
+			if (this.debug) console.log("key:"+key+" DOWN", this.#keys);
 		});
 		window.addEventListener("keyup", (e) => {
 			let key = e.key.toLowerCase();
 			let index = this.#keys.indexOf(key);
 			if (index == -1) return;
 			this.#triggerEvents("up", e);
-			if (this.debug) this.#keys.splice(index, 1);
+			this.#keys.splice(index, 1);
+			if (this.debug) console.log("key:"+key+" UP", this.#keys);
 		});
 	}
 
