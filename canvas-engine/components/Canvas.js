@@ -1,5 +1,5 @@
-import { Colour, range, getValue } from "../../toolbelt-v2/index.js";
-import { Component, Point2 } from "../utils.js";
+import { Colour, range, getValue, Point2 } from "../../toolbelt-v2/index.js";
+import { Component } from "../utils.js";
 
 export class Canvas extends Component {
 	#cameraTracking = false;
