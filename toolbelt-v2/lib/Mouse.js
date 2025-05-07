@@ -78,7 +78,7 @@ export const mouse = new class TBMouse {
 	/**
 	 * 
 	 * @param { object } options 
-	 * @param { (e: MouseEvent, mouse: Mouse) => {} } options.updateFunc
+	 * @param { (e: MouseEvent, mouse: TBMouse) => {} } options.updateFunc
 	 */
 	addHook(options) {
 		if (typeof options?.updateFunc != "function") options.updateFunc = new Function;

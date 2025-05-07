@@ -305,8 +305,8 @@ export class Engine {
 			}
 			return point2;
 		},
-		updateFunc: (e) => {
-			if (e.click_l && (this.canvas.matches(":active") || this.canvas.matches(":hover")) ) {
+		updateFunc: (e, mouse) => {
+			if (mouse.click_l && (this.canvas.matches(":active") || this.canvas.matches(":hover")) ) {
 				e.stopPropagation();
 				e.preventDefault();
 			};
