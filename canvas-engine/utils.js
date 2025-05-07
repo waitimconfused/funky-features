@@ -279,7 +279,7 @@ export class Engine {
 			if (typeof x == "number" && typeof y == "number") {
 				mouseRelative = {x, y};
 			} else {
-				mouseRelative = mouse.position.relative(this.canvas);
+				mouseRelative = mouse.toElement(this.canvas);
 			}
 			let point2 = new Point2;
 			point2.x = (mouseRelative.x - this.canvas.width/2) / this.camera.zoom + this.camera.position.x;
@@ -293,7 +293,7 @@ export class Engine {
 		 * @returns {Point2}
 		 */
 		toObject: (object, x, y) => {
-			let mousePos = mouse.position.relative(this.canvas);
+			let mousePos = mouse.toElement(this.canvas);
 			if (typeof x == "number" && typeof y == "number") mousePos = { x, y };
 			let point2 = new Point2;
 			if (object.fixedPosition) {
