@@ -53,6 +53,8 @@ export const mouse = new class TBMouse {
 	#pointerType = "mouse";
 	get pointerType() { return this.#pointerType; }
 
+	/** @type {MouseHook[]} */
+	#hooks = [];
 
 	constructor() {
 		window.addEventListener("pointermove", (e) => {
@@ -71,6 +73,40 @@ export const mouse = new class TBMouse {
 		window.addEventListener("contextmenu", (e) => {
 			if (this.preventContextMenu == true) e.preventDefault();
 		});
+	}
+
+	/**
+	 * 
+	 * @param { object } options 
+	 * @param { (e: MouseEvent, mouse: Mouse) => {} } options.updateFunc
+	 */
+	addHook(options) {
+		if (typeof options?.updateFunc != "function") options.updateFunc = new Function;
+		let hook = new MouseHook({
+			x: this.position.x,
+			y: this.position.y,
+			click_l: this.click_l,
+			click_r: this.click_r,
+			...options
+		});
+		this.#hooks.push(hook);
+		return hook;
+	}
+	/**
+	 * @param {MouseEvent} e
+	 */
+	#updateHooks(e) {
+		for (let i = 0; i < this.#hooks.length; i++) {
+			/**
+			 * @type { MouseHook }
+			 */
+			let hook = this.#hooks[i];
+			hook.x = this.position.x;
+			hook.y = this.position.y;
+			hook.click_l = this.click_l;
+			hook.click_r = this.click_r;
+			hook.updateFunc(e, this);
+		}
 	}
 
 	/** @param {PointerEvent} e */
@@ -110,9 +146,6 @@ export const mouse = new class TBMouse {
 			this.#pen.tiltX = e.tiltX;
 			this.#pen.tiltY = e.tiltY;
 		}
-
-
-
 		
 		if (trigger_onMove) this.#triggerEvents("on", "move", e);
 		if (trigger_onLClick) this.#triggerEvents("on", "lclick", e);
@@ -124,6 +157,8 @@ export const mouse = new class TBMouse {
 		if (trigger_offRClick) this.#triggerEvents("off", "rclick", e);
 		if (trigger_offWClick) this.#triggerEvents("off", "wclick", e);
 		if (trigger_offLClick || trigger_offRClick || trigger_offWClick) this.#triggerEvents("off", "click", e);
+
+		this.#updateHooks();
 	}
 
 	/**
@@ -235,4 +270,22 @@ export const mouse = new class TBMouse {
 		return { x, y };
 	}
 
+}
+
+class MouseHook {
+	x = 0;
+	y = 0;
+	click_l = false;
+	click_r = false;
+
+	/**
+	 * @param { object} options
+	 * @param { function } options.
+	 */
+	constructor(options) {
+		for (let key in options) {
+			if (["x", "y"].includes(key)) continue;
+			this[key] = options[key];
+		}
+	}
 }
