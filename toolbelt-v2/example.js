@@ -1,4 +1,4 @@
-import { keyboard, mouse, Database } from "./index.js";
+import { mouse } from "./index.js";
 
 mouse.preventContextMenu = true;
 mouse.preventScroll = true;

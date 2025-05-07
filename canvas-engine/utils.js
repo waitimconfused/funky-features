@@ -1,9 +1,4 @@
-import { ceilToNearest, image, mouse, Range, Vector } from "../toolbelt/toolbelt.js";
-import { Point2, Point3, Point4 } from "../toolbelt/lib/points.js";
-import { getValue, unitConverter } from "../toolbelt/lib/units.js";
-export { Point2, Point3, Point4 };
-
-var engines = {};
+import { Point2, Point4, unitConverter, image, mouse, range } from "../toolbelt-v2/index.js";
 
 function isValidUrl(urlString) {
 	try { 
@@ -200,7 +195,7 @@ class Camera {
 				if (this.canZoom == false) return;
 
 				this.zoom -= e.deltaY * this.wheelZoomMultiplier * this.zoom/2;
-				this.zoom = Range.clamp(this.minZoom, this.zoom, this.maxZoom);
+				this.zoom = range.clamp(this.minZoom, this.zoom, this.maxZoom);
 			} else {
 				e.preventDefault();
 				if (this.canPan == false) return;
@@ -224,7 +219,7 @@ class Camera {
 				if (this.ctrl0.resetZoom) this.zoom = this.defaultZoom;
 				if (this.ctrl0.resetPos) this.moveTo(0, 0);
 			}
-			this.zoom = Range.clamp(this.minZoom, this.zoom, this.maxZoom);
+			this.zoom = range.clamp(this.minZoom, this.zoom, this.maxZoom);
 		}
 	
 	}

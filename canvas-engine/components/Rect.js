@@ -1,6 +1,5 @@
-import { getValue } from "../../toolbelt/lib/units.js";
-import { Range, lerp, mouse } from "../../toolbelt/toolbelt.js";
-import { Component, Point2, Point4 } from "../utils.js";
+import { getValue, range, Point2, Point4 } from "../../toolbelt-v2/index.js";
+import { Component } from "../utils.js";
 
 /**
  * 
@@ -81,7 +80,7 @@ class AnimationLib {
 		let startTime = this.#frameStartTime;
 		let endTime = this.#frameEndTime;
 		let t = (time-startTime) / (endTime - startTime);
-		t = Range.clamp(0, t, 1);
+		t = range.clamp(0, t, 1);
 		let interpolationValue = this.#easingFunction(t);
 
 		let thisFrame = this.#keyframes[this.#frame];
@@ -100,11 +99,11 @@ class AnimationLib {
 		if (this.looping && this.#frame+1 >= this.#keyframes.length) nextFrame = this.#keyframes[0];
 
 		let interpolatedValues = new AnimationKeyframe;
-		interpolatedValues.display.x = lerp(thisFrame.display.x, nextFrame.display.x, interpolationValue);
-		interpolatedValues.display.y = lerp(thisFrame.display.y, nextFrame.display.y, interpolationValue);
-		interpolatedValues.display.w = lerp(thisFrame.display.w, nextFrame.display.w, interpolationValue);
-		interpolatedValues.display.h = lerp(thisFrame.display.w, nextFrame.display.w, interpolationValue);
-		interpolatedValues.rotation = lerp(thisFrame.rotation, nextFrame.rotation, interpolationValue);
+		interpolatedValues.display.x = range.lerp(thisFrame.display.x, nextFrame.display.x, interpolationValue);
+		interpolatedValues.display.y = range.lerp(thisFrame.display.y, nextFrame.display.y, interpolationValue);
+		interpolatedValues.display.w = range.lerp(thisFrame.display.w, nextFrame.display.w, interpolationValue);
+		interpolatedValues.display.h = range.lerp(thisFrame.display.w, nextFrame.display.w, interpolationValue);
+		interpolatedValues.rotation = range.lerp(thisFrame.rotation, nextFrame.rotation, interpolationValue);
 
 		this.#lastValues = interpolatedValues;
 		return interpolatedValues;
@@ -251,12 +250,12 @@ export class Rect extends Component {
 			if (typeof x == "object" && x.x && x.y) { y = x.y; x = x.x; }
 			let myPosX = this.display.x - this.display.w * this.transform.x;
 			let myPosY = this.display.y - this.display.h * this.transform.y;
-			return Range.fits(
+			return range.fits(
 				myPosX,
 				x,
 				myPosX + this.display.w
 			) &&
-			Range.fits(
+			range.fits(
 				myPosY,
 				y,
 				myPosY + this.display.h
@@ -287,8 +286,8 @@ export class Rect extends Component {
 		// 	this.rotation = currentFrame.rotation;
 		// }
 
-		this.transform.x = Range.clamp(0, this.transform.x, 1);
-		this.transform.y = Range.clamp(0, this.transform.y, 1);
+		this.transform.x = range.clamp(0, this.transform.x, 1);
+		this.transform.y = range.clamp(0, this.transform.y, 1);
 
 		let destinationW = getValue( this.display.w, this.engine );
 		let destinationH = getValue( this.display.h, this.engine );
@@ -324,7 +323,7 @@ export class Rect extends Component {
 		context.fillStyle = this.colour || "#FF00FF";
 
 		let mousePos = this.engine.mouse.toObject(this);
-		if (Range.fits(0, mousePos.x, this.display.w) && this.engine.mouse.hoverable) {
+		if (range.fits(0, mousePos.x, this.display.w) && this.engine.mouse.hoverable) {
 			// context.fillStyle = "red";
 			this.engine.mouse.hoverable = false;
 		}

@@ -1,32 +1,8 @@
-import { getValue } from "../../toolbelt/lib/units.js";
-import { Range } from "../../toolbelt/toolbelt.js";
+import { getValue, Point2, range } from "../../toolbelt-v2/index.js";
 import * as components from "../components.js";
-import { ComponentGroup, Engine, Point2 } from "../utils.js";
+import { ComponentGroup, Engine } from "../utils.js";
 
 const engine = new Engine;
-
-// let kinds = Object.keys(components);
-
-// for (let i = 0; i < kinds.length; i ++) {
-// 	let kind = kinds[i];
-// 	let object = new components[kind];
-// 	engine.addObject(object);
-
-// 	object.moveTo(i * 100, 0);
-
-// 	if (object?.radius) {
-// 		object.radius = 50;
-// 	} else {
-// 		object.setSize(100, 100);
-// 	}
-
-// 	let label = new components.Text;
-// 	engine.addObject(label);
-// 	label.moveTo(i * 100, 100);
-// 	label.content = `Type: "${kind}"`;
-// 	label.fontSize = 16
-// 	label.rotation = 45;
-// }
 
 class Window extends ComponentGroup {
 
@@ -59,8 +35,8 @@ class Window extends ComponentGroup {
 
 		if (!this.visibility) return this;
 
-		this.transform.x = Range.clamp(0, this.transform.x, 1);
-		this.transform.y = Range.clamp(0, this.transform.y, 1);
+		this.transform.x = range.clamp(0, this.transform.x, 1);
+		this.transform.y = range.clamp(0, this.transform.y, 1);
 
 		let destinationW = getValue(this.display.w, this.engine);
 		let destinationH = getValue(this.display.h, this.engine);

@@ -9,24 +9,33 @@ import { keyboard } from "./lib/Keyboard.js";
 import { mouse } from "./lib/Mouse.js";
 
 import { CustomMenu } from "./lib/CustomMenu.js";
+import { CustomUnitConverter, getValue, unitConverter } from "./lib/Units.js";
+
+import { image } from "./lib/Image.js";
+import { Point2, Point3, Point4 } from "./lib/points.js";
 
 window.toolbelt = {
 	keyboard, mouse,
 	DefaultController, XboxController,
 	Database: TBDatabase,
 	Colour, Color: Colour,
+	CustomUnitConverter, getValue, unitConverter,
 	range, round, Vector,
 	files,
-	CustomMenu
-}
+	CustomMenu,
+	image,
+	Point2, Point3, Point4,
+};
 
 export {
 	keyboard, mouse,
 	DefaultController, XboxController,
 	TBDatabase as Database,
 	Colour, Colour as Color,
-	range, round,
-	Vector,
+	CustomUnitConverter, getValue, unitConverter,
+	range, round, Vector,
 	files,
-	CustomMenu
+	CustomMenu,
+	image,
+	Point2, Point3, Point4
 };

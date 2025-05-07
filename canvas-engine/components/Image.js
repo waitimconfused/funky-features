@@ -1,8 +1,8 @@
-import { draw as drawImage } from "../../toolbelt/lib/image.js";
-import { Range } from "../../toolbelt/toolbelt.js";
-import { Component, Point2, Point4 } from "../utils.js";
+import { range, Point2, Point4, image } from "../../toolbelt-v2/index.js";
+import { Component } from "../utils.js";
 import { AnimationCluster } from "../animations.js";
 import { SuperGif } from "../../libgif.js";
+
 
 export class Image extends Component {
 	#cameraTracking = false;
@@ -139,8 +139,8 @@ export class Image extends Component {
 
 		if (!this.visibility) return this;
 
-		this.transform.x = Range.clamp(0, this.transform.x, 1);
-		this.transform.y = Range.clamp(0, this.transform.y, 1);
+		this.transform.x = range.clamp(0, this.transform.x, 1);
+		this.transform.y = range.clamp(0, this.transform.y, 1);
 
 		let destinationW = this.display.w;
 		let destinationH = this.display.h;
@@ -206,14 +206,14 @@ export class Image extends Component {
 				w: currentFrame.width,
 				h: currentFrame.height
 			}
-			drawImage(
+			image.drawImage(
 				currentFrame.source,
 				destinationObj,
 				cropObj,
 				filters, this.engine.canvas
 			);
 		} else {
-			drawImage(
+			image.drawImage(
 				this.source,
 				destinationObj,
 				this.crop,

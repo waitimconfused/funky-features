@@ -1,5 +1,4 @@
-import { getValue } from "../../toolbelt/lib/units.js";
-import { parseColour, Range } from "../../toolbelt/toolbelt.js";
+import { Colour, range, getValue } from "../../toolbelt-v2/index.js";
 import { Component, Point2 } from "../utils.js";
 
 export class Canvas extends Component {
@@ -54,8 +53,8 @@ export class Canvas extends Component {
 		
 		if (!this.visibility) return this;
 
-		this.transform.x = Range.clamp(0, this.transform.x, 1);
-		this.transform.y = Range.clamp(0, this.transform.y, 1);
+		this.transform.x = range.clamp(0, this.transform.x, 1);
+		this.transform.y = range.clamp(0, this.transform.y, 1);
 
 		let destinationW = getValue(this.documentElement.width);
 		let destinationH = getValue(this.documentElement.height);
@@ -84,12 +83,12 @@ export class Canvas extends Component {
 			context.translate(-this.engine.camera.position.x, -this.engine.camera.position.y);
 		}
 
-		context.fillStyle = parseColour(this.colour);
-		context.strokeStyle = parseColour(this.outline.colour);
+		context.fillStyle = Colour.parseColour(this.colour);
+		context.strokeStyle = Colour.parseColour(this.outline.colour);
 		let lineWidth = getValue(this.outline.size);
 		context.lineWidth = lineWidth;
 
-		context.shadowColor = parseColour(this.shadow.colour);
+		context.shadowColor = Colour.parseColour(this.shadow.colour);
 		context.shadowOffsetX = getValue(this.shadow.offset.x);
 		context.shadowOffsetY = getValue(this.shadow.offset.y);
 		context.shadowBlur = getValue(this.shadow.blur);

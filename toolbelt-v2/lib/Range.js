@@ -64,6 +64,16 @@ export const range = new class TBRange {
 		let offset = (max+min)/2;
 		return scale * Math.cos(number) + offset;
 	}
+
+	/**
+	 * Linear interpolation between `min` and `max`
+	 * @param {number} min 
+	 * @param {number} max 
+	 * @param {number} percentage Percentage in the form of 0-1, but all values are accepted
+	 */
+	lerp(min, max, percentage) {
+		return min + (max - min) * percentage;
+	}
 }
 
 export const round = new class TBRound {

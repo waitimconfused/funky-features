@@ -1,6 +1,5 @@
-import { getValue } from "../../toolbelt/lib/units.js";
-import { parseColour } from "../../toolbelt/toolbelt.js";
-import { Component, Point2 } from "../utils.js";
+import { getValue, Colour, Point2 } from "../../toolbelt-v2/index.js";
+import { Component } from "../utils.js";
 
 export class Text extends Component {
 	content = "Text Object";
@@ -122,8 +121,8 @@ export class Text extends Component {
 		context.rotate(this.rotation * Math.PI / 180);
 
 
-		context.fillStyle = parseColour(this.colour);
-		context.strokeStyle = parseColour(this.outline.colour);
+		context.fillStyle = Colour.parseColour(this.colour);
+		context.strokeStyle = Colour.parseColour(this.outline.colour);
 		context.lineWidth = getValue(this.outline.size);
 		context.lineCap = this.outline.lineCap || "round";
 		context.lineJoin = this.outline.lineJoin || "round";

@@ -1,6 +1,5 @@
-import { getValue } from "../../toolbelt/lib/units.js";
-import { parseColour, Range } from "../../toolbelt/toolbelt.js";
-import { Component, Point2, Point4 } from "../utils.js";
+import { Colour, getValue, range, Point2, Point4 } from "../../toolbelt-v2/index.js";
+import { Component } from "../utils.js";
 
 export class Path extends Component {
 	#cameraTracking = false;
@@ -125,13 +124,13 @@ export class Path extends Component {
 	 */
 	render(context, defaultOffset){
 
-		let colour = parseColour(this.colour);
-		let outlineColour = parseColour(this.outline.colour);
+		let colour = Colour.parseColour(this.colour);
+		let outlineColour = Colour.parseColour(this.outline.colour);
 		
 		if (!this.visibility) return this;
 
-		this.transform.x = Range.clamp(0, this.transform.x, 1);
-		this.transform.y = Range.clamp(0, this.transform.y, 1);
+		this.transform.x = range.clamp(0, this.transform.x, 1);
+		this.transform.y = range.clamp(0, this.transform.y, 1);
 
 		let destinationW = getValue(this.display.w);
 		let destinationH = getValue(this.display.h);
@@ -162,8 +161,8 @@ export class Path extends Component {
 
 		context.beginPath();
 
-		context.fillStyle = parseColour(colour);
-		context.strokeStyle = parseColour(outlineColour);
+		context.fillStyle = Colour.parseColour(colour);
+		context.strokeStyle = Colour.parseColour(outlineColour);
 		context.lineWidth = getValue(this.outline.size);
 		context.lineCap = this.outline.lineCap || "round";
 		context.lineJoin = this.outline.lineJoin || "round";

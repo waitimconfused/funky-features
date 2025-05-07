@@ -159,4 +159,24 @@ export class Colour {
 		this.setRgb(r, g, b);
 	}
 
+	/**
+	 * @param {string|null|undefined} colour 
+	 * @returns {string}
+	 */
+	static parseColour(colour) {
+		let output = colour;
+		if (["", "none", null, undefined].includes(output)) {
+			output = "transparent";
+		}
+		if (/^var\(.*\)$/gm.test(output)) {
+			let cssVar = output.replace(/^var\(|\)$/g, "")
+			output = window.getComputedStyle(document.documentElement).getPropertyValue(cssVar);
+		}
+		if (/^color-mix\(.*\)$/gm.test(output)) {
+			let parameters = output.replace(/^color-mix\(|\)$/g, "").replace(/\s*,\s/g, ",").split(",");
+		}
+
+		return output;
+	}
+
 }
