@@ -24,7 +24,7 @@ export class Path extends Component {
 	 * lineJoin: "miter" | "round" | "bevel" | "miter-clip" | "arcs",
 	 * }}
 	 */
-	outline = { colour: "black", size: 0, lineCap: "round", lineJoin: "round" };
+	outline = { colour: "black", size: "5 / 100cz", lineCap: "round", lineJoin: "round" };
 	cameraTracking = false;
 	/** @type { number } In Degrees */
 	rotation = 0;
