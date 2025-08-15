@@ -1,4 +1,4 @@
-export class CustomUnitConverter {
+class TBUnitConverter {
 	/**
 	 * @type {{unit: string, callback: (value: number) => number}[]}
 	 */
@@ -43,7 +43,9 @@ export class CustomUnitConverter {
 	}
 }
 
-export const unitConverter = new CustomUnitConverter;
+export default new TBUnitConverter;
+
+export const unitConverter = new TBUnitConverter;
 
 export const getValue = function(value, ...params) {
 	return unitConverter.getValue(value, ...params)

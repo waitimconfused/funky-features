@@ -1,7 +1,12 @@
-import { engine } from "../utils.js";
+import { Engine } from "../utils.js";
 import { Text, Rect } from "../components.js";
 
+const engine = new Engine;
+
+engine.fullscreen = true;
 engine.camera.maxZoom = Infinity;
+engine.camera.canZoom = true;
+engine.camera.canPan = true;
 
 engine.loadAsset("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
 engine.loadAsset("https://fonts.gstatic.com/s/jetbrainsmono/v20/tDbX2o-flEEny0FZhsfKu5WU4xD-Cw6nSHrV.woff2");

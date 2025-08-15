@@ -1,4 +1,7 @@
-import { Point2, Point4, unitConverter, image, mouse, range } from "../toolbelt-v2/index.js";
+import { Point2, Point4 } from "../toolbelt-v2/lib/Points.js";
+import { range } from "../toolbelt-v2/lib/Range.js";
+import units from "../toolbelt-v2/lib/Units.js";
+import mouse from "../toolbelt-v2/lib/Mouse.js";
 
 function isValidUrl(urlString) {
 	try { 
@@ -11,24 +14,47 @@ function isValidUrl(urlString) {
 class Camera {
 	position = new Point2(0, 0);
 
+	/** Reference to: `Camera.position` */
 	get pos() { return this.position; }
 
+	/** Reference to: `Camera.position.x` */
 	get x() { return this.position.x; }
+
+	/** Reference to: `Camera.position.y` */
 	get y() { return this.position.y; }
 
+	/** Defines how zoomed in the camera is (usefull for pixel-art) */
 	zoom = 1;
+
+	/** Specifies what the `Camera.zoom` value should be reset to when using `Camera.reset()`, as well as `CTRL` + `0` *(optional, see `Camera.ctrl0`)* */
 	defaultZoom = 1;
 
+	/** Specifies the minimum value of `Camera.zoom`, as `Camera.zoom == 0` results in nothing being rendered */
 	minZoom = 0.1;
+
+	/** Specifies the maximum value of `Camera.zoom`. Usefull for when users can zoom manually (see: `Camera.canZoom`) */
 	maxZoom = 999;
 
+	/** Determines how fast/slow the zoom changes when the user scrolls (Disable user zooming with `Camera.canZoom`) */
 	wheelZoomMultiplier = 0.01;
-	keyZoomMultiplier = 0.1;
 
+	/** Determines how fast/slow the zoom changes when the user uses `CTRL` + `+`/`-` (Disable user zooming with `Camera.canZoom`) */
+	keyZoomMultiplier = 0.1;
+	
+	/** Determines if the user can manually zoom in and out by scrollng and/or using `CTRL` + `+`/`-`. */
+	canZoom = false;
+
+	/** Determines if the user can manually move the camera by scrollng left, right, up, or down. */
+	canPan = false;
+
+	/** Specifiy which camera properties are reset when the user presses `CTRL` + `0`. */
 	ctrl0 = {
+		/** Determines whether or not `CTRL` + `0` resets the cameras zoom level back to `Camera.defaultZoom`. */
 		resetZoom: true,
+		/** Determines whether or not `CTRL` + `0` resets the cameras position back to `x:0` and `y:0`. */
 		resetPos: false
 	};
+	
 
 	/** @type {Engine} */
 	#engine;
@@ -41,7 +67,7 @@ class Camera {
 		window.addEventListener("gestureend", this.#preventDefaultEvent, {passive: false});
 		window.addEventListener("wheel", this.#customZoomEvent, {passive: false});
 		window.addEventListener("keydown", this.#customZoomEvent);
-
+		
 		this.trackingTimingFunction.linear();
 
 		this.#engine = engine;
@@ -179,8 +205,6 @@ class Camera {
 		this.trackingObject = null;
 	}
 
-	canZoom = false;
-	canPan = false;
 
 	/**
 	 * 
@@ -317,8 +341,7 @@ export class Engine {
 	canvas = document.createElement("canvas");
 
 	/** @type {Object<string, Component>} */
-	components = {
-	};
+	components = {};
 	/** @type {string[]} */
 	renderingHashes = [];
 	isPixelArt = false;
@@ -345,17 +368,29 @@ export class Engine {
 	#assetsLoaded = 0;
 	#fullscreen = false;
 
-	setSize(width=this.canvas.width, height=this.canvas.height) {
-		this.canvas.width = width;
-		this.canvas.height = height;
+	/**
+	 * Set the size of the canvas element
+	 * @param {number} width 
+	 * @param {number} height 
+	 */
+	setSize(width, height) {
+		this.canvas.width = width ?? this.canvas.width;
+		this.canvas.height = height ?? this.canvas.height;
 		this.canvas.style.width = `${width}px`;
 		this.canvas.style.height = `${height}px`;
 	}
 
+	/**
+	 * Specifies if the canvas is fullscreen (ontop of html content, fit to window size)
+	 * @returns {boolean}
+	 */
 	get fullscreen () {
 		return this.#fullscreen;
 	}
-	/** @param {boolean} value */
+	/**
+	 * Specifies if the canvas is fullscreen (ontop of html content, fit to window size)
+	 * @param {boolean} value
+	 * */
 	set fullscreen (value) {
 		let prevValue = this.#fullscreen;
 		this.#fullscreen = value;
@@ -368,6 +403,7 @@ export class Engine {
 	}
 
 	/**
+	 * Load an asset (like an image, css, or a font) directly from a URL.
 	 * @param { string } source
 	 * @param {{
 	 * 	fontFamilyName?: string
@@ -422,51 +458,83 @@ export class Engine {
 		})
 	}
 	/**
-	 * Disable all console messages when calling `engine.loadAsset()`
+	 * Disable all console messages when calling `Engine.loadAsset()`
 	 * 
-	 * !WARNING! Suppresses all asset loading errors
+	 * ***!WARNING!*** Suppresses all asset loading errors
 	 */
 	disableLoadAssetLogs() {
 		this.#show_loadAsset_logs = false;
 	}
 	
 	/**
-	 * Enable all console messages when calling `engine.loadAsset()`
+	 * Enable all console messages when calling `Engine.loadAsset()`
 	 */
 	enableLoadAssetLogs() {
 		this.#show_loadAsset_logs = false;
 	}
 
+	/** Will be ran *before* all the components are rendered */
 	preRenderingScript = () => {};
+
+	/** Will be ran *after* all the components are rendered */
 	postRenderingScript = () => {};
 
 	/**
-	 * @param { ""|"auto"|"default"|"none"|"context-menu"|"help"|"pointer"|"progress"|"wait"|"cell"|"crosshair"|"text"|"vertical-text"|"alias"|"copy"|"move"|"no-drop"|"not-allowed"|"grab"|"grabbing"|"all-scroll"|"col-resize"|"row-resize"|"n-resize"|"e-resize"|"s-resize"|"w-resize"|"ne-resize"|"nw-resize"|"se-resize"|"sw-resize"|"ew-resize"|"ns-resize"|"nesw-resize"|"nwse-resize"| "zoom-in"|"zoom-out" } cursor
+	 * Specifies what style cursor will be used when hovering over the canvas
+	 * @param {""|"auto"|"default"|"none"|"context-menu"|"help"|"pointer"|"progress"|"wait"|"cell"|"crosshair"|"text"|"vertical-text"|"alias"|"copy"|"move"|"no-drop"|"not-allowed"|"grab"|"grabbing"|"all-scroll"|"col-resize"|"row-resize"|"n-resize"|"e-resize"|"s-resize"|"w-resize"|"ne-resize"|"nw-resize"|"se-resize"|"sw-resize"|"ew-resize"|"ns-resize"|"nesw-resize"|"nwse-resize"| "zoom-in"|"zoom-out"} cursor
 	 */
 	set cursor(cursor) {
 		this.canvas.style.cursor = cursor ?? "auto";
 	}
+	/**
+	 * Specifies what style cursor will be used when hovering over the canvas
+	 * @returns {""|"auto"|"default"|"none"|"context-menu"|"help"|"pointer"|"progress"|"wait"|"cell"|"crosshair"|"text"|"vertical-text"|"alias"|"copy"|"move"|"no-drop"|"not-allowed"|"grab"|"grabbing"|"all-scroll"|"col-resize"|"row-resize"|"n-resize"|"e-resize"|"s-resize"|"w-resize"|"ne-resize"|"nw-resize"|"se-resize"|"sw-resize"|"ew-resize"|"ns-resize"|"nesw-resize"|"nwse-resize"| "zoom-in"|"zoom-out"}
+	 */
 	get cursor() {
 		return this.canvas.style.cursor;
 	}
 
-	/** @param {number} size */
+	/**
+	 * Specifies the width of the canvas
+	 * @param {number} size
+	 */
 	set width(size) {
 		this.setSize(size, this.canvas.height);
 	}
+	/**
+	 * Specifies the width of the canvas
+	 * @returns {boolean}
+	 */
 	get width() {
 		return this.canvas.width;
 	}
-	/** @param {number} size */
+
+	/**
+	 * Specifies the height of the canvas
+	 * @param {number} size
+	 */
 	set height(size) {
 		this.setSize(this.canvas.width, size);
 	}
+	/**
+	 * Specifies the height of the canvas
+	 * @returns {number}
+	 */
 	get height() {
 		return this.canvas.height;
 	}
+
+	/**
+	 * Get the width of the viewport (AKA: `Engine.width / Engine.camera.zoom`)
+	 * @readonly
+	 */
 	get veiwportWidth() {
 		return this.canvas.width / this.camera.zoom;
 	}
+	/**
+	 * Get the height of the viewport (AKA: `Engine.height / Engine.camera.zoom`)
+	 * @readonly
+	 */
 	get veiwportHeight() {
 		return this.canvas.height / this.camera.zoom;
 	}
@@ -505,7 +573,7 @@ export class Engine {
 		this.stats.fps = Math.round(1000 / this.stats.delta);
 	}
 
-	/** @param {HTMLCanvasElement} canvas */
+	/** @param {?HTMLCanvasElement} canvas */
 	constructor(canvas) {
 		if (canvas) {
 			this.canvas = canvas;
@@ -528,6 +596,7 @@ export class Engine {
 	}
 
 	/**
+	 * Change where the engine renders the output, to a new/different canvas
 	 * @param {HTMLCanvasElement} canvas
 	 */
 	setCanvas(canvas) {
@@ -537,7 +606,7 @@ export class Engine {
 	}
 
 	/**
-	 * 
+	 * Add an component to the rendering and script execution order at the highest index
 	 * @param { ...Component } components
 	 */
 	addObject(...components) {
@@ -563,7 +632,9 @@ export class Engine {
 		return this;
 	}
 	/**
+	 * Returns if the render/script execution includes the specified component
 	 * @param { Component } component
+	 * @returns {boolean}
 	 */
 	hasObject(component) {
 		if(component instanceof Component == false) throw new Error("Cannot find object in engine if object is not of type: Component");
@@ -571,7 +642,7 @@ export class Engine {
 		return indexOfComponent > -1;
 	}
 	/**
-	 * 
+	 * Retrieves a Component by its `Component.hash` value
 	 * @param {string|number} hash
 	 * @returns {Component}
 	 */
@@ -581,6 +652,7 @@ export class Engine {
 		return this.components[hash];
 	}
 	/**
+	 * Removes the object from the rendering/script execution, as well as from `Engine.components`
 	 * @param { Component } component
 	 */
 	removeObject(component) {
@@ -601,29 +673,18 @@ export class Engine {
 		} else {
 			this.canvas.style.backgroundColor = background;
 		}
+
 	}
 	get background() {
 		return this.canvas.style.backgroundImage || this.canvas.style.backgroundColor || this.canvas.style.background;
-	}
-	/**
-	 * @param { string } href
-	 */
-	setFavicon(href="") {
-		let favicon = document.querySelector("link[rel=icon]");
-		if (!favicon) {
-			favicon = document.createElement("link");
-			favicon.setAttribute("rel", "icon");
-			document.head.appendChild(favicon);
-		}
-		favicon.href = href;
 	}
 
 	#tick() {
 
 		this.mouse.hoverable = true;
+		this.#updateStats();
 
 		this.preRenderingScript();
-		this.#updateStats();
 
 		let context = this.canvas.getContext("2d");
 		if (this.#previousData.isPixelArt != this.isPixelArt) {
@@ -1069,26 +1130,26 @@ function generateUUID() { // Public Domain/MIT
     });
 }
 
-unitConverter.defineUnit("vw", (number, engine) => {
+units.defineUnit("vw", (number, engine) => {
 	return number / 100 * engine.veiwportWidth;
 });
-unitConverter.defineUnit("w", (number, engine) => {
+units.defineUnit("w", (number, engine) => {
 	return number / 100 * engine.width;
 });
 
-unitConverter.defineUnit("vh", (number, engine) => {
+units.defineUnit("vh", (number, engine) => {
 	return number / 100 * engine.veiwportHeight;
 });
-unitConverter.defineUnit("h", (number, engine) => {
+units.defineUnit("h", (number, engine) => {
 	return number / 100 * engine.height;
 });
 
-unitConverter.defineUnit("cx", (number, engine) => {
+units.defineUnit("cx", (number, engine) => {
 	return number / 100 * engine.camera.position.x;
 });
-unitConverter.defineUnit("cy", (number, engine) => {
+units.defineUnit("cy", (number, engine) => {
 	return number / 100 * engine.camera.position.y;
 });
-unitConverter.defineUnit("cz", (number, engine) => {
+units.defineUnit("cz", (number, engine) => {
 	return number / 100 * engine.camera.zoom;
 });

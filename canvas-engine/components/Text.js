@@ -1,4 +1,6 @@
-import { getValue, Colour, Point2 } from "../../toolbelt-v2/index.js";
+import Colour from "../../toolbelt-v2/lib/Colour.js";
+import { Point2 } from "../../toolbelt-v2/lib/Points.js";
+import units from "../../toolbelt-v2/lib/Units.js";
 import { Component } from "../utils.js";
 
 export class Text extends Component {
@@ -88,7 +90,7 @@ export class Text extends Component {
 
 		if (!this.visibility) return this;
 
-		let fontSize = getValue(this.fontSize);
+		let fontSize = units.getValue(this.fontSize);
 		if (typeof this.letterSpacing == "number") this.letterSpacing += "px";
 
 		context.font = `${this.styling} ${fontSize}px "${this.fontFamily}", Arial`;
@@ -126,7 +128,7 @@ export class Text extends Component {
 
 		context.fillStyle = Colour.parseColour(this.colour);
 		context.strokeStyle = Colour.parseColour(this.outline.colour);
-		context.lineWidth = getValue(this.outline.size);
+		context.lineWidth = units.getValue(this.outline.size);
 		context.lineCap = this.outline.lineCap || "round";
 		context.lineJoin = this.outline.lineJoin || "round";
 

@@ -1,4 +1,7 @@
-import { Colour, getValue, range, Point2 } from "../../toolbelt-v2/index.js";
+import { Point2 } from "../../toolbelt-v2/lib/Points.js";
+import Colour from "../../toolbelt-v2/lib/Colour.js";
+import { range } from "../../toolbelt-v2/lib/Range.js";
+import units from "../../toolbelt-v2/lib/Units.js";
 import { Component } from "../utils.js";
 
 const degToRad = Math.PI / 180;
@@ -56,11 +59,11 @@ export class Circle extends Component {
 		let colour = Colour.parseColour(this.colour);
 		let outlineColour = Colour.parseColour(this.outline.colour);
 
-		let destinationX = getValue( this.display.x, this.engine );
-		let destinationY = getValue( this.display.y, this.engine );
-		let radius = getValue( this.radius, this.engine );
-		let innerRadius = getValue(this.innerRadius, this.engine) ?? radius/2;
-		let outlineSize = getValue(this.outline.size, this.engine);
+		let destinationX = units.getValue( this.display.x, this.engine );
+		let destinationY = units.getValue( this.display.y, this.engine );
+		let radius = units.getValue( this.radius, this.engine );
+		let innerRadius = units.getValue(this.innerRadius, this.engine) ?? radius/2;
+		let outlineSize = units.getValue(this.outline.size, this.engine);
 		destinationX += defaultOffset?.x ?? 0;
 		destinationY += defaultOffset?.y ?? 0;
 

@@ -3,7 +3,6 @@ var customMenuExistsInDOM = false;
 /** @type {?CSSStyleSheet} */
 var importedCSS;
 
-
 var shouldImportCSS = true;
 
 /**
@@ -25,6 +24,16 @@ var shouldImportCSS = true;
  * ### `kind="dropdown"` Just a dropdown menu
  * 
  * The elements nested inside are still `<option value="___">...</option>`
+ * 
+ * ### CSS Customization (`--cm-*`)
+ * 
+ * All CSS styles that can be customized (when active: `CustomMenu.importCSS = true`) are under the variable `--cm-*`:
+ * - `--cm-background`: The background for all the custom menus
+ * - `--cm-color`: Text colour
+ * - `--cm-accent`: The accent colour for all custom input-like elements
+ * - `--cm-box-shadow`: The box-shadow that is used throughout the custom-menus
+ * - `--cm-box-shadow-floating`: Same as `--cm-box-shadow` but with a blurred shadow aswell
+ * - `--cm-border-shadow`: The equivelent of `--cm-box-shadow` but a variation for the CSS `border` rule
  */
 export class CustomMenu extends HTMLElement {
 
@@ -34,31 +43,24 @@ export class CustomMenu extends HTMLElement {
 		console.groupEnd();
 	}
 
-	static set importCSS(boolean) {
-		if (typeof boolean != "boolean") throw new TypeError("CustomMenu.useDefaultCSS must be of type boolean.");
-		if (boolean == true && customMenuExistsInDOM && importedCSS) {
-			document.adoptedStyleSheets.push(importedCSS)
-			importedCSS.disabled = false;
-		} else if (boolean == true && customMenuExistsInDOM && importedCSS == null) {
-			let path = new URL("./custom-menu.css", import.meta.url);
-			this.hidden = true;
-			fetch(path)
-			.then(response => response.text())
-			.then((css) => {
-				if (shouldImportCSS == false) return;
-				importedCSS = new CSSStyleSheet;
-				importedCSS.replaceSync(css);
-				document.adoptedStyleSheets.push(importedCSS);
-			});
-		} else if (boolean == false && importedCSS) {
-			document.adoptedStyleSheets.splice( document.adoptedStyleSheets.indexOf(importedCSS) );
-			importedCSS.disabled = true;
-			importedCSS = null;
+	/** @param {"light"|"dark"} theme If the theme is not `"light" | "dark"`, the theme will be set the CSS `@media (preferes-color-sheme)`*/
+	static set theme(theme) {
+		if (theme != "light" && theme != "dark") {
+			theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			if (theme) theme = "dark";
+			else theme = "light";
 		}
-		shouldImportCSS = boolean;
+		document.documentElement.setAttribute("custom-menu-theme", theme);
 	}
-	static get importCSS() {
-		return shouldImportCSS;
+	static get theme() {
+		let theme = document.documentElement.getAttribute("custom-menu-theme");
+		if (theme != "light" && theme != "dark") {
+			theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			if (theme) theme = "dark";
+			else theme = "light";
+			document.documentElement.setAttribute("custom-menu-theme", theme);
+		}
+		return theme;
 	}
 
 	constructor() {
@@ -66,18 +68,19 @@ export class CustomMenu extends HTMLElement {
 	}
 
 	connectedCallback() {
-		if (customMenuExistsInDOM == false && shouldImportCSS) {
-			let path = new URL("./custom-menu.css", import.meta.url);
-			fetch(path)
-			.then(response => response.text())
-			.then((css) => {
-				if (shouldImportCSS == false) return;
-				importedCSS = new CSSStyleSheet;
-				importedCSS.replaceSync(css);
-				document.adoptedStyleSheets.push(importedCSS);
-			});
+		if (!customMenuExistsInDOM) {
+			this.style.display = "none";
+			let cssLink = document.createElement("link");
+			cssLink.onload = () => {
+				this.style.display = null;
+			}
+			cssLink.rel = "stylesheet";
+			cssLink.href = new URL("./custom-menu.css", import.meta.url);
+
+			document.head.appendChild( document.createComment("Inserted by toolbelt-v2/CustomMenu.js") );
+			document.head.appendChild(cssLink);
+			customMenuExistsInDOM = true;
 		}
-		customMenuExistsInDOM = true;
 		
 		let kind = this.getAttribute("kind");
 
@@ -237,14 +240,17 @@ export class CustomMenu extends HTMLElement {
 		this.appendChild(selected);
 		this.appendChild(unselectedDiv);
 		
-		selected.addEventListener("click", (e) => { this.classList.toggle("open"); });
-		// this.addEventListener("click", (e) => { this.classList.toggle("open"); });
+		selected.addEventListener("click", (e) => {
+			this.classList.toggle("open");
+			if (this.classList.length == 0) this.removeAttribute("class");
+		});
 		
 		for (let option of options) {
 			option.addEventListener("click", () => {
 				this.setAttribute("value", option.getAttribute("value"));
 				selected.innerText = option.innerText;
 				this.classList.remove("open");
+				if (this.classList.length == 0) this.removeAttribute("class");
 				options.forEach((o) => {o.removeAttribute("selected")});
 				option.setAttribute("selected", "");
 			});

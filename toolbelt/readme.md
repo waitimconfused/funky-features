@@ -19,18 +19,21 @@ So far, it's got these features:
 Getting key inputs:
 
 ```js
-// Get the state of the key "a"
-// Returns a bool
-toolbelt.keyboard.isPressed("a");
+import { keyboard } from "toolbelt";
+
+// Get the state of the key "a" (boolean)
+keyboard.isPressed("a");
 ```
 
 Creating a keybind:
 
 ```js
+import { keyboard } from "toolbelt";
+
 // Create a keyboard keybind/shortcut for (ctrl + b).
 // When pressed, console.log something
 // Noting else you need to do. Toolbelts are simple
-toolbelt.keyboard.setKeybind(() => {
+keyboard.setKeybind(() => {
   console.log(`Keybind [control + b] triggered`);
 }, [ "control", "b" ]);
 ```
@@ -40,10 +43,12 @@ toolbelt.keyboard.setKeybind(() => {
 Getting mouse inputs:
 
 ```js
-let position = toolbelt.mouse.position; // { x: 0, y: 0 }
-let positionRelative = toolbelt.mouse.position.relatve(HTMLElement); // Relative to a specified HTML Element
-let leftClick = toolbelt.mouse.click_l; // Is the left mouse button pressed?
-let rightClick = toolbelt.mouse.click_r; // Is the right mouse button pressed?
+import { keyboard } from "toolbelt";
+
+let position = mouse.position; // { x: 0, y: 0 }
+let positionRelative = mouse.position.relatve(HTMLElement); // Relative to a specified HTML Element
+let leftClick = mouse.click_l; // Is the left mouse button pressed?
+let rightClick = mouse.click_r; // Is the right mouse button pressed?
 ```
 
 ### Game Controllers
@@ -53,20 +58,25 @@ There are 3 ways of adding event listeners to any game controller, with naming c
 This example is for an Xbox Controller, with mulitple message for the (A) button being pressed, held, and unpressed:
 
 ```js
-// Get the controller at index 0
-// By default, there are a max of 4 "slots" for controllers to connect to
-// Using "controller.XBOX" for the standard Xbox Controller
-var xboxController = toolbelt.controller.XBOX.fromIndex(0);
+import { XboxController } from "toolbelt";
 
-xboxController.on("buttonA", function(){
+// Get the controller at index 0, with the Xbox-Controller layout
+// By default, there are a max of 4 "slots" for controllers to connect to
+var xboxController = new XboxController(0);
+
+xboxController.listener.on("button.A", function(){
   console.log("Button A is pressed");
 });
 
-boxController.while("buttonA", function(){
+boxController.listener.while("button.A", function(){
   console.log("Button A is being held");
 });
 
-boxController.off("buttonA", function(){
+boxController.listener.stateChange("button.A", function(){
+  console.log("Button A has changed");
+});
+
+boxController.listener.off("button.A", function(){
   console.log("Button A is no longer pressed");
 });
 ```

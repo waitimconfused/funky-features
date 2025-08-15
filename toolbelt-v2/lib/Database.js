@@ -1,6 +1,6 @@
 
 /** A wrapper for the `IndexedDB` APIs */
-export class TBDatabase {
+export default class TBDatabase {
 	/** @type {IDBDatabase} */
 	#database;
 

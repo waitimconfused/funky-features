@@ -1,11 +1,10 @@
-const mouseButtonNames = [ "left", "right", "wheel", "back", "forward", "eraser" ];
-
 /**
- * 
- * @param {MouseEvent} event 
+ * Gets the value of `PointerEvent.buttons`, and returns an object of `Object<string, boolean>`
+ * @param {PointerEvent} event 
  * @returns {{left:boolean, right:boolean, wheel:boolean, back:boolean, forward:boolean, eraser:boolean}}
  */
 function getMouseButtonsFromEvent(event) {
+	let mouseButtonNames = [ "left", "right", "wheel", "back", "forward", "eraser" ];
 	let object = {};
 	for (const buttonName of mouseButtonNames) {
 		let isPressed = Boolean(event.buttons & (1 << mouseButtonNames.indexOf(buttonName)));
@@ -14,7 +13,7 @@ function getMouseButtonsFromEvent(event) {
 	return object;
 }
 
-export const mouse = new class TBMouse {
+export default new class TBMouse {
 	#position = { x: 0, y: 0 };
 
 	get position() {  return this.#position; }

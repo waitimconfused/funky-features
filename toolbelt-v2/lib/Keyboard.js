@@ -5,7 +5,7 @@
  * }} TBKeyboardOptions
  */
 
-export const keyboard = new class TBKeyboard {
+export default new class TBKeyboard {
 
 	/** @param {string} key */
 	isKeyPressed(key) {

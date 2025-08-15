@@ -14,6 +14,7 @@ export class Vector {
 		this.#rad = number * degToRad;
 		this.#x = this.#mag * Math.cos( this.#rad );
 		this.#y = this.#mag * Math.sin( this.#rad );
+		this.#defaultMode = "deg";
 	}
 	get deg() { return this.#deg; }
 
@@ -24,6 +25,7 @@ export class Vector {
 		this.#rad = number;
 		this.#x = this.#mag * Math.cos(number);
 		this.#y = this.#mag * Math.sin(number);
+		this.#defaultMode = "rad";
 	}
 	get rad() { return this.#rad; }
 
@@ -43,6 +45,7 @@ export class Vector {
 		this.#mag = Math.hypot(number, this.#y);
 		this.#rad = Math.atan2(this.#y, number);
 		this.#deg = this.#rad * radToDeg;
+		this.#defaultMode = "xy";
 	}
 	get x() { return this.#x; }
 
@@ -52,8 +55,12 @@ export class Vector {
 		this.#mag = Math.hypot(this.#x, number);
 		this.#rad = Math.atan2(number, this.#x);
 		this.#deg = this.#rad * radToDeg;
+		this.#defaultMode = "xy";
 	}
 	get y() { return this.#y; }
+
+	/** @type {"xy"|"deg"|"rad"} */
+	#defaultMode = "xy";
 
 	/**
 	 * When `mode="xy"`, `a` represents the *X-position*, and `b` represents the *Y-position*
@@ -63,8 +70,17 @@ export class Vector {
 	 * When `mode="rad"`, `a` represents the *magnitude*, and `b` represents the *angle* (***in radians***)
 	 * 
 	 * @param {"xy"|"deg"|"rad"} mode
-	 * @param {number} a 
-	 * @param {number} b 
+	 * Determines if `a` and `b` should be interpreted as `x` & `y`, or magnitude & angle
+	 * @param {number} a
+	 * If `mode="xy"`, this represents `Vector.x`.
+	 * 
+	 * If `mode="deg"|"rad"`, this represents `Vector.magnitude`
+	 * @param {number} b
+	 * If `mode="xy"`, this represents `Vector.y`.
+	 * 
+	 * If `mode="deg"`, this represents `Vector.deg`.
+	 * 
+	 * If `mode="rad"`, this represents `Vector.rad`
 	 */
 	constructor(mode, a, b) {
 		if (mode == "xy") {
@@ -79,6 +95,7 @@ export class Vector {
 		} else {
 			throw new Error("Unknown Vector constructor mode of: \""+mode+"\"");
 		}
+		this.#defaultMode = mode;
 	}
 
 
@@ -99,26 +116,25 @@ export class Vector {
 	 * @param {number} y
 	 */
 	static fromPos(x, y) {
-		let vector = new Vector;
-		vector.x = x;
-		vector.y = y;
-		return vector;
+		return new Vector("xy", x, y);
 	}
 
 	/** @param {number} deg */
 	static fromDeg(deg) {
-		let vector = new Vector;
-		vector.deg = deg;
-		return vector;
+		return new Vector("deg", 1, deg);
 	}
 
 	/** @param {number} rad */
 	static fromRad(rad) {
-		let vector = new Vector;
-		vector.rad = rad;
-		return vector;
+		return new Vector("rad", 1, rad);
 	}
 
+	/**
+	 * Return the average beween two angles (in radians) 
+	 * @param {number} rad1 
+	 * @param {number} rad2 
+	 * @returns {number}
+	 */
 	static averageRad(rad1, rad2) {
 		rad1 %= 2 * Math.PI;
 		rad2 %= 2 * Math.PI;
@@ -126,6 +142,23 @@ export class Vector {
 		let angle = (rad1 + rad2) / 2;
 
 		if (Math.abs(rad2 - rad1) > Math.PI) angle += Math.PI;
+
+		return angle;
+	}
+
+	/**
+	 * Return the average beween two angles (in degrees) 
+	 * @param {number} deg1 
+	 * @param {number} deg2 
+	 * @returns {number}
+	 */
+	static averageDeg(deg1, deg2) {
+		deg1 %= 360;
+		deg2 %= 360;
+
+		let angle = (deg1 + deg2) / 2;
+
+		if (Math.abs(deg2 - deg1) > 180) angle += 180;
 
 		return angle;
 	}
@@ -139,20 +172,38 @@ export class Vector {
 			sum.y += vector.y;
 		}
 
-		let vector = new Vector;
-		vector.x = sum.x;
-		vector.y = sum.y;
-		return vector;
+		return new Vector("xy", sum.x, sum.y);
 	}
 
-	/** @param {Vector} vector1 @param {Vector} vector2 */
-	static dotProductOf(vector1, vector2) {
-		let dx = vector1.x - vector2.x;
-		let dy = vector1.y - vector2.y;
+	/**
+	 * Returns the dot product between two vectors
+	 * @param {Vector} vector1
+	 * @param {Vector} vector2
+	 * @returns {Vector}
+	 */
+	static dotProduct(vector1, vector2) {
+		return new Vector("xy", vector1.x * vector2.x, vector1.y * vector2.y);
+	}
 
-		let magnitude = Math.hypot(dx, dy);
-		let angle = Math.atan2(dy, dx);
+	/**
+	 * Returns the cross-product between two vectors
+	 * @param {Vector} vector1 
+	 * @param {Vector} vector2 
+	 * @returns {number}
+	 */
+	static crossProduct(vector1, vector2) {
+		return (vector1.x * vector2.y) - (vector1.y * vector2.x);
+	}
 
-		return new Vector("rad", magnitude, angle);
+	/** @param {"xy"|"deg"|"rad"|null} mode */
+	toString(mode) {
+		switch (mode ?? this.#defaultMode) {
+			case "deg":
+				return `(${this.#mag} \u2220${this.#deg}deg)`;
+			case "rad":
+				return `(${this.#mag} \u2220${this.#rad}rad)`;
+			case "xy":
+				return `(${this.x}, ${this.y})`;
+		}
 	}
 }

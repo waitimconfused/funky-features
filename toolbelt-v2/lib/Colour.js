@@ -18,7 +18,7 @@ import { range } from "./Range.js";
  * All channels are in the range 0-255
  */
 
-export class Colour {
+export default class Colour {
 	/** @type {HEX} */
 	#hex = "#FFFFFF";
 
@@ -161,22 +161,28 @@ export class Colour {
 
 	/**
 	 * @param {string|null|undefined} colour 
-	 * @returns {string}
+	 * @returns {{ r:number, g:number, b:number, a:number }}
 	 */
 	static parseColour(colour) {
-		let output = colour;
-		if (["", "none", null, undefined].includes(output)) {
-			output = "transparent";
-		}
-		if (/^var\(.*\)$/gm.test(output)) {
-			let cssVar = output.replace(/^var\(|\)$/g, "")
-			output = window.getComputedStyle(document.documentElement).getPropertyValue(cssVar);
-		}
-		if (/^color-mix\(.*\)$/gm.test(output)) {
-			let parameters = output.replace(/^color-mix\(|\)$/g, "").replace(/\s*,\s/g, ",").split(",");
+
+		if (["", "none", null, undefined].includes(colour)) {
+			colour = "transparent";
+		} else if (colour instanceof CanvasGradient || colour instanceof CanvasPattern) {
+			colour = "transparent";
 		}
 
-		return output;
+		let canvas = document.createElement("canvas");
+		canvas.width = 1;
+		canvas.height = 1;
+
+		let context = canvas.getContext("2d");
+		context.fillStyle = colour;
+
+		context.fillRect(0, 0, 1, 1);
+
+		let imageData = context.getImageData(0, 0, 1, 1);
+
+		return { r: imageData.data[0], g: imageData.data[1], b: imageData.data[2], a: imageData.data[3] }
 	}
 
 }

@@ -1,4 +1,6 @@
-import { range, Point2, Point4, image } from "../../toolbelt-v2/index.js";
+import { Point2, Point4 } from "../../toolbelt-v2/lib/Points.js";
+import { range } from "../../toolbelt-v2/lib/Range.js";
+import { image } from "../../toolbelt-v2/lib/Image.js";
 import { Component } from "../utils.js";
 import { AnimationCluster } from "../animations.js";
 import { SuperGif } from "../../libgif.js";

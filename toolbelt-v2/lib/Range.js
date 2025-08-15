@@ -1,4 +1,4 @@
-export const range = new class TBRange {
+export const range = {
 
 	/**
 	 * 
@@ -9,7 +9,7 @@ export const range = new class TBRange {
 	 */
 	clamp(min, number, max) {
 		return Math.max(Math.min(number, max), min);
-	}
+	},
 
 	/**
 	 * Detect if any number is within the range [min, max]
@@ -20,7 +20,7 @@ export const range = new class TBRange {
 	 */
 	fits(min, number, max) {
 		return number >= min && number <= max;
-	}
+	},
 
 	/**
 	 * Returns a random number in the range [min, max]
@@ -33,7 +33,7 @@ export const range = new class TBRange {
 		let value = Math.random() * (max - min) + min;
 		if (asInt) value = Math.round(value);
 		return value;
-	}
+	},
 
 	/**
 	 * Returns the sine of a number, scaled to fit range
@@ -48,7 +48,7 @@ export const range = new class TBRange {
 		let scale = Math.abs( (max-min) / 2 );
 		let offset = (max+min)/2;
 		return scale * Math.sin(number) + offset;
-	}
+	},
 
 	/**
 	 * Returns the cosine of a number, scaled to fit range
@@ -63,7 +63,22 @@ export const range = new class TBRange {
 		let scale = Math.abs( (max-min) / 2 );
 		let offset = (max+min)/2;
 		return scale * Math.cos(number) + offset;
-	}
+	},
+
+	/**
+	 * Computes a modulo operation that wraps values within a custom range `[a, b]`.
+	 *
+	 * This function ensures that the result cycles between `a` and `b`, instead of defaulting
+	 * to the standard `n%x` operator behavior range of `[0,x]`.
+	 * 
+	 * @param {number} min 
+	 * @param {number} value 
+	 * @param {number} max 
+	 * @returns {number}
+	 */
+	mod(min, value, max) {
+		return min + ( (value-min) % (max-min) );
+	},
 
 	/**
 	 * Linear interpolation between `min` and `max`
@@ -76,11 +91,11 @@ export const range = new class TBRange {
 	}
 }
 
-export const round = new class TBRound {
+export const round = {
 
-	round = Math.round;
-	floor = Math.floor;
-	ceil = Math.ceil;
+	round: Math.round,
+	floor: Math.floor,
+	ceil: Math.ceil,
 
 	roundToNearest(number=3.14, step=1) {
 		let rounded = Math.round(number / step) * step;
@@ -89,7 +104,7 @@ export const round = new class TBRound {
 			rounded = rounded.toFixed(step_decimalNumbers)
 		}
 		return rounded;
-	}
+	},
 	
 	floorToNearest(number = 3.14, nearest = 1) {
 		let rounded = Math.floor(number / step) * step;
@@ -98,7 +113,7 @@ export const round = new class TBRound {
 			rounded = rounded.toFixed(step_decimalNumbers)
 		}
 		return rounded;
-	}
+	},
 	
 	ceilToNearest(number = 3.14, nearest = 1) {
 		let rounded = Math.ceil(number / step) * step;
@@ -107,5 +122,5 @@ export const round = new class TBRound {
 			rounded = rounded.toFixed(step_decimalNumbers)
 		}
 		return rounded;
-	}
+	},
 }

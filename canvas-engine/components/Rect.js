@@ -1,4 +1,6 @@
-import { getValue, range, Point2, Point4 } from "../../toolbelt-v2/index.js";
+import { Point2, Point4 } from "../../toolbelt-v2/lib/Points.js";
+import { range } from "../../toolbelt-v2/lib/Range.js";
+import units from "../../toolbelt-v2/lib/Units.js";
 import { Component } from "../utils.js";
 
 /**
@@ -289,10 +291,10 @@ export class Rect extends Component {
 		this.transform.x = range.clamp(0, this.transform.x, 1);
 		this.transform.y = range.clamp(0, this.transform.y, 1);
 
-		let destinationW = getValue( this.display.w, this.engine );
-		let destinationH = getValue( this.display.h, this.engine );
-		let destinationX = getValue( this.display.x, this.engine );
-		let destinationY = getValue( this.display.y, this.engine );
+		let destinationW = units.getValue( this.display.w, this.engine );
+		let destinationH = units.getValue( this.display.h, this.engine );
+		let destinationX = units.getValue( this.display.x, this.engine );
+		let destinationY = units.getValue( this.display.y, this.engine );
 
 		destinationX += defaultOffset?.x ?? 0;
 		destinationX -= destinationW * this.transform.x;
@@ -332,7 +334,7 @@ export class Rect extends Component {
 		}
 
 		context.strokeStyle = this.outline.colour;
-		let lineWidth = getValue(this.outline.size, this.engine);
+		let lineWidth = units.getValue(this.outline.size, this.engine);
 		context.lineWidth = lineWidth;
 		context.roundRect(
 			destinationX,

@@ -1,4 +1,6 @@
-import { Colour, getValue, range, Point2, Point4 } from "../../toolbelt-v2/index.js";
+import { Point2, Point4 } from "../../toolbelt-v2/lib/Points.js";
+import Colour from "../../toolbelt-v2/lib/Colour.js";
+import units from "../../toolbelt-v2/lib/Units.js";
 import { Component } from "../utils.js";
 
 export class Path extends Component {
@@ -132,10 +134,10 @@ export class Path extends Component {
 		this.transform.x = range.clamp(0, this.transform.x, 1);
 		this.transform.y = range.clamp(0, this.transform.y, 1);
 
-		let destinationW = getValue(this.display.w, this.engine);
-		let destinationH = getValue(this.display.h, this.engine);
-		let destinationX = getValue(this.display.x, this.engine);
-		let destinationY = getValue(this.display.y, this.engine);
+		let destinationW = units.getValue(this.display.w, this.engine);
+		let destinationH = units.getValue(this.display.h, this.engine);
+		let destinationX = units.getValue(this.display.x, this.engine);
+		let destinationY = units.getValue(this.display.y, this.engine);
 
 		destinationX += defaultOffset?.x ?? 0;
 		destinationX -= destinationW * this.transform.x;
@@ -168,7 +170,7 @@ export class Path extends Component {
 
 		context.fillStyle = Colour.parseColour(colour);
 		context.strokeStyle = Colour.parseColour(outlineColour);
-		context.lineWidth = getValue(this.outline.size, this.engine);
+		context.lineWidth = units.getValue(this.outline.size, this.engine);
 		context.lineCap = this.outline.lineCap || "round";
 		context.lineJoin = this.outline.lineJoin || "round";
 		var path = new Path2D(this.path);

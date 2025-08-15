@@ -1,4 +1,4 @@
-export const files = new class TBFiles {
+export const files = {
 
 	/**
 	 * @param {{ multiple?:boolean, returnAsEvent?:boolean, accept?: string|string[] }} options
@@ -24,7 +24,7 @@ export const files = new class TBFiles {
 					reader.readAsText(file, "UTF-8");
 					reader.onload = (e) => {
 						if (options?.returnAsEvent) output.push(e);
-						else output.push(new TBFile(file, e));
+						else output.push({name: file.name, content: e.target.result });
 
 						if (output.length != files.length) return;
 
@@ -38,16 +38,5 @@ export const files = new class TBFiles {
 
 			fileUploadInput.click();
 		});
-	}
-}
-
-class TBFile {
-	name = "";
-	content = "";
-
-	/** @param {File} file @param {ProgressEvent<FileReader>} e */
-	constructor(file, e) {
-		this.name = file.name;
-		this.content = e.target.result;
 	}
 }
